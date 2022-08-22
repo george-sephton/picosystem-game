@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Map Maker</title>
+
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto" />
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+		<link rel="stylesheet" href="js/colpick/colpick.css" type="text/css"/>
+
+		<link rel="stylesheet" href="images/bootstrap-icons/bootstrap-icons.css">
+
+		<link rel="stylesheet" type="text/css" href="map_maker.css" />
+
+		<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.js"></script>
+		<script type="text/javascript" src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+		<script type="text/javascript" src="js/colpick/colpick.js"></script>
+
+		<script type="text/javascript" src="js/data.js"></script>
+		<script type="text/javascript" src="js/sprites.js"></script>
+		<script type="text/javascript" src="js/maps.js"></script>
+		
+		<script type="text/javascript">
+			/* Store the currently selected sprite */
+			var selected_sprite = new Object();
+			selected_sprite.sprite = false;
+			selected_sprite.group = false;
+
+			/* Store the sprite state */
+			selected_sprite.sprite_reverse_x = false;
+			selected_sprite.sprite_reverse_y = false;
+			selected_sprite.painting = false;
+
+			/* Dev */
+			//selected_sprite.sprite = sprites[2].sprites[0];
+			//selected_sprite.group = sprites[2];
+
+			/* Store current map info */
+			var selected_map = demo_map;
+			var map_cell_size = 10;
+			var drawing_functions = false; 
+
+			/* Store map resizing information */
+			var map_resizing = new Object();
+			map_resizing.en = false;
+			map_resizing.new_width = 0;
+			map_resizing.new_height = 0;
+			
+			/* Document load */
+			$( function() {
+				/* Load sprite list */
+				load_sprite_list();
+
+				/* Load sprite toolbar event listeners */
+				sprite_toolbar_event_listeners();
+
+				/* Load map editor */
+				load_map_editor();
+
+				/* Load map toolbar event listeners */
+				map_toolbar_event_listeners();
+			} );
+
+		</script>
+	</head>
+	<body>
+		<div id="container">
+			<div id="sidebar">
+				<div id="sprite_editor">
+				</div>
+				<div id="sprite_list_toolbar">
+					<div id="toolbar_left">
+						<i class="bi-folder-plus" id="toolbar_new_group" func="new-group"></i>
+						<i class="bi-plus-square-fill" id="toolbar_new_sprite" func="new"></i>
+						<i class="bi-arrow-left" id="toolbar_back" func="back"></i>
+					</div>
+					<div id="toolbar_right">
+						<i class="bi-type" func="rename"></i>
+						<i class="bi-back" func="duplicate"></i>
+						<i class="bi-trash" func="delete"></i>
+					</div>
+				</div>
+				<div id="sprite_list_toolbar_rename">
+					<input type="text" id="sprite_rename" />
+				</div>
+				<div id="sprite_list_toolbar_delete">
+					<input type="button" id="sprite_delete_y" value="Confirm" />
+					<input type="button" id="sprite_delete_n" value="Cancel"  />
+				</div>
+				<div id="sprite_list"> 
+					<ul id="sortable">
+					</ul>
+				</div>
+			</div>
+
+			<div id="content">
+				<div id="toolbar">
+					<div id="map_settings">
+						<div id="map_controls">
+							<i class="bi-plus-square-fill" func="new"></i>
+							<i class="bi-cloud-upload-fill" func="open"></i>
+							<i class="bi-cloud-download-fill" func="download"></i>
+							<i class="bi-file-earmark-code-fill" func="export"></i>
+							<div class="toolbar_separator"></div>
+							<i class="bi-x-square" func="clear"></i>
+							<i class="bi-aspect-ratio-fill" func="resize-canvas"></i>
+							<div class="toolbar_separator"></div>
+							<i class="bi-zoom-in" func="zoom-in"></i>
+							<i class="bi-zoom-out" func="zoom-out"></i>
+							<div class="toolbar_separator"></div>
+							<i class="bi-brush-fill" id="map_toolbar_paint" func="paint"></i>
+							<i class="bi-eraser-fill" id="map_toolbar_erase" func="erase"></i>
+							<i class="bi-paint-bucket" id="map_toolbar_fill" func="fill"></i>
+							<i class="bi-symmetry-horizontal" id="map_toolbar_flip_h" func="flip-h"></i>
+							<i class="bi-symmetry-vertical" id="map_toolbar_flip_v" func="flip-v"></i>
+						</div>
+						<div id="map_name">
+							<input type="text" id="map_name" placeholder="" />
+						</div>
+						<div id="map_confirm">
+							<label id="map_confirm_prompt"></label>
+							<input type="button" id="map_confirm_y" value="Confirm" />
+							<input type="button" id="map_confirm_n" value="Cancel"  />
+							<input type="button" id="map_done" value="Done"  />
+						</div>
+					</div>
+					<div id="map_paint_preview">
+
+					</div>
+					<div id="map_size">
+						<div id="cols">
+							<label for="map_cols">Width</label>
+							<input type="number" id="map_cols" name="map_cols" value="" min="3" max="40" onKeyDown="return false" />
+						</div>
+						<div id="rows">
+							<label for="map_rows">Height</label>
+							<input type="number" id="map_rows" name="map_rows" value="" min="3" max="40" onKeyDown="return false" />
+						</div>
+					</div>
+				</div>
+				<div id="map_editor_container">
+					<div id="map_editor"></div>
+					<div id="map_editor_loading">
+						Map Loading
+					</div>
+				</div>
+				
+			</div>
+		</div>
+		
+		
+
+
+	</body>
+</html> 
