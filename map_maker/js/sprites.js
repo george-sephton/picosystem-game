@@ -98,6 +98,7 @@ function sprite_list_event_listeners() {
 	/* Add onClick event listeners */
 	$( "#sortable li" ).on( "click" , function( e ) {
 
+		/* Ignore clicks on the items in the sprite list when resizing the canvas or erasing */
 		if( ( map_resizing.en == false ) && ( drawing_functions != 2 ) ) {
 
 			if( selected_sprite.group == false ) {
@@ -126,6 +127,7 @@ function sprite_list_event_listeners() {
 }
 
 function load_sprite_preview() {
+
 	/* Setup the sprite paint preview */
 	$( "#container #toolbar #map_paint_preview" ).css( "display", "block" );
 	$( "#container #toolbar #map_paint_preview" ).html( "<table></table>" );
@@ -155,6 +157,9 @@ function load_sprite_preview() {
 			$( '<td col_id="'+i+'" class="picker"></td>' ).appendTo( $(this) ).css( "background", "#" + selected_sprite.sprite.data[col_sel][row_sel]);
 		}
 	} );
+
+	/* Add styling if painting */
+	if( ( drawing_functions == 1 ) ) set_map_tile_settings_styles();
 }
 
 function clear_sprite_preview() {

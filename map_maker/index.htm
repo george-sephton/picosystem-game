@@ -31,17 +31,25 @@
 			/* Store the sprite state */
 			selected_sprite.sprite_reverse_x = false;
 			selected_sprite.sprite_reverse_y = false;
-			selected_sprite.painting = false;
+
+			/* Store tile information */
+			selected_sprite.can_walk = [true, true, true, true];
+			selected_sprite.exit_tile = false;
+			selected_sprite.exit_map_id = false;
+			selected_sprite.exit_map_dir = [0, 0];
+			selected_sprite.exit_map_pos = [0, 0];
 
 			/* Dev */
-			//selected_sprite.sprite = sprites[2].sprites[0];
-			//selected_sprite.group = sprites[2];
+			selected_sprite.sprite = sprites[0].sprites[0];
+			selected_sprite.group = sprites[0];
 
 			/* Store current map info */
 			var selected_map = demo_map;
 			var map_cell_size = 10;
-			var drawing_functions = false; 
 
+			/* Store drawing information */
+			var drawing_functions = false;
+			
 			/* Store map resizing information */
 			var map_resizing = new Object();
 			map_resizing.en = false;
@@ -128,6 +136,43 @@
 					</div>
 					<div id="map_paint_preview">
 
+					</div>
+					<div id="map_paint_settings">
+						<div id="map_paint_settings_l">
+							<div id="map_exit_tile_en">
+								<label for="exit_tile_en" class="exit_ignore_hide">Exit Tile</label>
+								<input type="checkbox" id="exit_tile_en" name="exit_tile_en" class="checkbox-input exit_ignore_hide" />
+								<label for="exit_tile_map_id">Map ID</label>
+								<input type="text" id="exit_tile_map_id" name="exit_tile_map_id" class="text-input" placeholder="ID" />
+							</div>
+							<div id="map_exit_tile_dir">
+								<label for="exit_tile_n" class="exit_ignore_hide">N</label>
+								<input type="checkbox" id="exit_tile_n" name="exit_tile_n" class="checkbox-input exit_ignore_hide dir_en_checkbox" checked="checked" />
+								<label for="exit_tile_e" class="exit_ignore_hide">E</label>
+								<input type="checkbox" id="exit_tile_e" name="exit_tile_e" class="checkbox-input exit_ignore_hide dir_en_checkbox" checked="checked" />
+								<label for="exit_tile_s" class="exit_ignore_hide">S</label>
+								<input type="checkbox" id="exit_tile_s" name="exit_tile_s" class="checkbox-input exit_ignore_hide dir_en_checkbox" checked="checked" />
+								<label for="exit_tile_w" class="exit_ignore_hide">W</label>
+								<input type="checkbox" id="exit_tile_w" name="exit_tile_w" class="checkbox-input exit_ignore_hide dir_en_checkbox" checked="checked" />
+							</div>
+						</div>
+						<div id="map_paint_settings_r">
+							<div id="map_exit_tile_pos">
+								<label for="exit_tile_map_pos_x">Pos</label>
+								<input type="text" id="exit_tile_map_pos_x" name="exit_tile_map_pos_x" class="text-input" placeholder="x" />
+								<input type="text" id="exit_tile_map_pos_y" name="exit_tile_map_pos_y" class="text-input" placeholder="y" />
+							</div>
+							<div id="map_exit_tile_dir">
+								<label for="exit_tile_map_dir">Dir</label>
+								<select name="exit_tile_map_dir" id="exit_tile_map_dir" class="select-input">
+									<option value="a" selected="selected">Any</option>
+									<option value="n">North</option>
+									<option value="e">East</option>
+									<option value="s">South</option>
+									<option value="w">West</option>
+								</select>
+							</div>
+						</div>
 					</div>
 					<div id="map_size">
 						<div id="cols">

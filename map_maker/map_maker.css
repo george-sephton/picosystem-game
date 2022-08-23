@@ -206,7 +206,8 @@ body {
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
-	gap: 30px;
+	gap: 15px;
+	overflow: scroll;
 }
 #container #toolbar #map_settings {
 	display: flex;
@@ -298,12 +299,66 @@ body {
 #container #toolbar #map_paint_preview {
 	width: 100px;
 	height: 100%;
+	margin: 0 0 0 6px;
 }
 #container #toolbar #map_paint_preview table {
-	width: 100%;
+	min-width: 95px;
 	height: 100%;
-	border: 1px solid #000;
+	border: 2px solid #000;
 	border-spacing: 0;
+}
+#container #toolbar #map_paint_settings {
+	display: none;
+	flex-direction: row;
+	background: #8bb1c7;
+	height: 100%;
+	gap: 14px;
+	padding: 0 10px 0 10px;
+	border-radius: 6px;
+}
+#container #toolbar #map_paint_settings #map_paint_settings_l, #container #toolbar #map_paint_settings #map_paint_settings_r {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 14px;
+	box-sizing: border-box;
+}
+#container #toolbar #map_paint_settings .checkbox-input{
+	width: 30px;
+	height: 30px;
+	margin: 0px;
+}
+#container #toolbar #map_paint_settings .text-input {
+	font-size: 12px;
+	width: 40px;
+	background: #FFF;
+}
+#container #toolbar #map_paint_settings .select-input {
+	font-size: 16px;
+	width: 110px;
+	background: #FFF;
+	border-radius: 10px;
+	border: 1px solid #666;
+	padding: 4px;
+}
+#container #toolbar #map_paint_settings #map_exit_tile_en label {
+	min-width: 60px;
+}
+#container #toolbar #map_paint_settings label {
+	margin: 6px 0 0 0;
+}
+#container #toolbar #map_paint_settings div {
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
+}
+#container #toolbar #map_paint_settings #map_paint_settings_r label {
+	display: inline-block;
+	min-width: 40px;
+}
+#container #toolbar #map_paint_settings #map_paint_settings_r input {
+	display: inline-block;
 }
 #container #toolbar input {
 	padding: 8px;
