@@ -752,7 +752,7 @@ function load_map_editor() {
 		var sprite_obj = undefined;
 		/* Get the sprite */
 		if( ( tile_info.sprite_gid != undefined ) && ( tile_info.sprite_id != undefined ) ) {
-			var group_obj = sprites.find( obj => obj.gid == tile_info.sprite_gid );
+			var group_obj = project.sprites.find( obj => obj.gid == tile_info.sprite_gid );
 			if( group_obj != undefined ) {
 				sprite_obj = group_obj.sprites.find( obj => obj.id == tile_info.sprite_id );
 			} else {
@@ -858,7 +858,7 @@ function display_tile_info( tile_row, tile_col ) {
 	var cell_sprite_id = selected_map.data[tile_row][tile_col].sprite_id;
 
 	/* Copy group and sprite data to selected sprite */
-	selected_sprite.group = sprites.find( obj => obj.gid == cell_sprite_gid );
+	selected_sprite.group = project.sprites.find( obj => obj.gid == cell_sprite_gid );
 	selected_sprite.sprite = selected_sprite.group.sprites.find( obj => obj.id == cell_sprite_id );
 
 	/* Copy tile info */

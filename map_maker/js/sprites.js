@@ -3,8 +3,8 @@ function load_sprite_list() {
 	//console.log( "Load sprite list" );
 
 	/* Clear sprite list */
-	$( "#sortable" ).html( "" );
-	$( "#sortable li" ).css( "color", "#000" );
+	$( "#sprite_list .sortable" ).html( "" );
+	$( "#sprite_list .sortable li" ).css( "color", "#000" );
 
 	/* Clear map editing icons */
 	$( "#map_toolbar_paint" ).css( "display", "none" );
@@ -17,8 +17,8 @@ function load_sprite_list() {
 		/* Groups */
 		sort_groups_by_gorder();
 
-		$.each( sprites, function( key, value ) {
-			$( "#sortable" ).append( '<li class="ui-state-default ui-group" g_sprite_id="'+value.gid+'">'+value.gorder+': '+value.name+' ('+value.gid+')</li>' );
+		$.each( project.sprites, function( key, value ) {
+			$( "#sprite_list .sortable" ).append( '<li class="ui-state-default ui-group" g_sprite_id="'+value.gid+'">'+value.gorder+': '+value.name+' ('+value.gid+')</li>' );
 		} );
 
 		/* Clear the current sprite id */
@@ -30,24 +30,24 @@ function load_sprite_list() {
 		$( "#toolbar_back" ).css( "display", "none" );
 		$( "#container #sidebar #sprite_list_toolbar #toolbar_right" ).css( "display", "none" );
 
-		
+
 	} else {
 		/* Sprites */
 		sort_sprites_by_order( selected_sprite.group.gid );
 
 		/* Add the group name */
-		$( "#sortable" ).append( '<li class="ui-state-default ui-state-disabled ui-group" g_sprite_id="'+selected_sprite.group.gid+'">'+selected_sprite.group.name+' ('+selected_sprite.group.gid+')</li>' );
+		$( "#sprite_list .sortable" ).append( '<li class="ui-state-default ui-state-disabled ui-group" g_sprite_id="'+selected_sprite.group.gid+'">'+selected_sprite.group.name+' ('+selected_sprite.group.gid+')</li>' );
 
 		$.each( selected_sprite.group.sprites, function( key, value ) {
-			$( "#sortable" ).append( '<li class="ui-state-default ui-sprite" sprite_id="'+value.id+'">'+value.order+': '+value.name+' ('+value.id+')</li>' );
+			$( "#sprite_list .sortable" ).append( '<li class="ui-state-default ui-sprite" sprite_id="'+value.id+'">'+value.order+': '+value.name+' ('+value.id+')</li>' );
 		} );
 
 		if( selected_sprite.sprite == false ) {
 			/* Highlight parent group */
-			$( "#sortable li[g_sprite_id='"+selected_sprite.group.gid+"']" ).css( "color", "#154561" );
+			$( "#sprite_list .sortable li[g_sprite_id='"+selected_sprite.group.gid+"']" ).css( "color", "#154561" );
 		} else {
 			/* Highlight selected sprite */
-			$( "#sortable li[sprite_id='"+selected_sprite.sprite.id+"']" ).css( "color", "#195170" );
+			$( "#sprite_list .sortable li[sprite_id='"+selected_sprite.sprite.id+"']" ).css( "color", "#195170" );
 
 			/* Store the sprite state */
 			selected_sprite.sprite_reverse_x = false;
@@ -78,9 +78,9 @@ function load_sprite_list() {
 
 	/* Disable hovering for draw functions */
 	if( drawing_functions == 1 )
-		$( "#container #sidebar #sprite_list #sortable .ui-group" ).addClass( "resize_disabled" );
+		$( "#container #sidebar #sprite_list #sprite_list .sortable .ui-group" ).addClass( "resize_disabled" );
 	else if( drawing_functions == 2 )
-		$( "#container #sidebar #sprite_list #sortable li" ).addClass( "resize_disabled" );
+		$( "#container #sidebar #sprite_list #sprite_list .sortable li" ).addClass( "resize_disabled" );
 
 	/* Disable cursor on sprite editor */
 	if( drawing_functions != false )
@@ -92,18 +92,18 @@ function sprite_list_event_listeners() {
 	//console.log( "Load sprite list event listeners" );
 	
 	/* Remove existing event listeners */
-	$( "#sortable li" ).unbind( "click" );
+	$( "#sprite_list .sortable li" ).unbind( "click" );
 	$( "#sprite_list" ).unbind( "click" ); /* For click out - not implemented */
 
 	/* Add onClick event listeners */
-	$( "#sortable li" ).on( "click" , function( e ) {
+	$( "#sprite_list .sortable li" ).on( "click" , function( e ) {
 
 		/* Ignore clicks on the items in the sprite list when resizing the canvas or erasing */
 		if( ( map_resizing.en == false ) && ( drawing_functions != 2 ) ) {
 
 			if( selected_sprite.group == false ) {
 				/* Top level click, no sprite or group selected */
-				selected_sprite.group = sprites.find( obj => obj.gid == $( this ).attr( "g_sprite_id" ) );
+				selected_sprite.group = project.sprites.find( obj => obj.gid == $( this ).attr( "g_sprite_id" ) );
 				load_sprite_list();
 			} else {
 				/* Group level click - either sprite or parent group selected */
@@ -234,7 +234,7 @@ function load_sprite_editor() {
 		}
 		$( "#sprite_parent_selector" ).append( '<option value="-1"'+selected_none+'> - None - </option>' );
 
-		$.each( sprites, function( key, value ) {
+		$.each( project.sprites, function( key, value ) {
 			/* Check to see if this is a child element or not */
 			if( value.parent == -1) {
 				/* Select the current parent (if any) */
@@ -328,11 +328,11 @@ function sprite_toolbar_event_listeners() {
 
 									/* Get new GID value */
 									sort_groups_by_gid();
-									new_group.gid = sprites[sprites.length - 1].gid + 1;
+									new_group.gid = project.sprites[project.sprites.length - 1].gid + 1;
 
 									/* Get new order value */
 									sort_groups_by_gorder();
-									new_group.gorder = sprites[sprites.length - 1].gorder + 1;
+									new_group.gorder = project.sprites[project.sprites.length - 1].gorder + 1;
 									/* Note we sort by order 2nd so the array goes back to the correct order */
 
 									if( ( selected_sprite.sprite == false ) && ( func == "duplicate" ) ) {
@@ -353,7 +353,7 @@ function sprite_toolbar_event_listeners() {
 									}
 
 									/* Add the new sprite into the local array*/
-									sprites.push( new_group );
+									project.sprites.push( new_group );
 
 									/* Let's also update the selected group to be our new one */
 									selected_sprite.group = new_group;
@@ -460,7 +460,7 @@ function sprite_toolbar_event_listeners() {
 						if( selected_sprite.sprite == false ) {
 
 							/* Delete selected group from local array */
-							sprites = sprites.filter(obj => obj.gid != selected_sprite.group.gid);
+							sprites = project.sprites.filter(obj => obj.gid != selected_sprite.group.gid);
 
 							/* Reorder the groups in local array */
 							var i = 0;
@@ -472,6 +472,21 @@ function sprite_toolbar_event_listeners() {
 								
 							} );
 
+
+
+
+							/* Function doesn't work correctly */
+
+
+
+
+
+
+
+
+
+
+
 							/* Clear the selected group */
 							selected_sprite.group = false;
 
@@ -479,6 +494,19 @@ function sprite_toolbar_event_listeners() {
 
 							/* Delete selected sprite from local array */
 							selected_sprite.group.sprites = selected_sprite.group.sprites.filter(obj => obj.id != selected_sprite.sprite.id);
+
+
+
+
+
+
+
+							/* Add functionality where deleting last sprite in a group also deletes group */
+
+
+
+
+
 
 							/* Reorder the sprites in local array */
 							var i = 0;
@@ -539,13 +567,13 @@ function sprite_toolbar_event_listeners() {
 function sprite_list_sortable() {
 
 	/* Destroy existing sortable list */
-	if ( $( "#sortable" ).hasClass('ui-sortable') ) {
-		$( "#sortable" ).sortable( "destroy" );
+	if ( $( "#sprite_list .sortable" ).hasClass('ui-sortable') ) {
+		$( "#sprite_list .sortable" ).sortable( "destroy" );
 	}
 	
 	/* Remove all event listeners */
-	$( "#sortable" ).unbind( "sortstart" );
-	$( "#sortable" ).unbind( "sortstop" );
+	$( "#sprite_list .sortable" ).unbind( "sortstart" );
+	$( "#sprite_list .sortable" ).unbind( "sortstop" );
 
 	if( selected_sprite.group == false ) {
 		var sort_highlight_class = "ui-state-group-highlight";
@@ -555,21 +583,21 @@ function sprite_list_sortable() {
 
 
 	/* Turn sprite list into a sortable list */
-	$( "#sortable" ).sortable( {
+	$( "#sprite_list .sortable" ).sortable( {
 		placeholder: sort_highlight_class,
 		items: "li:not(.ui-state-disabled)",
 		delay: 200
 	} );
-	$( "#sortable" ).disableSelection();
+	$( "#sprite_list .sortable" ).disableSelection();
 
 	/* Add sortable list event listeners */
-	$( "#sortable" ).on( "sortstart", function( e, ui ) {
+	$( "#sprite_list .sortable" ).on( "sortstart", function( e, ui ) {
 		//console.log( "sortstart" );
 
 		/* Temporarily ignore onClick event listener */
 		$( this ).css("pointer-events", "none");
 	} );
-	$( "#sortable" ).on( "sortstop", function( e, ui ) {
+	$( "#sprite_list .sortable" ).on( "sortstop", function( e, ui ) {
 		/* Once drag and drop ends, save the new order */
 		//console.log( "sortstop" );
 
@@ -585,7 +613,7 @@ function sprite_list_sortable() {
 		if( selected_sprite.group != false ) {
 
 			/* We're sorting sprites */
-			$.each( $( "#sortable" ).children( ":not(.ui-state-disabled)" ), function( k, v ) {
+			$.each( $( "#sprite_list .sortable" ).children( ":not(.ui-state-disabled)" ), function( k, v ) {
 				
 				/* Get sprite objects in sort order */
 				var sprite_obj = selected_sprite.group.sprites.find( obj => obj.id == $( v ).attr( "sprite_id" ) );
@@ -604,10 +632,10 @@ function sprite_list_sortable() {
 		} else {
 
 			/* We're sorting groups */
-			$.each( $( "#sortable" ).children(), function( k, v ) {
+			$.each( $( "#sprite_list .sortable" ).children(), function( k, v ) {
 				
 				/* Get sprite objects in sort order */
-				var sprite_obj = sprites.find( obj => obj.gid == $( v ).attr( "g_sprite_id" ) );
+				var sprite_obj = project.sprites.find( obj => obj.gid == $( v ).attr( "g_sprite_id" ) );
 
 				/* Give it it's new order and increment */
 				sprite_obj.gorder = i;
@@ -618,7 +646,7 @@ function sprite_list_sortable() {
 			} );
 
 			/* Set the new order in the local array */
-			sprites = newOrderArray;
+			project.sprites = newOrderArray;
 
 		}
 					
@@ -640,19 +668,19 @@ function sprite_list_sortable() {
 }
 
 function sort_groups_by_gid() {
-	sprites.sort( function( a, b ) {
+	project.sprites.sort( function( a, b ) {
 		return ((a.gid < b.gid) ? -1 : ((a.gid > b.gid) ? 1 : 0));
 	} );
 }
 
 function sort_groups_by_gorder() {
-	sprites.sort( function( a, b ) {
+	project.sprites.sort( function( a, b ) {
 		return ((a.gorder < b.gorder) ? -1 : ((a.gorder > b.gorder) ? 1 : 0));
 	} );
 }
 
 function sort_sprites_by_id( gid ) {
-	var sort_group = sprites.find( obj => obj.gid == gid );
+	var sort_group = project.sprites.find( obj => obj.gid == gid );
 
 	sort_group.sprites.sort( function( a, b ) {
 		return ((a.id < b.id) ? -1 : ((a.id > b.id) ? 1 : 0));
@@ -660,7 +688,7 @@ function sort_sprites_by_id( gid ) {
 }
 
 function sort_sprites_by_order( gid ) {
-	var sort_group = sprites.find( obj => obj.gid == gid );
+	var sort_group = project.sprites.find( obj => obj.gid == gid );
 
 	sort_group.sprites.sort( function( a, b ) {
 		return ((a.order < b.order) ? -1 : ((a.order > b.order) ? 1 : 0));

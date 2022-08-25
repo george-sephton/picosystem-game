@@ -19,8 +19,9 @@
 		<script type="text/javascript" src="js/colpick/colpick.js"></script>
 
 		<script type="text/javascript" src="js/data.js"></script>
-		<script type="text/javascript" src="js/sprites.js"></script>
+		<script type="text/javascript" src="js/project.js"></script>
 		<script type="text/javascript" src="js/maps.js"></script>
+		<script type="text/javascript" src="js/sprites.js"></script>
 		
 		<script type="text/javascript">
 			/* Store the currently selected sprite */
@@ -53,23 +54,26 @@
 			map_resizing.new_height = 0;
 
 			/* Dev */
-			//selected_sprite.sprite = sprites[0].sprites[0];
-			//selected_sprite.group = sprites[0];
+			//selected_sprite.sprite = project.sprites[0].sprites[0];
+			//selected_sprite.group = project.sprites[0];
 			//var selected_map = demo_map;
 			
 			/* Document load */
 			$( function() {
 				/* Load sprite list */
-				load_sprite_list();
+				//load_sprite_list();
 
 				/* Load sprite toolbar event listeners */
-				sprite_toolbar_event_listeners();
+				//sprite_toolbar_event_listeners();
 
 				/* Load map editor */
-				load_map_editor();
+				//load_map_editor();
 
 				/* Load map toolbar event listeners */
-				map_toolbar_event_listeners();
+				//map_toolbar_event_listeners();
+
+				/* Load map list */
+				load_map_list();
 			} );
 
 		</script>
@@ -98,8 +102,8 @@
 					<input type="button" id="sprite_delete_y" value="Confirm" />
 					<input type="button" id="sprite_delete_n" value="Cancel"  />
 				</div>
-				<div id="sprite_list"> 
-					<ul id="sortable">
+				<div id="sprite_list">
+					<ul class="sortable">
 					</ul>
 				</div>
 			</div>
@@ -139,9 +143,7 @@
 							<input type="button" id="map_done" value="Done"  />
 						</div>
 					</div>
-					<div id="map_paint_preview">
-
-					</div>
+					<div id="map_paint_preview"></div>
 					<div id="map_paint_settings">
 						<div id="map_paint_settings_l">
 							<div id="map_exit_tile_en">
@@ -196,7 +198,10 @@
 						Map Loading
 					</div>
 				</div>
-				
+				<div id="map_list">
+					<ul class="sortable">
+					</ul>
+				</div>
 			</div>
 		</div>
 		

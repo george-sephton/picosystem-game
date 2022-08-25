@@ -127,8 +127,8 @@ g_fence.gorder = 3;
 g_fence.gid = 8;
 g_fence.sprites = new Array( fence );
 
-/* Store sprite groups in an array */
-var sprites = new Array(g_grass_bg, g_mat, g_bollard, g_fence);
+/* Store sprites in an array */
+var demo_sprites = new Array( g_grass_bg, g_mat, g_bollard, g_fence );
 
 /* Demo map */
 var blank_tile = new Object();
@@ -142,12 +142,21 @@ blank_tile.exit_map_id = false;
 blank_tile.exit_map_dir = [0, 0];
 blank_tile.exit_map_pos = [0, 0];
 
-var demo_map = new Object();
-demo_map.name = "Demo Map";
-demo_map.width = 5;
-demo_map.height = 5;
-demo_map.data = Array.from( { length: demo_map.height }, () => Array.from( { length: demo_map.width }, () => Object.assign( {}, blank_tile ) ) );
-/* FYI: [height, y, rows][width, x, cols] */
+var map1 = new Object();
+map1.id = 0;
+map1.order = 0;
+map1.name = "Demo Map";
+map1.width = 5;
+map1.height = 5;
+map1.data = Array.from( { length: map1.height }, () => Array.from( { length: map1.width }, () => Object.assign( {}, blank_tile ) ) );
+
+var map2 = new Object();
+map2.id = 1;
+map2.order = 1;
+map2.name = "Large Demo Map";
+map2.width = 16;
+map2.height = 12;
+map2.data = Array.from( { length: map2.height }, () => Array.from( { length: map2.width }, () => Object.assign( {}, blank_tile ) ) );
 
 /* Dev */
 /*
@@ -159,3 +168,13 @@ demo_map.data[0][1].sprite_id = 3;
 demo_map.data[0][1].sprite_reverse_y = true;
 demo_map.data[0][1].sprite_reverse_x = true;
 */
+
+/* Store maps in an array */
+var demo_maps = new Array( map1, map2 );
+
+
+var project = new Object();
+project.name = "Demo Project";
+project.sprites = demo_sprites;
+project.maps = demo_maps;
+

@@ -6,6 +6,20 @@ body {
 	font-family: 'Roboto', serif;
 
 }
+.auto_cursor {
+	cursor: auto !important;
+}
+.project_functions {
+	display: block;
+}
+.map_editing_functions {
+	display: none;
+}
+.sortable {
+	list-style-type: none;
+	margin: 0px;
+	padding: 0px;
+}
 #container {
 	height: 100vh;
 	box-sizing: border-box;
@@ -34,12 +48,6 @@ body {
 	flex-direction: column;
 	/*max-width: calc(100vw - 430px);*/
 	width: 100%;
-}
-.project_functions {
-	display: block;
-}
-.map_editing_functions {
-	display: none;
 }
 #container #sidebar #sprite_editor {
 	width: 100%;
@@ -158,46 +166,41 @@ body {
 	box-sizing: border-box;
 	padding: 10px;
 }
-#container #sidebar #sprite_list #sortable {
-	list-style-type: none;
-	margin: 0px;
-	padding: 0px;
-}
-#container #sidebar #sprite_list #sortable .ui-group  {
+#container #sidebar #sprite_list .sortable .ui-group  {
 	background: #ccc;
 }
-#container #sidebar #sprite_list #sortable .ui-group:hover  {
+#container #sidebar #sprite_list .sortable .ui-group:hover  {
 	background: #999;
 	cursor: pointer;
 }
-#container #sidebar #sprite_list #sortable .ui-sprite  {
+#container #sidebar #sprite_list .sortable .ui-sprite  {
 	margin-left: 20px;
 }
-#container #sidebar #sprite_list #sortable .ui-sprite:hover  {
+#container #sidebar #sprite_list .sortable .ui-sprite:hover  {
 	background: #ccc;
 	cursor: pointer;
 }
-#container #sidebar #sprite_list #sortable li {
+#container #sidebar #sprite_list .sortable li {
 	font-size: 1.2em;
 	margin: 0 0 5px 0;
 	padding: 5px;
 	line-height: 1.2em;
 	border: 1px solid #666;
 }
-#container #sidebar #sprite_list #sortable .resize_disabled  {
+#container #sidebar #sprite_list .sortable .resize_disabled  {
 	cursor: default;
 	background: #ccc;
 }
-#container #sidebar #sprite_list #sortable .resize_disabled:hover  {
+#container #sidebar #sprite_list .sortable .resize_disabled:hover  {
 	cursor: default;
 	background: #ccc;
 }
-#container #sidebar #sprite_list #sortable .ui-state-group-highlight {
+#container #sidebar #sprite_list .sortable .ui-state-group-highlight {
 	background: #8bb1c7;
 	height: 1.5em;
 	line-height: 1.2em;
 }
-#container #sidebar #sprite_list #sortable .ui-state-sprite-highlight {
+#container #sidebar #sprite_list .sortable .ui-state-sprite-highlight {
 	background: #8bb1c7;
 	height: 1.5em;
 	line-height: 1.2em;
@@ -214,7 +217,7 @@ body {
 	justify-content: flex-start;
 	align-items: center;
 	gap: 15px;
-	overflow: scroll;
+	overflow: auto;
 }
 #container #toolbar #map_settings {
 	display: flex;
@@ -381,8 +384,8 @@ body {
 	background:#fff;
 	box-sizing: border-box;
 	padding: 10px;
-	overflow: scroll;
-	display: flex;
+	overflow: auto;
+	display: none;
 	flex-grow: 1;
 	justify-content: center;
 	align-items: center;
@@ -395,7 +398,7 @@ body {
 	display: flex;
 }
 #container #map_editor_container #map_editor #map_editor_table {
-	overflow: scroll;
+	overflow: auto;
 	padding: 0px;
 	margin: 0px;
 	border-spacing: 1px;
@@ -417,6 +420,20 @@ body {
 	padding: 0px;
 	margin: 0px;
 }
-.auto_cursor {
-	cursor: auto !important;
+#container #map_list {
+	max-width: 100%;
+	background:#fff;
+	box-sizing: border-box;
+	padding: 10px;
+	overflow: auto;
+	display: flex;
+	flex-grow: 1;
+}
+#container #map_list .sortable li {
+	font-size: 1.2em;
+	min-width: 400px;
+	margin: 0 0 5px 0;
+	padding: 5px;
+	line-height: 1.2em;
+	border: 1px solid #666;
 }
