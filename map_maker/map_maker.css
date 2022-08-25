@@ -22,8 +22,24 @@ body {
 	box-sizing: border-box;
 	gap: 10px;
 
+	display: none;
+	flex-direction: column;
+}
+#container #content {
+	flex-grow: 1;
+	box-sizing: border-box;
+	gap: 10px;
+
 	display: flex;
 	flex-direction: column;
+	/*max-width: calc(100vw - 430px);*/
+	width: 100%;
+}
+.project_functions {
+	display: block;
+}
+.map_editing_functions {
+	display: none;
 }
 #container #sidebar #sprite_editor {
 	width: 100%;
@@ -187,15 +203,6 @@ body {
 	line-height: 1.2em;
 	margin-left: 20px;
 }
-#container #content {
-	flex-grow: 1;
-	box-sizing: border-box;
-	gap: 10px;
-
-	display: flex;
-	flex-direction: column;
-	max-width: calc(100vw - 430px);
-}
 #container #toolbar {
 	width: 100%;
 	min-width: 600px;
@@ -253,7 +260,7 @@ body {
 	display: flex;
 }
 #container #toolbar #map_settings #map_name input {
-	width: 100%;
+	width: 400px;
 	font-size: 20px;
 	border: 0px;
 	background: #FFF;

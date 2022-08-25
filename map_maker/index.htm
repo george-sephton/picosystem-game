@@ -11,8 +11,8 @@
 		<link rel="stylesheet" href="js/colpick/colpick.css" type="text/css"/>
 
 		<link rel="stylesheet" href="images/bootstrap-icons/bootstrap-icons.css">
-
 		<link rel="stylesheet" type="text/css" href="map_maker.css" />
+		<link rel="icon" type="image/x-icon" href="images/favicon.ico" />
 
 		<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.js"></script>
 		<script type="text/javascript" src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
@@ -39,22 +39,23 @@
 			selected_sprite.exit_map_dir = [0, 0];
 			selected_sprite.exit_map_pos = [0, 0];
 
-			/* Dev */
-			selected_sprite.sprite = sprites[0].sprites[0];
-			selected_sprite.group = sprites[0];
-
 			/* Store current map info */
-			var selected_map = demo_map;
+			var selected_map = false;
 			var map_cell_size = 10;
 
 			/* Store drawing information */
 			var drawing_functions = false;
-			
+
 			/* Store map resizing information */
 			var map_resizing = new Object();
 			map_resizing.en = false;
 			map_resizing.new_width = 0;
 			map_resizing.new_height = 0;
+
+			/* Dev */
+			//selected_sprite.sprite = sprites[0].sprites[0];
+			//selected_sprite.group = sprites[0];
+			//var selected_map = demo_map;
 			
 			/* Document load */
 			$( function() {
@@ -107,22 +108,26 @@
 				<div id="toolbar">
 					<div id="map_settings">
 						<div id="map_controls">
-							<i class="bi-plus-square-fill" func="new"></i>
-							<i class="bi-cloud-upload-fill" func="open"></i>
-							<i class="bi-cloud-download-fill" func="download"></i>
-							<i class="bi-file-earmark-code-fill" func="export"></i>
-							<div class="toolbar_separator"></div>
-							<i class="bi-x-square" func="clear"></i>
-							<i class="bi-aspect-ratio-fill" func="resize-canvas"></i>
-							<div class="toolbar_separator"></div>
-							<i class="bi-zoom-in" func="zoom-in"></i>
-							<i class="bi-zoom-out" func="zoom-out"></i>
-							<div class="toolbar_separator"></div>
-							<i class="bi-brush-fill" id="map_toolbar_paint" func="paint"></i>
-							<i class="bi-eraser-fill" id="map_toolbar_erase" func="erase"></i>
-							<i class="bi-paint-bucket" id="map_toolbar_fill" func="fill"></i>
-							<i class="bi-symmetry-horizontal" id="map_toolbar_flip_h" func="flip-h"></i>
-							<i class="bi-symmetry-vertical" id="map_toolbar_flip_v" func="flip-v"></i>
+							<i class="bi-plus-square-fill project_functions" func="new"></i>
+							<i class="bi-cloud-upload-fill project_functions" func="open"></i>
+							<i class="bi-cloud-download-fill project_functions " func="download"></i>
+							<i class="bi-file-earmark-code-fill project_functions" func="export"></i>
+							<i class="bi-arrow-left map_editing_functions" func="close-map"></i>
+							<i class="bi-type map_editing_functions" func="rename-map"></i>
+							<i class="bi-back map_editing_functions" func="duplicate-map"></i>
+							<i class="bi-trash map_editing_functions" func="trash-map"></i>
+							<div class="toolbar_separator map_editing_functions"></div>
+							<i class="bi-x-square map_editing_functions" func="clear"></i>
+							<i class="bi-aspect-ratio-fill map_editing_functions" func="resize-canvas"></i>
+							<div class="toolbar_separator map_editing_functions"></div>
+							<i class="bi-zoom-in map_editing_functions" func="zoom-in"></i>
+							<i class="bi-zoom-out map_editing_functions" func="zoom-out"></i>
+							<div class="toolbar_separator map_editing_functions"></div>
+							<i class="bi-brush-fill map_editing_functions" id="map_toolbar_paint" func="paint"></i>
+							<i class="bi-eraser-fill map_editing_functions" id="map_toolbar_erase" func="erase"></i>
+							<i class="bi-paint-bucket map_editing_functions" id="map_toolbar_fill" func="fill"></i>
+							<i class="bi-symmetry-horizontal map_editing_functions" id="map_toolbar_flip_h" func="flip-h"></i>
+							<i class="bi-symmetry-vertical map_editing_functions" id="map_toolbar_flip_v" func="flip-v"></i>
 						</div>
 						<div id="map_name">
 							<input type="text" id="map_name" placeholder="" />
