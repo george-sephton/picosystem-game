@@ -60,20 +60,10 @@
 			
 			/* Document load */
 			$( function() {
-				/* Load sprite list */
-				//load_sprite_list();
 
-				/* Load sprite toolbar event listeners */
-				//sprite_toolbar_event_listeners();
+				/* Load project view */
+				load_project_view();
 
-				/* Load map editor */
-				//load_map_editor();
-
-				/* Load map toolbar event listeners */
-				//map_toolbar_event_listeners();
-
-				/* Load map list */
-				load_map_list();
 			} );
 
 		</script>
@@ -110,8 +100,8 @@
 
 			<div id="content">
 				<div id="toolbar">
-					<div id="map_settings">
-						<div id="map_controls">
+					<div id="settings">
+						<div id="controls">
 							<i class="bi-plus-square-fill project_functions" func="new"></i>
 							<i class="bi-cloud-upload-fill project_functions" func="open"></i>
 							<i class="bi-cloud-download-fill project_functions " func="download"></i>
@@ -133,8 +123,8 @@
 							<i class="bi-symmetry-horizontal map_editing_functions" id="map_toolbar_flip_h" func="flip-h"></i>
 							<i class="bi-symmetry-vertical map_editing_functions" id="map_toolbar_flip_v" func="flip-v"></i>
 						</div>
-						<div id="map_name">
-							<input type="text" id="map_name" placeholder="" />
+						<div id="name_input_container">
+							<input type="text" id="name_input" placeholder="" />
 						</div>
 						<div id="map_confirm">
 							<label id="map_confirm_prompt"></label>
@@ -181,7 +171,7 @@
 							</div>
 						</div>
 					</div>
-					<div id="map_size">
+					<div id="map_size_settings">
 						<div id="cols">
 							<label for="map_cols">Width</label>
 							<input type="number" id="map_cols" name="map_cols" value="" min="3" max="40" onKeyDown="return false" />
@@ -204,9 +194,5 @@
 				</div>
 			</div>
 		</div>
-		
-		
-
-
 	</body>
 </html> 

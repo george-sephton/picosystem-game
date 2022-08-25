@@ -13,12 +13,15 @@ body {
 	display: block;
 }
 .map_editing_functions {
-	display: none;
+	display: block;
 }
 .sortable {
 	list-style-type: none;
 	margin: 0px;
 	padding: 0px;
+}
+.sortable li {
+	cursor: pointer;
 }
 #container {
 	height: 100vh;
@@ -46,7 +49,6 @@ body {
 
 	display: flex;
 	flex-direction: column;
-	/*max-width: calc(100vw - 430px);*/
 	width: 100%;
 }
 #container #sidebar #sprite_editor {
@@ -106,9 +108,8 @@ body {
 	height: 60px;
 	display: none;
 	justify-content: center;
-	gap: 8px;
-	display: none;
 	align-items: center;
+	gap: 8px;
 }
 #container #sidebar #sprite_list_toolbar_delete input {
 	padding: 8px;
@@ -130,7 +131,7 @@ body {
 	align-items: center;
 }
 #container #sidebar #sprite_list_toolbar #toolbar_right {
-	display: none;
+	display: flex;
 	flex-direction: row;
 	justify-content: flex-end;
 	align-items: center;
@@ -157,7 +158,7 @@ body {
 	margin: 0 0 0 8px;
 }
 #toolbar_new_group, #toolbar_new_sprite, #toolbar_back {
-	display: none;
+	display: flex;
 }
 #container #sidebar #sprite_list {
 	width: 100%;
@@ -209,7 +210,7 @@ body {
 #container #toolbar {
 	width: 100%;
 	min-width: 600px;
-	height: 120px;
+	min-height: 120px;
 	background:#ccc;
 	box-sizing: border-box;
 	padding: 12px;
@@ -219,64 +220,63 @@ body {
 	gap: 15px;
 	overflow: auto;
 }
-#container #toolbar #map_settings {
+#container #toolbar #settings {
 	display: flex;
 	flex-direction: column;
 	gap: 14px;
 	box-sizing: border-box;
 }
-#container #toolbar #map_settings #map_controls {
-	display: flex;
+#container #toolbar #settings #controls {
+	display: none;
 	flex-direction: row;
 	gap: 8px;
 }
-#container #toolbar #map_settings #map_controls i {
+#container #toolbar #settings #controls i {
 	color: #333;
 	font-size: 28px;
 }
-#container #toolbar #map_settings #map_controls i:hover {
+#container #toolbar #settings #controls i:hover {
 	color: #8bb1c7;
 	cursor: pointer;
 }
-#container #toolbar #map_settings #map_controls .selected_tool {
+#container #toolbar #settings #controls .selected_tool {
 	color: #8bb1c7;
 	font-size: 28px;
 }
-#container #toolbar #map_settings #map_controls .selected_tool:hover {
+#container #toolbar #settings #controls .selected_tool:hover {
 	color: #666;
 	cursor: pointer;
 }
-#container #toolbar #map_settings #map_controls .resize_disabled {
+#container #toolbar #settings #controls .resize_disabled {
 	color: #999;
 }
-#container #toolbar #map_settings #map_controls .resize_disabled:hover {
+#container #toolbar #settings #controls .resize_disabled:hover {
 	color: #999;
 	cursor: auto;
 }
-#container #toolbar #map_settings #map_controls .toolbar_separator {
+#container #toolbar #settings #controls .toolbar_separator {
 	background: #666;
 	margin: 6px 4px 6px 4px;
 	width: 2px;
 	border-radius: 1px;
 }
-#container #toolbar #map_settings #map_name {
-	display: flex;
+#container #toolbar #settings #name_input_container {
+	display: none;
 }
-#container #toolbar #map_settings #map_name input {
+#container #toolbar #settings #name_input_container #name_input {
 	width: 400px;
 	font-size: 20px;
 	border: 0px;
 	background: #FFF;
 }
-#container #toolbar #map_settings #map_confirm {
-	display: flex;
+#container #toolbar #settings #map_confirm {
+	display: none;
 	justify-content: flex-start;
 	align-items: center;
 	gap: 8px;
-	display: none;
 	margin: 6px 0 0 0;
 }
-#container #toolbar #map_settings #map_confirm input {
+#container #toolbar #settings #map_confirm input {
 	padding: 8px;
 	border: 1px solid #666;
 	color: #fff;
@@ -284,25 +284,25 @@ body {
 	border-radius: 10px;
 	font-size: 14px;
 }
-#container #toolbar #map_settings #map_confirm input:hover {
+#container #toolbar #settings #map_confirm input:hover {
 	background: #8bb1c7;
 	color: #333;
 	cursor: pointer;
 }
-#container #toolbar #map_size {
+#container #toolbar #map_size_settings {
 	display: none;
 	flex-direction: column;
 	gap: 4px;
 	font-size: 20px;
 }
-#container #toolbar #map_size div {
+#container #toolbar #map_size_settings div {
 	padding: 2px;
 }
-#container #toolbar #map_size input {
+#container #toolbar #map_size_settings input {
 	display: inline-block;
 	min-width: 80px;
 }
-#container #toolbar #map_size label {
+#container #toolbar #map_size_settings label {
 	display: inline-block;
 	min-width: 100px;
 }
@@ -310,6 +310,7 @@ body {
 	width: 100px;
 	height: 100%;
 	margin: 0 0 0 6px;
+	display: none;
 }
 #container #toolbar #map_paint_preview table {
 	min-width: 95px;
@@ -385,7 +386,7 @@ body {
 	box-sizing: border-box;
 	padding: 10px;
 	overflow: auto;
-	display: none;
+	display: flex;
 	flex-grow: 1;
 	justify-content: center;
 	align-items: center;
@@ -395,7 +396,7 @@ body {
 }
 #container #map_editor_container #map_editor_loading {
 	background:#fff;
-	display: flex;
+	display: none;
 }
 #container #map_editor_container #map_editor #map_editor_table {
 	overflow: auto;
@@ -436,4 +437,9 @@ body {
 	padding: 5px;
 	line-height: 1.2em;
 	border: 1px solid #666;
+}
+#container #content #map_list .sortable .ui-state-highlight {
+	background: #8bb1c7;
+	height: 1.5em;
+	line-height: 1.2em;
 }

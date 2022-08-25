@@ -1,7 +1,5 @@
 function load_sprite_list() {
 
-	//console.log( "Load sprite list" );
-
 	/* Clear sprite list */
 	$( "#sprite_list .sortable" ).html( "" );
 	$( "#sprite_list .sortable li" ).css( "color", "#000" );
@@ -87,13 +85,16 @@ function load_sprite_list() {
 		$( ".picker" ).addClass( "auto_cursor" );
 }
 
-function sprite_list_event_listeners() {
-
-	//console.log( "Load sprite list event listeners" );
+function clear_sprite_list_event_listeners() {
 	
-	/* Remove existing event listeners */
 	$( "#sprite_list .sortable li" ).unbind( "click" );
 	$( "#sprite_list" ).unbind( "click" ); /* For click out - not implemented */
+}
+
+function sprite_list_event_listeners() {
+	
+	/* Remove existing event listeners */
+	clear_sprite_list_event_listeners();
 
 	/* Add onClick event listeners */
 	$( "#sprite_list .sortable li" ).on( "click" , function( e ) {
@@ -162,18 +163,23 @@ function load_sprite_preview() {
 	if( ( drawing_functions == 1 ) ) set_map_tile_settings_styles();
 }
 
-function clear_sprite_preview() {
+function clear_sprite_paint_preview() {
+	
 	/* Clear the sprite paint preview */
 	$( "#container #toolbar #map_paint_preview" ).html( "" );
 	$( "#container #toolbar #map_paint_preview" ).css( "display", "none" );
 }
 
+function clear_sprite_editor_colour_pickers() {
+	
+	$( '.colpick_hex' ).remove();
+}
+
 function load_sprite_editor() {
 
-	//console.log( "Load sprite editor" );
-
 	/* Remove existing colour pickers */
-	$( '.colpick_hex' ).remove();
+	clear_sprite_editor_colour_pickers();
+	
 	/* Clear parent selector */
 	$( "#sprite_parent_selector" ).html( "" );
 	/* Hide delete confirmation prompt and show the toolbar */
@@ -219,6 +225,20 @@ function load_sprite_editor() {
 				/* Update sprite paint preview */
 				load_sprite_preview();
 
+
+
+
+
+
+				/* Add functionality to update any sprites on the map */
+
+
+
+
+
+
+
+
 				/* Hide the colour picker */
 				$( e ).colpickHide();
 			}
@@ -251,16 +271,19 @@ function load_sprite_editor() {
 		$( "#sprite_editor" ).html( "Select a sprite" );
 
 		/* Clear the paint preview */
-		clear_sprite_preview();
+		clear_sprite_paint_preview();
 	}
+}
+
+function clear_sprite_toolbar_event_listeners() {
+	
+	$( "#container #sidebar #sprite_list_toolbar i" ).unbind( "click" );
 }
 
 function sprite_toolbar_event_listeners() {
 
-	//console.log( "Load sprite toolbar event listeners" );
-
 	/* Remove all event listeners */
-	$( "#container #sidebar #sprite_list_toolbar i" ).unbind( "click" );
+	clear_sprite_toolbar_event_listeners();
 
 	/* Sprite toolbar event listeners */
 	$( "#container #sidebar #sprite_list_toolbar i" ).click(function() {
@@ -313,7 +336,7 @@ function sprite_toolbar_event_listeners() {
 					/* Add event listners to either save or discard change */
 					$( "#container #sidebar #sprite_list_toolbar_rename #sprite_rename" ).on( "keyup blur", function( e ) {
 						
-						/* Save change */
+						/* Save the change */
 						if( e.key == "Enter" ) {
 
 							/* Get entered name */
@@ -387,7 +410,6 @@ function sprite_toolbar_event_listeners() {
 									/* Select newly created sprite */
 									selected_sprite.sprite = new_sprite;
 								}
-								
 							}
 
 							if( func == "rename" ) {
@@ -409,16 +431,6 @@ function sprite_toolbar_event_listeners() {
 
 							/* Reload sprite list */
 							load_sprite_list();
-
-
-
-
-
-							/* Here we need to save the changes */
-
-
-
-
 						}
 
 						/* Discard change */
@@ -431,7 +443,6 @@ function sprite_toolbar_event_listeners() {
 							$( "#container #sidebar #sprite_list_toolbar_rename #sprite_rename" ).unbind( "keyup blur" );
 						}
 					});
-
 					break;
 
 				case "delete": /* Delete the selected sprite */
@@ -475,8 +486,7 @@ function sprite_toolbar_event_listeners() {
 
 
 
-							/* Function doesn't work correctly */
-
+							/* Function doesn't work correctly - can't delete groups */
 
 
 
@@ -537,7 +547,6 @@ function sprite_toolbar_event_listeners() {
 
 
 
-							/* Here we need to save the changes */
 							/* We also need to clear any tiles on the map that use this sprite */
 
 
@@ -557,23 +566,28 @@ function sprite_toolbar_event_listeners() {
 						$( document ).unbind( "keyup" );
 						$( "#container #sidebar #sprite_list_toolbar_delete #sprite_delete_y" ).unbind( "click" );
 					} );
-
 					break;
 			}
 		}
 	});
 }
 
-function sprite_list_sortable() {
-
-	/* Destroy existing sortable list */
-	if ( $( "#sprite_list .sortable" ).hasClass('ui-sortable') ) {
-		$( "#sprite_list .sortable" ).sortable( "destroy" );
-	}
+function clear_sprite_list_sortable() {
 	
-	/* Remove all event listeners */
-	$( "#sprite_list .sortable" ).unbind( "sortstart" );
-	$( "#sprite_list .sortable" ).unbind( "sortstop" );
+	if ( $( "#sprite_list .sortable" ).hasClass( "ui-sortable" ) ) {
+		$( "#sprite_list .sortable" ).sortable( "destroy" );
+	
+		/* Remove all event listeners */
+		$( "#sprite_list .sortable" ).unbind( "sortstart" );
+		$( "#sprite_list .sortable" ).unbind( "sortstop" );
+		$( "#sprite_list .sortable" ).unbind( "selectstart" );
+	}
+}
+
+function sprite_list_sortable() {
+	
+	/* Destroy existing sortable list */
+	clear_sprite_list_sortable();
 
 	if( selected_sprite.group == false ) {
 		var sort_highlight_class = "ui-state-group-highlight";
@@ -592,14 +606,12 @@ function sprite_list_sortable() {
 
 	/* Add sortable list event listeners */
 	$( "#sprite_list .sortable" ).on( "sortstart", function( e, ui ) {
-		//console.log( "sortstart" );
 
 		/* Temporarily ignore onClick event listener */
 		$( this ).css("pointer-events", "none");
 	} );
 	$( "#sprite_list .sortable" ).on( "sortstop", function( e, ui ) {
 		/* Once drag and drop ends, save the new order */
-		//console.log( "sortstop" );
 
 		/* Store the currently selected sprite */
 		var temp_selected_sprite = (selected_sprite != 0) ? selected_sprite.id : -1;
@@ -653,33 +665,27 @@ function sprite_list_sortable() {
 		/* Reload sprite list */
 		load_sprite_list();
 
-
-
-
-		/* Here we need to save the changes */
-
-
-
-
 		/* Re-instate onClick event listener */
 		$( this ).css("pointer-events", "auto");
 	} );
-
 }
 
 function sort_groups_by_gid() {
+	
 	project.sprites.sort( function( a, b ) {
 		return ((a.gid < b.gid) ? -1 : ((a.gid > b.gid) ? 1 : 0));
 	} );
 }
 
 function sort_groups_by_gorder() {
+	
 	project.sprites.sort( function( a, b ) {
 		return ((a.gorder < b.gorder) ? -1 : ((a.gorder > b.gorder) ? 1 : 0));
 	} );
 }
 
 function sort_sprites_by_id( gid ) {
+	
 	var sort_group = project.sprites.find( obj => obj.gid == gid );
 
 	sort_group.sprites.sort( function( a, b ) {
@@ -688,6 +694,7 @@ function sort_sprites_by_id( gid ) {
 }
 
 function sort_sprites_by_order( gid ) {
+	
 	var sort_group = project.sprites.find( obj => obj.gid == gid );
 
 	sort_group.sprites.sort( function( a, b ) {
