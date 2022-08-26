@@ -7,8 +7,11 @@ function load_project_view() {
 
 	$( "#container #content" ).css( "max-width", "100%" );
 
-	$( "#container #content #toolbar #settings #controls" ).css( "display", "flex" );
 	$( "#container #content #toolbar #settings #name_input_container" ).css( "display", "flex" );
+	$( "#container #content #toolbar #settings #name_input_container #name_input" ).attr( "disabled", "disabled" );
+	$( "#container #content #toolbar #settings #name_input_container #name_input" ).val( "" );
+
+	$( "#container #content #toolbar #settings #controls" ).css( "display", "flex" );
 	$( "#container #content #toolbar #settings #map_confirm" ).css( "display", "none" );
 
 	$( "#container #content #toolbar #map_paint_preview" ).css( "display", "none" );
@@ -96,10 +99,7 @@ function map_list_event_listeners() {
 		close_project_view();
 
 		/* Open the map editor view */
-		load_map_editing_view();
-
-		/* Load the map editor */
-		
+		load_map_editing_view();		
 	});
 }
 
@@ -222,5 +222,12 @@ function sort_maps_by_order() {
 	
 	project.maps.sort( function( a, b ) {
 		return ((a.order < b.order) ? -1 : ((a.order > b.order) ? 1 : 0));
+	} );
+}
+
+function sort_maps_by_id() {
+	
+	project.maps.sort( function( a, b ) {
+		return ((a.id < b.id) ? -1 : ((a.id > b.id) ? 1 : 0));
 	} );
 }

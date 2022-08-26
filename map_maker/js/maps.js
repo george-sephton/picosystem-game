@@ -7,8 +7,11 @@ function load_map_editing_view() {
 
 	$( "#container #content" ).css( "max-width", "calc(100vw - 430px)" );
 
-	$( "#container #content #toolbar #settings #controls" ).css( "display", "flex" );
 	$( "#container #content #toolbar #settings #name_input_container" ).css( "display", "flex" );
+	$( "#container #content #toolbar #settings #name_input_container #name_input" ).attr( "disabled", "disabled" );
+	$( "#container #content #toolbar #settings #name_input_container #name_input" ).val( "" );
+
+	$( "#container #content #toolbar #settings #controls" ).css( "display", "flex" );
 	$( "#container #content #toolbar #settings #map_confirm" ).css( "display", "none" );
 
 	$( "#container #content #toolbar #map_paint_preview" ).css( "display", "none" );
@@ -23,6 +26,13 @@ function load_map_editing_view() {
 	/* Show project icons */
 	$( ".project_functions" ).css( "display", "none" );
 	$( ".map_editing_functions" ).css( "display", "block" );
+
+	/* Set variables */
+	selected_sprite.sprite = false;
+	selected_sprite.group = false;
+
+	drawing_functions = false;
+	map_resizing.en = false;
 
 	/* Load map editor */
 	load_map_editor();
@@ -42,9 +52,17 @@ function close_map_editing_view() {
 	clear_sprite_toolbar_event_listeners();
 	clear_sprite_list_event_listeners();
 	clear_sprite_editor_colour_pickers();
+	clear_map_editor_event_listeners();
 
 	/* Disable sorting on sprite list */
 	clear_sprite_list_sortable();
+
+	/* Clear variables */
+	selected_sprite.sprite = false;
+	selected_sprite.group = false;
+	selected_map = false;
+	drawing_functions = false;
+	map_resizing.en = false;
 
 	/* Clear map editing elements */
 	$( "#container #sidebar #sprite_list .sortable" ).html( "" );
@@ -222,8 +240,8 @@ function map_editor_toolbar_reset() {
 	$( "#container #toolbar #map_paint_settings" ).css( "display", "none" );
 	
 	/* Remove event listener from map editor */
-	$( "#container #map_editor_container #map_editor #map_editor_table .map_editor_table_row .map_editor_table_cell_draw" ).unbind( "click" );
-	$( "#container #map_editor_container #map_editor #map_editor_table .map_editor_table_row .map_editor_table_cell_draw" ).unbind( "contextmenu" );
+	clear_map_editor_event_listeners();
+
 	/* Remove hover functionality from map editor */
 	$( "#container #map_editor_container #map_editor #map_editor_table .map_editor_table_row .map_editor_table_cell" ).removeClass( "map_editor_table_cell_draw" );
 
@@ -245,116 +263,6 @@ function map_editor_toolbar_reset() {
 	}
 }
 
-function map_editor_start_drawing() {
-	
-	/* Disable sprite list toolbar */
-	$( "#container #sidebar #sprite_list_toolbar i" ).addClass( "resize_disabled" );
-	
-	/* Disable colour picker */
-	$( ".picker" ).addClass( "auto_cursor" );
-
-	/* Disable sorting on sprite list */
-	clear_sprite_list_sortable();
-
-	/* Add hover functionality to map editor */
-	$( "#container #map_editor_container #map_editor #map_editor_table .map_editor_table_row .map_editor_table_cell" ).addClass( "map_editor_table_cell_draw" );
-}
-
-function set_map_tile_settings_styles() {
-	
-	/* Set preview to have no special borders */
-	$( "#container #toolbar #map_paint_preview table" ).css( "border", "2px solid #000" );
-	$( "#container #toolbar #map_paint_preview table" ).css( "border-top", "2px solid #000" );
-	$( "#container #toolbar #map_paint_preview table" ).css( "border-left", "2px solid #000" );
-	$( "#container #toolbar #map_paint_preview table" ).css( "border-bottom", "2px solid #000" );
-	$( "#container #toolbar #map_paint_preview table" ).css( "border-right", "2px solid #000" );
-
-	if( selected_sprite.exit_tile ) {
-		/* Exit tile enabled, show the rest of the settings  */
-		$( "#exit_tile_en" ).prop( "checked", true );
-
-		$( "#container #toolbar #map_paint_settings input:not(.exit_ignore_hide)" ).css( "display", "block" );
-		$( "#container #toolbar #map_paint_settings label:not(.exit_ignore_hide)" ).css( "display", "block" );
-		$( "#container #toolbar #map_paint_settings select" ).css( "display", "block" );
-
-		/* Disable the "can walk" checkboxes */
-		$( ".dir_en_checkbox" ).prop( "checked", true );
-		$( ".dir_en_checkbox" ).prop( "disabled", true );
-
-		/* Set values */
-		$( "#container #toolbar #map_paint_settings #exit_tile_map_id" ).val( selected_sprite.exit_map_id );
-		$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_x" ).val( selected_sprite.exit_map_pos[0] );
-		$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_y" ).val( selected_sprite.exit_map_pos[1] );
-
-		/* Set styling for an exit tile and select the correct value from the dropdown menu */
-		switch( selected_sprite.exit_map_dir.join() ) {
-			case "0,1": /* Exit when walking north */
-				$( "#container #toolbar #map_paint_preview table" ).css( "border-bottom", "2px solid #ff0" );
-				$( "#container #toolbar #map_paint_settings #exit_tile_map_dir" ).val( "n" );
-				break;
-			case "1,0": /* Exit when walking east */
-				$( "#container #toolbar #map_paint_preview table" ).css( "border-left", "2px solid #ff0" );
-				$( "#container #toolbar #map_paint_settings #exit_tile_map_dir" ).val( "e" );
-				break;
-			case "0,-1": /* Exit when walking south */
-				$( "#container #toolbar #map_paint_preview table" ).css( "border-top", "2px solid #ff0" );
-				$( "#container #toolbar #map_paint_settings #exit_tile_map_dir" ).val( "s" );
-				break;
-			case "-1,0": /* Exit when walking west */
-				$( "#container #toolbar #map_paint_preview table" ).css( "border-right", "2px solid #ff0" );
-				$( "#container #toolbar #map_paint_settings #exit_tile_map_dir" ).val( "w" );
-				break;
-			default:  /* Exit any direction */
-				$( "#container #toolbar #map_paint_preview table" ).css( "border", "2px solid #ff0" );
-				$( "#container #toolbar #map_paint_settings #exit_tile_map_dir" ).val( "a" );
-				break;
-		}
-		
-	} else {
-		/* Exit tile disabled, hide the rest of the settings  */
-		$( "#exit_tile_en" ).prop( "checked", false );
-
-		$( "#container #toolbar #map_paint_settings input:not(.exit_ignore_hide)" ).css( "display", "none" );
-		$( "#container #toolbar #map_paint_settings label:not(.exit_ignore_hide)" ).css( "display", "none" );
-		$( "#container #toolbar #map_paint_settings select" ).css( "display", "none" );
-
-		/* Enable the "can walk" checkboxes */
-		$( ".dir_en_checkbox" ).prop( "checked", false );
-		$( ".dir_en_checkbox" ).prop( "disabled", false );
-
-		/* Set directions player can walk into tile */
-
-		/* Updated tile direction N */
-		if( !selected_sprite.can_walk[0] ) {
-			$( "#container #toolbar #map_paint_preview table" ).css( "border-top", "2px solid #f00" );
-			$( "#exit_tile_n" ).prop( "checked", false );
-		} else {
-			$( "#exit_tile_n" ).prop( "checked", true );
-		}
-		/* Updated tile direction E */
-		if( !selected_sprite.can_walk[1] ) {
-			$( "#container #toolbar #map_paint_preview table" ).css( "border-right", "2px solid #f00" );
-			$( "#exit_tile_e" ).prop( "checked", false );
-		} else {
-			$( "#exit_tile_e" ).prop( "checked", true );
-		}
-		/* Updated tile direction S */
-		if( !selected_sprite.can_walk[2] ) {
-			$( "#container #toolbar #map_paint_preview table" ).css( "border-bottom", "2px solid #f00" );
-			$( "#exit_tile_s" ).prop( "checked", false );
-		} else {
-			$( "#exit_tile_s" ).prop( "checked", true );
-		}
-		/* Updated tile direction W */
-		if( !selected_sprite.can_walk[3] ) {
-			$( "#container #toolbar #map_paint_preview table" ).css( "border-left", "2px solid #f00" );
-			$( "#exit_tile_w" ).prop( "checked", false );
-		} else {
-			$( "#exit_tile_w" ).prop( "checked", true );
-		}
-	}
-}
-
 function clear_map_toolbar_event_listeners() {
 	
 	$( "#container #toolbar #settings #controls i" ).unbind( "click" );
@@ -372,6 +280,7 @@ function map_toolbar_event_listeners() {
 		if( map_resizing.en == false ) {
 
 			var func = $( this ).attr( "func" );
+			console.log( func );
 
 			if( ( func != "paint") && ( func != "erase" ) && ( func != "zoom-in" ) && ( func != "zoom-out" ) && ( func != "flip-v" ) && ( func != "flip-h" ) && ( drawing_functions != false ) ) {
 								
@@ -389,6 +298,150 @@ function map_toolbar_event_listeners() {
 					
 					/* Load project view */
 					load_project_view();
+
+					break;
+				case "rename-map":
+				case "duplicate-map":
+
+					/* Reset toolbar for a clean start */
+					map_editor_toolbar_reset();
+
+					/* Disable controls - don't hide the name input */
+					disable_controls( false );
+					
+					/* Focus on name input */
+					if( func == "rename-map" ) {
+						$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "placeholder", selected_map.name );
+					} else {
+						$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "placeholder", "Enter new map name" );
+					}
+					$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "disabled", false );
+					$( "#container #toolbar #settings #name_input_container #name_input" ).focus();
+
+					/* Add event listeners */
+					$( "#container #toolbar #settings #name_input_container #name_input" ).on( "keyup blur", function( e ) {
+
+						/* Save the change */
+						if( e.key == "Enter" ) {
+
+							var map_name_value = $( this ).val();
+
+							if( func == "rename-map" ) {
+								if( ( map_name_value != "" ) && (map_name_value != selected_map.name ) ) {
+									
+									/* Change the map name */
+									selected_map.name = map_name_value;
+								}
+							} else {
+								if( map_name_value != "" ) {
+
+									/* Duplicate current map */
+									new_map = new Array();
+									$.extend( true, new_map, selected_map ); /* Clone array */
+
+									/* Set the new name */
+									new_map.name = map_name_value;
+
+									/* Get new ID value */
+									sort_maps_by_id();
+									new_map.id = project.maps[project.maps.length - 1].id + 1;
+
+									/* Get new order value */
+									sort_maps_by_order();
+									new_map.order = project.maps[project.maps.length - 1].order + 1;
+									/* Note we sort by order 2nd so the array goes back to the correct order */
+
+									/* Add the duplicated map to the array */
+									project.maps.push( new_map );
+
+									/* Reload map editor */
+									close_map_editing_view();
+									selected_map = project.maps.find( obj => obj.id == new_map.id );
+									load_map_editing_view();
+								}
+							}
+
+							/* Re-enable controls */
+							enable_controls();
+
+							/* Remove event listeners */
+							$( "#container #toolbar #settings #name_input_container #name_input" ).unbind( "keyup blur" );
+							
+							/* Put things back the way they were */
+							$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "disabled", "disabled" );
+							$( "#container #toolbar #settings #name_input_container #name_input" ).val( "" );
+							$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "placeholder", selected_map.name );
+						}
+
+						/* Discard change */
+						if( ( e.key == "Escape" ) || ( e.type == "blur" ) ) {
+
+							/* Re-enable controls */
+							enable_controls();
+
+							/* Remove event listeners */
+							$( "#container #toolbar #settings #name_input_container #name_input" ).unbind( "keyup blur" );
+							
+							/* Put things back the way they were */
+							$( "#container #toolbar #settings #name_input_container #name_input" ).val( "" );
+							$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "placeholder", selected_map.name );
+							$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "disabled", "disabled" );
+						}
+					});			
+					break;
+				case "trash-map":
+
+					/* Disable controls */
+					disable_controls();
+
+					/* Show the confirmation prompt */
+					$( "#container #toolbar #settings #map_confirm #map_confirm_prompt" ).html( "Are you sure you want to delete this map?" );
+
+					$( "#container #toolbar #settings #map_confirm input[type=button]" ).css( "display", "block" );
+					$( "#container #toolbar #settings #map_confirm #map_done" ).css( "display", "none" );
+
+					$( "#container #toolbar #settings #map_confirm" ).css( "display", "flex" );
+
+					/* Add event listeners */
+					$( "#container #toolbar #settings #map_confirm input[type=button]" ).on( "click" , function( e ) {
+						
+						if( $( this ).attr( "id" ) == "map_confirm_y" ) {
+
+							/* Delete current map from local array */
+							project.maps = project.maps.filter(obj => obj.id != selected_map.id);
+
+							/* Reorder the groups in local array */
+							var i = 0;
+							$.each( project.maps, function( k, v ) {
+
+								/* Give it it's new order and increment */
+								v.order = i;
+								i++;
+							} );
+							
+							/* Re-enable controls */
+							enable_controls();
+
+							/* Clear map editing content */
+							close_map_editing_view();
+
+							/* Load project view */
+							load_project_view();
+
+						} else if( $( this ).attr( "id" ) == "map_confirm_n" ) {
+							
+							/* Re-enable controls */
+							enable_controls();
+						}
+
+						/* Remove event listeners */
+						$( "#container #toolbar #settings #map_confirm input[type=button]" ).unbind( "click" );
+
+						/* Hide the confirmation prompt */
+						$( "#container #toolbar #settings #map_confirm #map_confirm_prompt" ).html( "" );
+
+						$( "#container #toolbar #settings #map_confirm" ).css( "display", "none" );
+					});
 
 					break;
 				case "paint":
@@ -438,153 +491,8 @@ function map_toolbar_event_listeners() {
 						drawing_functions = false;
 					}
 
-					/* Add map editor event listeners */
-					$( "#container #map_editor_container #map_editor #map_editor_table .map_editor_table_row .map_editor_table_cell_draw" ).on( "click" , function( e ) {
-		
-						/* Store tile information */
-						var tile_info = new Object();
-						tile_info.row = $( this ).parent().attr( "row_id" );
-						tile_info.col = $( this ).attr( "col_id" );
-
-						if( func == "erase" ) {
-							/* Clear the cell */
-							$( this ).html( "" );
-							$( this ).css( "background", "#ccc" );
-
-							/* Update the local array */
-							selected_map.data[tile_info.row][tile_info.col].sprite_gid = undefined;
-							selected_map.data[tile_info.row][tile_info.col].sprite_id = undefined;
-							selected_map.data[tile_info.row][tile_info.col].sprite_reverse_x = false;
-							selected_map.data[tile_info.row][tile_info.col].sprite_reverse_y = false;
-							selected_map.data[tile_info.row][tile_info.col].can_walk = [false, false, false, false];
-							selected_map.data[tile_info.row][tile_info.col].exit_map_id = false;
-							selected_map.data[tile_info.row][tile_info.col].exit_map_dir = [0, 0];
-							selected_map.data[tile_info.row][tile_info.col].exit_map_pos = [0, 0];
-
-						} else if( func == "paint" ) {
-
-							/* Draw in the cell */
-							$( this ).html( '<table class="sprite_table"></table>' );
-
-							/* Add 8 rows */
-							for(i=0; i<8; i++)
-								$( this ).find( ".sprite_table" ).append( '<tr row_id="' + i + '"></tr>' );
-
-							/* Add 8 cells for each row */
-							$( this ).find( ".sprite_table tr" ).each( function() {
-								for(i=0; i<8; i++) {
-										
-									/* Draw sprite */
-									var row_sel = $( this ).attr( "row_id" );
-									var col_sel = i;
-
-									if( selected_sprite.sprite_reverse_y == true ) {
-										/* Flip vertically */
-										row_sel = 7 - ( $( this ).attr( "row_id" ) );
-									}
-									if( selected_sprite.sprite_reverse_x == true ) {
-										/* Flip horizontally */
-										col_sel = 7 - i;
-									}
-
-									$( '<td col_id="'+i+'"></td>' ).appendTo( $(this) ).css( "background", "#" + selected_sprite.sprite.data[col_sel][row_sel] );	
-								}
-							} );
-
-							if( selected_sprite.exit_tile ) {
-								/* We're setting an exit tile */
-
-								selected_sprite.exit_tile = true;
-								selected_sprite.exit_map_id = $( "#container #toolbar #map_paint_settings #exit_tile_map_id" ).val();
-								selected_sprite.exit_map_dir = [$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_x" ).val(), $( "#container #toolbar #map_paint_settings #exit_tile_map_pos_y" ).val()];
-								
-								switch( $( "#container #toolbar #map_paint_settings #exit_tile_map_dir" ).val() ) {
-									case "a":  /* Exit any direction */
-										selected_sprite.exit_map_dir = [0, 0];
-										$( this ).find( ".sprite_table" ).css( "border", "3px solid #ff0" );
-										break;
-									case "n": /* Exit when walking north */
-										$( this ).find( ".sprite_table" ).css( "border-bottom", "3px solid #ff0" );
-										selected_sprite.exit_map_dir = [0, 1];
-										break;
-									case "e": /* Exit when walking east */
-										$( this ).find( ".sprite_table" ).css( "border-left", "3px solid #ff0" );
-										selected_sprite.exit_map_dir = [1, 0];
-										break;
-									case "s": /* Exit when walking south */
-										$( this ).find( ".sprite_table" ).css( "border-top", "3px solid #ff0" );
-										selected_sprite.exit_map_dir = [0, -1];
-										break;
-									case "w": /* Exit when walking west */
-										$( this ).find( ".sprite_table" ).css( "border-right", "3px solid #ff0" );
-										selected_sprite.exit_map_dir = [-1, 0];
-										break;
-								}
-
-							} else {
-								/* Update CSS based on can_walk */
-								if(!selected_sprite.can_walk[0]) $( this ).find( ".sprite_table" ).css( "border-top", "3px solid #f00" );
-								if(!selected_sprite.can_walk[1]) $( this ).find( ".sprite_table" ).css( "border-right", "3px solid #f00" );
-								if(!selected_sprite.can_walk[2]) $( this ).find( ".sprite_table" ).css( "border-bottom", "3px solid #f00" );
-								if(!selected_sprite.can_walk[3]) $( this ).find( ".sprite_table" ).css( "border-left", "3px solid #f00" );
-
-								/* Update selected tile data */
-								selected_sprite.exit_map_id = false;
-								selected_sprite.exit_map_dir = [0, 0];
-								selected_sprite.exit_map_pos = [0, 0];
-							}
-
-							/* Update the local array */
-							selected_map.data[tile_info.row][tile_info.col].sprite_gid = selected_sprite.group.gid;
-							selected_map.data[tile_info.row][tile_info.col].sprite_id = selected_sprite.sprite.id;
-
-							selected_map.data[tile_info.row][tile_info.col].sprite_reverse_x = selected_sprite.sprite_reverse_x;
-							selected_map.data[tile_info.row][tile_info.col].sprite_reverse_y = selected_sprite.sprite_reverse_y;
-
-							selected_map.data[tile_info.row][tile_info.col].exit_tile = selected_sprite.exit_tile;
-							selected_map.data[tile_info.row][tile_info.col].exit_map_id = selected_sprite.exit_map_id;
-
-							selected_map.data[tile_info.row][tile_info.col].can_walk = new Array();
-							$.extend( true, selected_map.data[tile_info.row][tile_info.col].can_walk, selected_sprite.can_walk ); /* Clone array */
-							selected_map.data[tile_info.row][tile_info.col].exit_map_dir = new Array();
-							$.extend( true, selected_map.data[tile_info.row][tile_info.col].exit_map_dir, selected_sprite.exit_map_dir ); /* Clone array */
-							selected_map.data[tile_info.row][tile_info.col].exit_map_pos = new Array();
-							$.extend( true, selected_map.data[tile_info.row][tile_info.col].exit_map_pos, selected_sprite.exit_map_pos ); /* Clone array */
-
-						} else {
-							/* Get sprite info */
-							var cell_sprite_gid = selected_map.data[tile_info.row][tile_info.col].sprite_gid;
-							var cell_sprite_id = selected_map.data[tile_info.row][tile_info.col].sprite_id;
-
-							if( cell_sprite_gid != undefined ) {
-								/* If we have a sprite to examine, load the info */
-								display_tile_info( tile_info.row, tile_info.col );
-							}
-						}
-					} );
-
-					$( "#container #map_editor_container #map_editor #map_editor_table .map_editor_table_row .map_editor_table_cell_draw" ).on( "contextmenu" , function( e ) {
-
-						if( drawing_functions == 1 ) {
-
-							/* Get tile information */
-							var tile_info = new Object();
-							tile_info.row = $( this ).parent().attr( "row_id" );
-							tile_info.col = $( this ).attr( "col_id" );
-
-							/* Get sprite info */
-							var cell_sprite_gid = selected_map.data[tile_info.row][tile_info.col].sprite_gid;
-							var cell_sprite_id = selected_map.data[tile_info.row][tile_info.col].sprite_id;
-
-							if( cell_sprite_gid != undefined ) {
-								/* If we have a sprite to examine, load the info */
-								display_tile_info( tile_info.row, tile_info.col );
-
-								/* Cancel browser `right click` */
-								return false;
-							}
-						}
-					} );
+					/* Load map editor event listeners */
+					map_editor_event_listeners();
 
 					break;
 				case "fill":
@@ -604,6 +512,7 @@ function map_toolbar_event_listeners() {
 
 					/* Add event listeners */
 					$( "#container #toolbar #settings #map_confirm input[type=button]" ).on( "click" , function( e ) {
+						
 						if( $( this ).attr( "id" ) == "map_confirm_y" ) {
 							/* Fill her up! */
 
@@ -872,6 +781,276 @@ function map_toolbar_event_listeners() {
 	} );
 }
 
+function map_editor_start_drawing() {
+	
+	/* Disable sprite list toolbar */
+	$( "#container #sidebar #sprite_list_toolbar i" ).addClass( "resize_disabled" );
+	
+	/* Disable colour picker */
+	$( ".picker" ).addClass( "auto_cursor" );
+
+	/* Disable sorting on sprite list */
+	clear_sprite_list_sortable();
+
+	/* Add hover functionality to map editor */
+	$( "#container #map_editor_container #map_editor #map_editor_table .map_editor_table_row .map_editor_table_cell" ).addClass( "map_editor_table_cell_draw" );
+}
+
+function clear_map_editor_event_listeners() {
+	
+	$( "#container #map_editor_container #map_editor #map_editor_table .map_editor_table_row .map_editor_table_cell_draw" ).unbind( "click" );
+	$( "#container #map_editor_container #map_editor #map_editor_table .map_editor_table_row .map_editor_table_cell_draw" ).unbind( "contextmenu" );
+}
+
+function map_editor_event_listeners() {
+
+	/* Remove existing event listeners from map editor */
+	clear_map_editor_event_listeners();
+
+	/* Add map editor event listeners */
+	$( "#container #map_editor_container #map_editor #map_editor_table .map_editor_table_row .map_editor_table_cell_draw" ).on( "click" , function( e ) {
+
+		/* Store tile information */
+		var tile_info = new Object();
+		tile_info.row = $( this ).parent().attr( "row_id" );
+		tile_info.col = $( this ).attr( "col_id" );
+
+		if( drawing_functions == 2 ) { /* Clear */
+			/* Clear the cell */
+			$( this ).html( "" );
+			$( this ).css( "background", "#ccc" );
+
+			/* Update the local array */
+			selected_map.data[tile_info.row][tile_info.col].sprite_gid = undefined;
+			selected_map.data[tile_info.row][tile_info.col].sprite_id = undefined;
+			selected_map.data[tile_info.row][tile_info.col].sprite_reverse_x = false;
+			selected_map.data[tile_info.row][tile_info.col].sprite_reverse_y = false;
+			selected_map.data[tile_info.row][tile_info.col].can_walk = [false, false, false, false];
+			selected_map.data[tile_info.row][tile_info.col].exit_map_id = false;
+			selected_map.data[tile_info.row][tile_info.col].exit_map_dir = [0, 0];
+			selected_map.data[tile_info.row][tile_info.col].exit_map_pos = [0, 0];
+
+		} else if( drawing_functions == 1 ) { /* Paint */
+
+			/* Draw in the cell */
+			$( this ).html( '<table class="sprite_table"></table>' );
+
+			/* Add 8 rows */
+			for(i=0; i<8; i++)
+				$( this ).find( ".sprite_table" ).append( '<tr row_id="' + i + '"></tr>' );
+
+			/* Add 8 cells for each row */
+			$( this ).find( ".sprite_table tr" ).each( function() {
+				for(i=0; i<8; i++) {
+						
+					/* Draw sprite */
+					var row_sel = $( this ).attr( "row_id" );
+					var col_sel = i;
+
+					if( selected_sprite.sprite_reverse_y == true ) {
+						/* Flip vertically */
+						row_sel = 7 - ( $( this ).attr( "row_id" ) );
+					}
+					if( selected_sprite.sprite_reverse_x == true ) {
+						/* Flip horizontally */
+						col_sel = 7 - i;
+					}
+
+					$( '<td col_id="'+i+'"></td>' ).appendTo( $(this) ).css( "background", "#" + selected_sprite.sprite.data[col_sel][row_sel] );	
+				}
+			} );
+
+			if( selected_sprite.exit_tile ) {
+				/* We're setting an exit tile */
+
+				selected_sprite.exit_tile = true;
+				selected_sprite.exit_map_id = $( "#container #toolbar #map_paint_settings #exit_tile_map_id" ).val();
+				selected_sprite.exit_map_dir = [$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_x" ).val(), $( "#container #toolbar #map_paint_settings #exit_tile_map_pos_y" ).val()];
+				
+				switch( $( "#container #toolbar #map_paint_settings #exit_tile_map_dir" ).val() ) {
+					case "a":  /* Exit any direction */
+						selected_sprite.exit_map_dir = [0, 0];
+						$( this ).find( ".sprite_table" ).css( "border", "3px solid #ff0" );
+						break;
+					case "n": /* Exit when walking north */
+						$( this ).find( ".sprite_table" ).css( "border-bottom", "3px solid #ff0" );
+						selected_sprite.exit_map_dir = [0, 1];
+						break;
+					case "e": /* Exit when walking east */
+						$( this ).find( ".sprite_table" ).css( "border-left", "3px solid #ff0" );
+						selected_sprite.exit_map_dir = [1, 0];
+						break;
+					case "s": /* Exit when walking south */
+						$( this ).find( ".sprite_table" ).css( "border-top", "3px solid #ff0" );
+						selected_sprite.exit_map_dir = [0, -1];
+						break;
+					case "w": /* Exit when walking west */
+						$( this ).find( ".sprite_table" ).css( "border-right", "3px solid #ff0" );
+						selected_sprite.exit_map_dir = [-1, 0];
+						break;
+				}
+
+			} else {
+				/* Update CSS based on can_walk */
+				if(!selected_sprite.can_walk[0]) $( this ).find( ".sprite_table" ).css( "border-top", "3px solid #f00" );
+				if(!selected_sprite.can_walk[1]) $( this ).find( ".sprite_table" ).css( "border-right", "3px solid #f00" );
+				if(!selected_sprite.can_walk[2]) $( this ).find( ".sprite_table" ).css( "border-bottom", "3px solid #f00" );
+				if(!selected_sprite.can_walk[3]) $( this ).find( ".sprite_table" ).css( "border-left", "3px solid #f00" );
+
+				/* Update selected tile data */
+				selected_sprite.exit_map_id = false;
+				selected_sprite.exit_map_dir = [0, 0];
+				selected_sprite.exit_map_pos = [0, 0];
+			}
+
+			/* Update the local array */
+			selected_map.data[tile_info.row][tile_info.col].sprite_gid = selected_sprite.group.gid;
+			selected_map.data[tile_info.row][tile_info.col].sprite_id = selected_sprite.sprite.id;
+
+			selected_map.data[tile_info.row][tile_info.col].sprite_reverse_x = selected_sprite.sprite_reverse_x;
+			selected_map.data[tile_info.row][tile_info.col].sprite_reverse_y = selected_sprite.sprite_reverse_y;
+
+			selected_map.data[tile_info.row][tile_info.col].exit_tile = selected_sprite.exit_tile;
+			selected_map.data[tile_info.row][tile_info.col].exit_map_id = selected_sprite.exit_map_id;
+
+			selected_map.data[tile_info.row][tile_info.col].can_walk = new Array();
+			$.extend( true, selected_map.data[tile_info.row][tile_info.col].can_walk, selected_sprite.can_walk ); /* Clone array */
+			selected_map.data[tile_info.row][tile_info.col].exit_map_dir = new Array();
+			$.extend( true, selected_map.data[tile_info.row][tile_info.col].exit_map_dir, selected_sprite.exit_map_dir ); /* Clone array */
+			selected_map.data[tile_info.row][tile_info.col].exit_map_pos = new Array();
+			$.extend( true, selected_map.data[tile_info.row][tile_info.col].exit_map_pos, selected_sprite.exit_map_pos ); /* Clone array */
+
+		} else {
+			/* Get sprite info */
+			var cell_sprite_gid = selected_map.data[tile_info.row][tile_info.col].sprite_gid;
+			var cell_sprite_id = selected_map.data[tile_info.row][tile_info.col].sprite_id;
+
+			if( cell_sprite_gid != undefined ) {
+				/* If we have a sprite to examine, load the info */
+				display_tile_info( tile_info.row, tile_info.col );
+			}
+		}
+	} );
+
+	$( "#container #map_editor_container #map_editor #map_editor_table .map_editor_table_row .map_editor_table_cell_draw" ).on( "contextmenu" , function( e ) {
+
+		if( drawing_functions == 1 ) {
+
+			/* Get tile information */
+			var tile_info = new Object();
+			tile_info.row = $( this ).parent().attr( "row_id" );
+			tile_info.col = $( this ).attr( "col_id" );
+
+			/* Get sprite info */
+			var cell_sprite_gid = selected_map.data[tile_info.row][tile_info.col].sprite_gid;
+			var cell_sprite_id = selected_map.data[tile_info.row][tile_info.col].sprite_id;
+
+			if( cell_sprite_gid != undefined ) {
+				/* If we have a sprite to examine, load the info */
+				display_tile_info( tile_info.row, tile_info.col );
+
+				/* Cancel browser `right click` */
+				return false;
+			}
+		}
+	} );
+}
+
+function set_map_tile_settings_styles() {
+	
+	/* Set preview to have no special borders */
+	$( "#container #toolbar #map_paint_preview table" ).css( "border", "2px solid #000" );
+	$( "#container #toolbar #map_paint_preview table" ).css( "border-top", "2px solid #000" );
+	$( "#container #toolbar #map_paint_preview table" ).css( "border-left", "2px solid #000" );
+	$( "#container #toolbar #map_paint_preview table" ).css( "border-bottom", "2px solid #000" );
+	$( "#container #toolbar #map_paint_preview table" ).css( "border-right", "2px solid #000" );
+
+	if( selected_sprite.exit_tile ) {
+		/* Exit tile enabled, show the rest of the settings  */
+		$( "#exit_tile_en" ).prop( "checked", true );
+
+		$( "#container #toolbar #map_paint_settings input:not(.exit_ignore_hide)" ).css( "display", "block" );
+		$( "#container #toolbar #map_paint_settings label:not(.exit_ignore_hide)" ).css( "display", "block" );
+		$( "#container #toolbar #map_paint_settings select" ).css( "display", "block" );
+
+		/* Disable the "can walk" checkboxes */
+		$( ".dir_en_checkbox" ).prop( "checked", true );
+		$( ".dir_en_checkbox" ).prop( "disabled", true );
+
+		/* Set values */
+		$( "#container #toolbar #map_paint_settings #exit_tile_map_id" ).val( selected_sprite.exit_map_id );
+		$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_x" ).val( selected_sprite.exit_map_pos[0] );
+		$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_y" ).val( selected_sprite.exit_map_pos[1] );
+
+		/* Set styling for an exit tile and select the correct value from the dropdown menu */
+		switch( selected_sprite.exit_map_dir.join() ) {
+			case "0,1": /* Exit when walking north */
+				$( "#container #toolbar #map_paint_preview table" ).css( "border-bottom", "2px solid #ff0" );
+				$( "#container #toolbar #map_paint_settings #exit_tile_map_dir" ).val( "n" );
+				break;
+			case "1,0": /* Exit when walking east */
+				$( "#container #toolbar #map_paint_preview table" ).css( "border-left", "2px solid #ff0" );
+				$( "#container #toolbar #map_paint_settings #exit_tile_map_dir" ).val( "e" );
+				break;
+			case "0,-1": /* Exit when walking south */
+				$( "#container #toolbar #map_paint_preview table" ).css( "border-top", "2px solid #ff0" );
+				$( "#container #toolbar #map_paint_settings #exit_tile_map_dir" ).val( "s" );
+				break;
+			case "-1,0": /* Exit when walking west */
+				$( "#container #toolbar #map_paint_preview table" ).css( "border-right", "2px solid #ff0" );
+				$( "#container #toolbar #map_paint_settings #exit_tile_map_dir" ).val( "w" );
+				break;
+			default:  /* Exit any direction */
+				$( "#container #toolbar #map_paint_preview table" ).css( "border", "2px solid #ff0" );
+				$( "#container #toolbar #map_paint_settings #exit_tile_map_dir" ).val( "a" );
+				break;
+		}
+		
+	} else {
+		/* Exit tile disabled, hide the rest of the settings  */
+		$( "#exit_tile_en" ).prop( "checked", false );
+
+		$( "#container #toolbar #map_paint_settings input:not(.exit_ignore_hide)" ).css( "display", "none" );
+		$( "#container #toolbar #map_paint_settings label:not(.exit_ignore_hide)" ).css( "display", "none" );
+		$( "#container #toolbar #map_paint_settings select" ).css( "display", "none" );
+
+		/* Enable the "can walk" checkboxes */
+		$( ".dir_en_checkbox" ).prop( "checked", false );
+		$( ".dir_en_checkbox" ).prop( "disabled", false );
+
+		/* Set directions player can walk into tile */
+
+		/* Updated tile direction N */
+		if( !selected_sprite.can_walk[0] ) {
+			$( "#container #toolbar #map_paint_preview table" ).css( "border-top", "2px solid #f00" );
+			$( "#exit_tile_n" ).prop( "checked", false );
+		} else {
+			$( "#exit_tile_n" ).prop( "checked", true );
+		}
+		/* Updated tile direction E */
+		if( !selected_sprite.can_walk[1] ) {
+			$( "#container #toolbar #map_paint_preview table" ).css( "border-right", "2px solid #f00" );
+			$( "#exit_tile_e" ).prop( "checked", false );
+		} else {
+			$( "#exit_tile_e" ).prop( "checked", true );
+		}
+		/* Updated tile direction S */
+		if( !selected_sprite.can_walk[2] ) {
+			$( "#container #toolbar #map_paint_preview table" ).css( "border-bottom", "2px solid #f00" );
+			$( "#exit_tile_s" ).prop( "checked", false );
+		} else {
+			$( "#exit_tile_s" ).prop( "checked", true );
+		}
+		/* Updated tile direction W */
+		if( !selected_sprite.can_walk[3] ) {
+			$( "#container #toolbar #map_paint_preview table" ).css( "border-left", "2px solid #f00" );
+			$( "#exit_tile_w" ).prop( "checked", false );
+		} else {
+			$( "#exit_tile_w" ).prop( "checked", true );
+		}
+	}
+}
+
 function display_tile_info( tile_row, tile_col ) {
 
 	/* Update the local array */
@@ -903,7 +1082,7 @@ function display_tile_info( tile_row, tile_col ) {
 	load_sprite_preview();
 }
 
-function disable_controls() {
+function disable_controls( hide_name_input = true ) {
 	
 	map_resizing.en = true;
 
@@ -917,7 +1096,8 @@ function disable_controls() {
 	clear_sprite_list_sortable();
 
 	/* Hide the other toolbar elements */
-	$( "#container #toolbar #settings #name_input_container" ).css( "display", "none" );
+	if( hide_name_input )
+		$( "#container #toolbar #settings #name_input_container" ).css( "display", "none" );
 }
 
 function enable_controls() {

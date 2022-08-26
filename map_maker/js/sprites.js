@@ -300,7 +300,6 @@ function sprite_toolbar_event_listeners() {
 					
 					/* Reload sprite list */
 					load_sprite_list();
-
 					break;
 
 				case "new": /* Create a new sprite */
@@ -471,31 +470,16 @@ function sprite_toolbar_event_listeners() {
 						if( selected_sprite.sprite == false ) {
 
 							/* Delete selected group from local array */
-							sprites = project.sprites.filter(obj => obj.gid != selected_sprite.group.gid);
+							project.sprites = project.sprites.filter(obj => obj.gid != selected_sprite.group.gid);
 
 							/* Reorder the groups in local array */
 							var i = 0;
-							$.each( sprites, function( k, v ) {
+							$.each( project.sprites, function( k, v ) {
 
 								/* Give it it's new order and increment */
 								v.gorder = i;
 								i++;
-								
 							} );
-
-
-
-
-							/* Function doesn't work correctly - can't delete groups */
-
-
-
-
-
-
-
-
-
 
 							/* Clear the selected group */
 							selected_sprite.group = false;
@@ -505,32 +489,64 @@ function sprite_toolbar_event_listeners() {
 							/* Delete selected sprite from local array */
 							selected_sprite.group.sprites = selected_sprite.group.sprites.filter(obj => obj.id != selected_sprite.sprite.id);
 
+							/* Loop through each map and remove any of these sprites */
+							$.each( project.maps, function( k, map ) {
 
+								/* Loop through each row of the map */
+								$.each( map.data, function( k, map_row ) {
 
+									/* Get the tiles with matching sprite */
+									var map_tile = map_row.find( obj => ( ( obj.sprite_gid == selected_sprite.group.gid ) && ( obj.sprite_id == selected_sprite.sprite.id ) ) );
+									if( map_tile != undefined ) {
 
-
-
-
-							/* Add functionality where deleting last sprite in a group also deletes group */
-
-
-
-
-
-
-							/* Reorder the sprites in local array */
-							var i = 0;
-							$.each( selected_sprite.group.sprites, function( k, v ) {
-
-								/* Give it it's new order and increment */
-								v.order = i;
-								i++;
-								
+										/* Matching sprite, let's remove it */
+										map_tile.can_walk = [true, true, true, true];
+										map_tile.sprite_gid = undefined;
+										map_tile.sprite_id = undefined;
+										map_tile.sprite_reverse_x = false;
+										map_tile.sprite_reverse_y = false;
+										map_tile.exit_tile = false;
+										map_tile.exit_map_id = false;
+										map_tile.exit_map_dir = [0, 0];
+										map_tile.exit_map_pos = [0, 0];
+									}
+								} );
 							} );
+
+							/* Reload map editor */
+							load_map_editor();							
+
+							if( selected_sprite.group.sprites.length == 0 ) {
+
+								/* We deleted the last sprite in the group, so delete the group too */
+								project.sprites = project.sprites.filter(obj => obj.gid != selected_sprite.group.gid);
+
+								/* Reorder the groups in local array */
+								var i = 0;
+								$.each( project.sprites, function( k, v ) {
+
+									/* Give it it's new order and increment */
+									v.gorder = i;
+									i++;
+								} );
+
+								/* Clear the selected group */
+								selected_sprite.group = false;
+
+							} else {
+
+								/* Reorder the sprites in local array */
+								var i = 0;
+								$.each( selected_sprite.group.sprites, function( k, v ) {
+
+									/* Give it it's new order and increment */
+									v.order = i;
+									i++;
+								} );
+							}
 
 							/* Clear the selected sprite */
 							selected_sprite.sprite = false;
-
 						}
 
 						/* Exit delete sprite confirmation */
@@ -543,18 +559,6 @@ function sprite_toolbar_event_listeners() {
 						
 						/* Reload sprite list */
 						load_sprite_list();
-
-
-
-
-							/* We also need to clear any tiles on the map that use this sprite */
-
-
-
-
-
-
-
 					} );
 
 					$( "#container #sidebar #sprite_list_toolbar_delete #sprite_delete_n" ).click( function() {
@@ -594,7 +598,6 @@ function sprite_list_sortable() {
 	} else {
 		var sort_highlight_class = "ui-state-sprite-highlight";
 	}
-
 
 	/* Turn sprite list into a sortable list */
 	$( "#sprite_list .sortable" ).sortable( {
