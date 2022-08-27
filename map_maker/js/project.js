@@ -55,26 +55,29 @@ function load_map_list() {
 
 	/* Add project name */
 	$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "placeholder", project.name );
-		
-	/* Sort maps into order */
-	sort_maps_by_order();
+	
+	if( project.maps.length != 0 ) {
 
-	/* Add all the maps to the list */
-	$.each( project.maps, function( key, value ) {
-		$( "#map_list .sortable" ).append( '<li class="ui-state-default" map_id="' + value.id + '">' + value.order + ': ' + value.name + ' (' + value.id + ')</li>' );
-	} );
+	 	/* Sort maps into order */
+		sort_maps_by_order();
+
+		/* Add all the maps to the list */
+		$.each( project.maps, function( key, value ) {
+			$( "#map_list .sortable" ).append( '<li class="ui-state-default" map_id="' + value.id + '">' + value.order + ': ' + value.name + ' (' + value.id + ')</li>' );
+		} );
+
+		/* Add event listeners to the list */
+		map_list_event_listeners();
+	
+		/* Add sorting capability */
+		map_list_sortable();	
+	}
 
 	/* Set the icons */
 	$( "#toolbar_new_group" ).css( "display", "block" );
 	$( "#toolbar_new_sprite" ).css( "display", "none" );
 	$( "#toolbar_back" ).css( "display", "none" );
 	$( "#container #sidebar #sprite_list_toolbar #toolbar_right" ).css( "display", "none" );
-
-	/* Add event listeners to the list */
-	map_list_event_listeners();
-	
-	/* Add sorting capability */
-	map_list_sortable();	
 }
 
 function clear_map_list_event_listeners() {
@@ -106,7 +109,7 @@ function map_list_event_listeners() {
 function clear_project_toolbar_event_listeners() {
 	
 	$( "#container #toolbar #settings #controls i" ).unbind( "click" );
-	$( "#container #toolbar #settings #name_input_container #name_input" ).unbind( "blur" );
+	$( "#container #toolbar #settings #name_input_container #name_input" ).unbind( "keyup blur" );
 }
 
 function project_toolbar_event_listeners() {
@@ -118,41 +121,101 @@ function project_toolbar_event_listeners() {
 	$( "#container #toolbar #settings #controls i" ).on( "click", function() {
 
 		var func = $( this ).attr( "func" );
+		console.log( func );
 
+		switch( func ) {
+			case "new":
+				
+				/* Reset toolbar for a clean start */
+				map_editor_toolbar_reset();
 
+				/* Disable controls - don't hide the name input */
+				disable_controls( false );
 
+				$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "placeholder", "Enter new map name" );
+				$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "disabled", false );
+				$( "#container #toolbar #settings #name_input_container #name_input" ).focus();
 
+				/* Add event listeners */
+				$( "#container #toolbar #settings #name_input_container #name_input" ).on( "keyup blur", function( e ) {
 
+					/* Save the change */
+					if( e.key == "Enter" ) {
 
+						var map_name_value = $( this ).val();
+						console.log( map_name_value );
 
+						if( map_name_value != "" ) {
 
+							/* Duplicate current map */
+							new_map = new Object();
+							
+							/* Set the new name */
+							new_map.name = map_name_value;
 
+							/* Give it a blank canvas */
+							var blank_tile = new Object();
+							blank_tile.can_walk = [true, true, true, true];
+							blank_tile.sprite_gid = undefined;
+							blank_tile.sprite_id = undefined;
+							blank_tile.sprite_reverse_x = false;
+							blank_tile.sprite_reverse_y = false;
+							blank_tile.exit_tile = false;
+							blank_tile.exit_map_id = false;
+							blank_tile.exit_map_dir = [0, 0];
+							blank_tile.exit_map_pos = [0, 0];
 
+							new_map.width = 8;
+							new_map.height = 8;
+							new_map.data = Array.from( { length: new_map.height }, () => Array.from( { length: new_map.width }, () => Object.assign( {}, blank_tile ) ) );
 
+							/* Get new ID value */
+							sort_maps_by_id();
+							new_map.id = ( project.maps.length != 0 ) ? ( project.maps[project.maps.length - 1].id + 1 ) : 0;
 
+							/* Get new order value */
+							sort_maps_by_order();
+							new_map.order = ( project.maps.length != 0 ) ? ( project.maps[project.maps.length - 1].order + 1 ) : 0;
+							/* Note we sort by order 2nd so the array goes back to the correct order */
 
-	} );
+							console.log( new_map );
 
-	/* Project name event listener */
-	$( "#container #toolbar #settings #name_input_container #name_input" ).on( "blur", function() {
+							/* Add the duplicated map to the array */
+							project.maps.push( new_map );
 
-		var project_name_value = $( this ).val();
-		if( ( project_name_value != "" ) && (project_name_value != project.name ) ) {
-			console.log( project_name_value );
+							/* Close the project view */
+							close_project_view();
+
+							/* Open the map editor view */
+							selected_map = project.maps.find( obj => obj.id == new_map.id );
+							load_map_editing_view();
+						}
+
+						/* Re-enable controls */
+						enable_controls();
+
+						/* Remove event listeners */
+						$( "#container #toolbar #settings #name_input_container #name_input" ).unbind( "keyup blur" );
+					}
+
+					/* Discard change */
+					if( ( e.key == "Escape" ) || ( e.type == "blur" ) ) {
+
+						/* Re-enable controls */
+						enable_controls();
+
+						/* Remove event listeners */
+						$( "#container #toolbar #settings #name_input_container #name_input" ).unbind( "keyup blur" );
+						
+						/* Put things back the way they were */
+						$( "#container #toolbar #settings #name_input_container #name_input" ).val( "" );
+						$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "placeholder", project.name );
+						$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "disabled", "disabled" );
+					}
+				} );
+				break;
 		}
-
-
-
-
-
-
-
-
-
-
-
 	} );
-
 }
 
 function clear_map_list_sortable() {
@@ -219,7 +282,6 @@ function map_list_sortable() {
 }
 
 function sort_maps_by_order() {
-	
 	project.maps.sort( function( a, b ) {
 		return ((a.order < b.order) ? -1 : ((a.order > b.order) ? 1 : 0));
 	} );

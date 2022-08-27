@@ -133,8 +133,8 @@ var demo_sprites = new Array( g_grass_bg, g_mat, g_bollard, g_fence );
 /* Demo map */
 var blank_tile = new Object();
 blank_tile.can_walk = [true, true, true, true];
-blank_tile.sprite_gid = undefined;
-blank_tile.sprite_id = undefined;
+blank_tile.sprite_gid = 0;
+blank_tile.sprite_id = 0;
 blank_tile.sprite_reverse_x = false;
 blank_tile.sprite_reverse_y = false;
 blank_tile.exit_tile = false;
@@ -158,23 +158,20 @@ map2.width = 16;
 map2.height = 12;
 map2.data = Array.from( { length: map2.height }, () => Array.from( { length: map2.width }, () => Object.assign( {}, blank_tile ) ) );
 
-/* Dev */
-/*
-demo_map.data[0][0].sprite_gid = 1;
-demo_map.data[0][0].sprite_id = 3;
-
-demo_map.data[0][1].sprite_gid = 1;
-demo_map.data[0][1].sprite_id = 3;
-demo_map.data[0][1].sprite_reverse_y = true;
-demo_map.data[0][1].sprite_reverse_x = true;
-*/
-
 /* Store maps in an array */
 var demo_maps = new Array( map1, map2 );
 
+var demo_project = new Object();
+demo_project.name = "Demo Project";
+demo_project.sprites = demo_sprites;
+demo_project.maps = demo_maps;
 
-var project = new Object();
-project.name = "Demo Project";
-project.sprites = demo_sprites;
-project.maps = demo_maps;
+var empty_project = new Object();
+empty_project.name = "New Project";
+empty_project.sprites = new Array();
+empty_project.maps = new Array();
 
+var project = empty_project;
+
+/* Load demo project */
+var project = demo_project;

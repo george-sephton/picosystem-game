@@ -95,7 +95,7 @@ function load_map_editor() {
 	var show_cols = map_resizing.en ? map_resizing.new_width : selected_map.width;
 	$( "#map_editor_table" ).children().each( function() {
 		for(i=0; i<show_cols; i++)
-			$( '<td col_id="'+i+'" sprite_id="" class="map_editor_table_cell"></td>' ).appendTo( $(this) );
+			$( '<td col_id="'+i+'" class="map_editor_table_cell"></td>' ).appendTo( $(this) );
 	} );
 
 	/* Add sprite to each cell */
@@ -336,7 +336,7 @@ function map_toolbar_event_listeners() {
 								if( map_name_value != "" ) {
 
 									/* Duplicate current map */
-									new_map = new Array();
+									new_map = new Object();
 									$.extend( true, new_map, selected_map ); /* Clone array */
 
 									/* Set the new name */
@@ -387,7 +387,7 @@ function map_toolbar_event_listeners() {
 							$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "placeholder", selected_map.name );
 							$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "disabled", "disabled" );
 						}
-					});			
+					} );
 					break;
 				case "trash-map":
 

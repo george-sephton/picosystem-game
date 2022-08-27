@@ -220,24 +220,30 @@ function load_sprite_editor() {
 				$( this.el ).css("background", "#" + hex );
 
 				/* Update the local array */
-				selected_sprite.sprite.data[ $( this.el ).attr( "col_id" ) ][ $( this.el ).parent().attr( "row_id" ) ] = hex;
+				var sprite_row = $( this.el ).parent().attr( "row_id" );
+				var sprite_col = $( this.el ).attr( "col_id" );
+
+				selected_sprite.sprite.data[ sprite_col ][ sprite_row ] = hex;
 				
 				/* Update sprite paint preview */
 				load_sprite_preview();
 
+				/* Loop through each row of the map */
+				$.each( selected_map.data, function( tile_row, row ) {
 
+					/* Loop through each col of the map */
+					$.each( row, function( tile_col, cell ) {
 
+						if( ( cell.sprite_gid == selected_sprite.group.gid ) && ( cell.sprite_id == selected_sprite.sprite.id ) ) {
+							/* Cell is the sprite we're looking for, found at (tile_row, tile_col) */
+							var tile = $( "#map_editor #map_editor_table .map_editor_table_row[row_id=" + tile_row + "] .map_editor_table_cell[col_id=" + tile_col + "]" );
 
-
-
-				/* Add functionality to update any sprites on the map */
-
-
-
-
-
-
-
+							/* Get the cell of the pixel that was changed and update it */
+							var pixel = $( tile.find( ".sprite_table tr[row_id=" + ( ( cell.sprite_reverse_y ) ? ( 7 - sprite_row ) : sprite_row ) + "] td[col_id=" + ( ( cell.sprite_reverse_x ) ? ( 7 - sprite_col ) : sprite_col ) + "]" ) );
+							pixel.css("background", "#" + hex );
+						}
+					} );
+				} );
 
 				/* Hide the colour picker */
 				$( e ).colpickHide();
@@ -350,11 +356,11 @@ function sprite_toolbar_event_listeners() {
 
 									/* Get new GID value */
 									sort_groups_by_gid();
-									new_group.gid = project.sprites[project.sprites.length - 1].gid + 1;
+									new_group.gid = ( project.sprites.length != 0 ) ? ( project.sprites[project.sprites.length - 1].gid + 1 ) : 0;
 
 									/* Get new order value */
 									sort_groups_by_gorder();
-									new_group.gorder = project.sprites[project.sprites.length - 1].gorder + 1;
+									new_group.gorder = ( project.sprites.length != 0 ) ? ( project.sprites[project.sprites.length - 1].gorder + 1 ) : 0;
 									/* Note we sort by order 2nd so the array goes back to the correct order */
 
 									if( ( selected_sprite.sprite == false ) && ( func == "duplicate" ) ) {
