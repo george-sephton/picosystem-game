@@ -8,6 +8,7 @@ function load_map_editing_view() {
 	$( "#container #content" ).css( "max-width", "calc(100vw - 430px)" );
 
 	$( "#container #content #toolbar #upload_settings" ).css( "display", "none" );
+	$( "#container #content #toolbar #settings" ).css( "display", "flex" );
 	$( "#container #content #toolbar #settings #name_input_container" ).css( "display", "flex" );
 	$( "#container #content #toolbar #settings #name_input_container #name_input" ).attr( "disabled", "disabled" );
 	$( "#container #content #toolbar #settings #name_input_container #name_input" ).val( "" );
@@ -230,6 +231,11 @@ function map_editor_toolbar_reset() {
 	/* Re-enable colour picker */
 	$( ".picker" ).removeClass( "auto_cursor" );
 
+	$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_x" ).val( "" );
+	$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_x" ).css( "background", "#fff" );
+	$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_y" ).val( "" );
+	$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_y" ).css( "background", "#fff" );
+
 	/* Re-add sorting to the sprite list */
 	sprite_list_sortable();
 
@@ -277,7 +283,6 @@ function map_toolbar_event_listeners() {
 		if( map_resizing.en == false ) {
 
 			var func = $( this ).attr( "func" );
-			console.log( func );
 
 			if( ( func != "paint") && ( func != "erase" ) && ( func != "zoom-in" ) && ( func != "zoom-out" ) && ( func != "flip-v" ) && ( func != "flip-h" ) && ( drawing_functions != false ) ) {
 								
@@ -321,7 +326,7 @@ function map_toolbar_event_listeners() {
 						/* Save the change */
 						if( e.key == "Enter" ) {
 
-							var map_name_value = $( this ).val();
+							var map_name_value = sanitise_input( $( this ).val() );
 
 							if( func == "rename-map" ) {
 								if( ( map_name_value != "" ) && (map_name_value != selected_map.name ) ) {
@@ -701,13 +706,32 @@ function map_toolbar_event_listeners() {
 					if( element.prop( "checked" ) ) {
 						/* Exit tile enabled */
 						selected_sprite.exit_tile = true;
-						selected_sprite.exit_map_id = 0;
 						selected_sprite.exit_map_dir = [0, 0];
 						selected_sprite.exit_map_pos = [0, 0];
+
+						/* Clear the position fields */
+						$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_x" ).val( "" );
+						$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_x" ).css( "background", "#fff" );
+						$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_y" ).val( "" );
+						$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_y" ).css( "background", "#fff" );
+
+						/* Fill the map list, but clear it first */
+						$( "#exit_tile_map_id" ).empty();
+
+						/* Sort the maps in order and then add them */
+						sort_maps_by_order();
+						$.each( project.maps, function( key, value ) {
+							$( "#exit_tile_map_id" ).append( '<option value="' + value.id + '">' + value.name + '</option>' );
+						} );
+
+						/* Select the first map as the exit map id, just in case it isn't changed */
+						selected_sprite.exit_map_id = project.maps[0].id;
 					} else {
 						/* Exit tile disabled */
 						selected_sprite.exit_tile = false;
 						selected_sprite.can_walk = [true, true, true, true];
+
+						$( "#exit_tile_map_id" ).empty();
 					}
 					break;
 				case "exit_tile_n":
@@ -765,15 +789,66 @@ function map_toolbar_event_listeners() {
 					selected_sprite.exit_map_id = element.val();
 					break;
 				case "exit_tile_map_pos_x":
-					selected_sprite.exit_map_pos[0] = element.val();
+
+					if( parseInt( element.val() ) ){
+
+						/* They entered a number, let's check it isn't out of bounds */
+						var exit_tile_pos_x = parseInt( element.val() );
+
+						var exit_map = project.maps.find( obj => obj.id == selected_sprite.exit_map_id );
+						if( ( exit_tile_pos_x >= 0 ) && ( exit_tile_pos_x < exit_map.width ) ) {
+							/* Position is within bounds */
+							element.css( "background", "#fff" );
+						} else {
+							/* Show an error */
+							element.css( "background", "#e8736b" );
+						}
+						selected_sprite.exit_map_pos[0] = exit_tile_pos_x;
+						
+					} else {
+
+						/* They didn't enter a number, let's correct that */
+						selected_sprite.exit_map_pos[0] = 0;
+
+						/* Don't alter anything if the field is empty */
+						if( element.val() != "" ) {
+							element.val( "0" );
+						}
+					}
+					
 					break;
 				case "exit_tile_map_pos_y":
-					selected_sprite.exit_map_pos[1] = element.val();
+
+					if( parseInt( element.val() ) ){
+
+						/* They entered a number, let's check it isn't out of bounds */
+						var exit_tile_pos_y = parseInt( element.val() );
+
+						var exit_map = project.maps.find( obj => obj.id == selected_sprite.exit_map_id );
+						if( ( exit_tile_pos_y >= 0 ) && ( exit_tile_pos_y < exit_map.height ) ) {
+							/* Position is within bounds */
+							element.css( "background", "#fff" );
+						} else {
+							/* Show an error */
+							element.css( "background", "#e8736b" );
+						}
+						selected_sprite.exit_map_pos[1] = exit_tile_pos_y;
+						
+					} else {
+
+						/* They didn't enter a number, let's correct that */
+						selected_sprite.exit_map_pos[1] = 0;
+
+						/* Don't alter anything if the field is empty */
+						if( element.val() != "" ) {
+							element.val( "0" );
+						}
+					}
 					break;
 			}
 
 			/* Reload the tile settings */
-			set_map_tile_settings_styles();
+			set_map_tile_settings_styles( true );
 		}
 	} );
 }
@@ -858,11 +933,11 @@ function map_editor_event_listeners() {
 			} );
 
 			if( selected_sprite.exit_tile ) {
-				/* We're setting an exit tile */
 
+				/* We're setting an exit tile */
 				selected_sprite.exit_tile = true;
 				selected_sprite.exit_map_id = $( "#container #toolbar #map_paint_settings #exit_tile_map_id" ).val();
-				selected_sprite.exit_map_dir = [$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_x" ).val(), $( "#container #toolbar #map_paint_settings #exit_tile_map_pos_y" ).val()];
+				selected_sprite.exit_map_dir = [ parseInt( $( "#container #toolbar #map_paint_settings #exit_tile_map_pos_x" ).val() ), parseInt( $( "#container #toolbar #map_paint_settings #exit_tile_map_pos_y" ).val() ) ];
 				
 				switch( $( "#container #toolbar #map_paint_settings #exit_tile_map_dir" ).val() ) {
 					case "a":  /* Exit any direction */
@@ -953,7 +1028,7 @@ function map_editor_event_listeners() {
 	} );
 }
 
-function set_map_tile_settings_styles() {
+function set_map_tile_settings_styles( direct_update = false ) {
 	
 	/* Set preview to have no special borders */
 	$( "#container #toolbar #map_paint_preview table" ).css( "border", "2px solid #000" );
@@ -976,8 +1051,23 @@ function set_map_tile_settings_styles() {
 
 		/* Set values */
 		$( "#container #toolbar #map_paint_settings #exit_tile_map_id" ).val( selected_sprite.exit_map_id );
-		$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_x" ).val( selected_sprite.exit_map_pos[0] );
-		$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_y" ).val( selected_sprite.exit_map_pos[1] );
+		
+		if( !direct_update ) {
+			
+			$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_x" ).val( selected_sprite.exit_map_pos[0] );
+			$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_y" ).val( selected_sprite.exit_map_pos[1] );
+
+			var exit_map = project.maps.find( obj => obj.id == selected_sprite.exit_map_id );
+			if( ( selected_sprite.exit_map_pos[0] >= 0 ) && ( selected_sprite.exit_map_pos[0] < exit_map.width ) )
+				$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_x" ).css( "background", "#fff" );
+			else
+				$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_x" ).css( "background", "#e8736b" );
+
+			if( ( selected_sprite.exit_map_pos[1] >= 0 ) && ( selected_sprite.exit_map_pos[1] < exit_map.height ) )
+				$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_y" ).css( "background", "#fff" );
+			else
+				$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_y" ).css( "background", "#e8736b" );
+		}
 
 		/* Set styling for an exit tile and select the correct value from the dropdown menu */
 		switch( selected_sprite.exit_map_dir.join() ) {
@@ -1057,6 +1147,15 @@ function display_tile_info( tile_row, tile_col ) {
 	/* Copy group and sprite data to selected sprite */
 	selected_sprite.group = project.sprites.find( obj => obj.gid == cell_sprite_gid );
 	selected_sprite.sprite = selected_sprite.group.sprites.find( obj => obj.id == cell_sprite_id );
+
+	/* Fill the map list, but clear it first */
+	$( "#exit_tile_map_id" ).empty();
+
+	/* Sort the maps in order and then add them */
+	sort_maps_by_order();
+	$.each( project.maps, function( key, value ) {
+		$( "#exit_tile_map_id" ).append( '<option value="' + value.id + '">' + value.name + '</option>' );
+	} );
 
 	/* Copy tile info */
 	selected_sprite.exit_tile = selected_map.data[tile_row][tile_col].exit_tile;

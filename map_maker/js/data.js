@@ -301,12 +301,12 @@ fence.name = "Fence";
 fence.order = 0;
 fence.id = 0;
 fence.data =	       [["77DD66", "77DD66", "000011", "000011", "77DD66", "77DD66", "77DD66", "77DD66"],
-						["77DD66", "000011", "77DD66", "77DD66", "000011", "000011", "CCFF88", "77DD66"],
-						["000011", "77DD66", "CCFF88", "CCFF88", "77DD66", "77DD66", "000011", "000011"],
-						["000011", "CCFF88", "CCFF88", "CCFF88", "CCFF88", "CCFF88", "77DD66", "000011"],
-						["000011", "CCFF88", "CCFF88", "CCFF88", "CCFF88", "CCFF88", "77DD66", "000011"],
-						["000011", "CCFF88", "CCFF88", "CCFF88", "CCFF88", "CCFF88", "77DD66", "000011"],
-						["77DD66", "000011", "CCFF88", "77DD66", "77DD66", "000011", "000011", "77DD66"],
+						["77DD66", "000011", "77DD66", "77DD66", "000011", "000011", "CCFFBB", "77DD66"],
+						["000011", "77DD66", "CCFFBB", "CCFFBB", "77DD66", "77DD66", "000011", "000011"],
+						["000011", "CCFFBB", "CCFFBB", "CCFFBB", "CCFFBB", "CCFFBB", "77DD66", "000011"],
+						["000011", "CCFFBB", "CCFFBB", "CCFFBB", "CCFFBB", "CCFFBB", "77DD66", "000011"],
+						["000011", "CCFFBB", "CCFFBB", "CCFFBB", "CCFFBB", "CCFFBB", "77DD66", "000011"],
+						["77DD66", "000011", "CCFFBB", "77DD66", "77DD66", "000011", "000011", "77DD66"],
 						["77DD66", "77DD66", "000011", "000011", "000011", "77DD66", "77DD66", "77DD66"]];
 
 var g_fence = new Object();
@@ -331,7 +331,7 @@ blank_tile.exit_map_dir = [0, 0];
 blank_tile.exit_map_pos = [0, 0];
 
 var map1 = new Object();
-map1.id = 0;
+map1.id = 3;
 map1.order = 0;
 map1.name = "Demo Map";
 map1.width = 5;

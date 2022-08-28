@@ -22,46 +22,7 @@
 		<script type="text/javascript" src="js/project.js"></script>
 		<script type="text/javascript" src="js/maps.js"></script>
 		<script type="text/javascript" src="js/sprites.js"></script>
-		
-		<script type="text/javascript">
-			/* Store the currently selected sprite */
-			var selected_sprite = new Object();
-			selected_sprite.sprite = false;
-			selected_sprite.group = false;
-
-			/* Store the sprite state */
-			selected_sprite.sprite_reverse_x = false;
-			selected_sprite.sprite_reverse_y = false;
-
-			/* Store tile information */
-			selected_sprite.can_walk = [true, true, true, true];
-			selected_sprite.exit_tile = false;
-			selected_sprite.exit_map_id = false;
-			selected_sprite.exit_map_dir = [0, 0];
-			selected_sprite.exit_map_pos = [0, 0];
-
-			/* Store current map info */
-			var selected_map = false;
-			var map_cell_size = 10;
-
-			/* Store drawing information */
-			var drawing_functions = false;
-
-			/* Store map resizing information */
-			var map_resizing = new Object();
-			map_resizing.en = false;
-			map_resizing.new_width = 0;
-			map_resizing.new_height = 0;
-			
-			/* Document load */
-			$( function() {
-
-				/* Load project view */
-				load_project_view();
-
-			} );
-
-		</script>
+		<script type="text/javascript" src="js/map_maker.js"></script>
 	</head>
 	<body>
 		<div id="container">
@@ -135,10 +96,10 @@
 					<div id="map_paint_settings">
 						<div id="map_paint_settings_l">
 							<div id="map_exit_tile_en">
-								<label for="exit_tile_en" class="exit_ignore_hide">Exit Tile</label>
+								<label for="exit_tile_en" class="exit_ignore_hide">Exit</label>
 								<input type="checkbox" id="exit_tile_en" name="exit_tile_en" class="checkbox-input exit_ignore_hide" />
-								<label for="exit_tile_map_id">Map ID</label>
-								<input type="text" id="exit_tile_map_id" name="exit_tile_map_id" class="text-input" placeholder="ID" />
+								<label for="exit_tile_map_id">Map</label>
+								<select name="exit_tile_map_id" id="exit_tile_map_id" class="select-input"></select>
 							</div>
 							<div id="map_exit_tile_dir">
 								<label for="exit_tile_n" class="exit_ignore_hide">N</label>

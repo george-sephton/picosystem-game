@@ -374,7 +374,7 @@ function sprite_toolbar_event_listeners() {
 						if( e.key == "Enter" ) {
 
 							/* Get entered name */
-							var new_name = $( "#container #sidebar #sprite_list_toolbar_rename #sprite_rename" ).val();
+							var new_name = sanitise_input( $( "#container #sidebar #sprite_list_toolbar_rename #sprite_rename" ).val() );
 
 							if( ( func == "new" ) || ( func == "new-group" ) || ( func == "duplicate" ) ) {
 								

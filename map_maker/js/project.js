@@ -124,7 +124,6 @@ function project_toolbar_event_listeners() {
 	$( "#container #toolbar #settings #controls i" ).on( "click", function() {
 
 		var func = $( this ).attr( "func" );
-		console.log( func );
 
 		switch( func ) {
 			case "new-map":
@@ -145,8 +144,7 @@ function project_toolbar_event_listeners() {
 					/* Save the change */
 					if( e.key == "Enter" ) {
 
-						var map_name_value = $( this ).val();
-						console.log( map_name_value );
+						var map_name_value = sanitise_input( $( this ).val() );
 
 						if( map_name_value != "" ) {
 
@@ -235,7 +233,7 @@ function project_toolbar_event_listeners() {
 					/* Save the change */
 					if( e.key == "Enter" ) {
 
-						var project_name_value = encodeURI( $( this ).val() );
+						var project_name_value = sanitise_input( $( this ).val() );
 						
 						if( project_name_value != "" ) {
 							project.name = project_name_value;
