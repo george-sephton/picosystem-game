@@ -7,6 +7,7 @@ function load_map_editing_view() {
 
 	$( "#container #content" ).css( "max-width", "calc(100vw - 430px)" );
 
+	$( "#container #content #toolbar #upload_settings" ).css( "display", "none" );
 	$( "#container #content #toolbar #settings #name_input_container" ).css( "display", "flex" );
 	$( "#container #content #toolbar #settings #name_input_container #name_input" ).attr( "disabled", "disabled" );
 	$( "#container #content #toolbar #settings #name_input_container #name_input" ).val( "" );
@@ -20,8 +21,9 @@ function load_map_editing_view() {
 
 	$( "#container #content #map_editor_container" ).css( "display", "flex" );
 	$( "#container #content #map_editor_container #map_editor" ).css( "display", "none" );
-	$( "#container #content #map_editor_container #map_editor_loading" ).css( "display", "flex" );
+
 	$( "#container #content #map_list" ).css( "display", "none" );
+	$( "#container #content #project_upload" ).css( "display", "none" );
 
 	/* Show project icons */
 	$( ".project_functions" ).css( "display", "none" );
@@ -71,10 +73,6 @@ function close_map_editing_view() {
 }
 
 function load_map_editor() {
-
-	/* Show loading message */
-	$( "#container #map_editor_container #map_editor" ).css( "display", "none" );
-	$( "#container #map_editor_container #map_editor_loading" ).css( "display", "flex" );
 
 	/* Change editor position */
 	$( "#container #map_editor_container" ).css( "justify-content", "center" );
@@ -207,9 +205,8 @@ function load_map_editor() {
 		
 	} );
 
-	/* Hide loading message */
+	/* Show map editor */
 	$( "#container #map_editor_container #map_editor" ).css( "display", "flex" );
-	$( "#container #map_editor_container #map_editor_loading" ).css( "display", "none" );
 
 	/* Change editor position */
 	$( "#container #map_editor_container" ).css( "justify-content", "flex-start" );

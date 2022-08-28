@@ -9,6 +9,9 @@ function load_sprite_list() {
 	$( "#map_toolbar_fill" ).css( "display", "none" );
 	$( "#map_toolbar_flip_h" ).css( "display", "none" );
 	$( "#map_toolbar_flip_v" ).css( "display", "none" );
+
+	/* Clear fill sprite icon */
+	$( "#sprite_fill" ).css( "display", "none" );
 	
 	/* Check if we are showing groups or sprites */
 	if( selected_sprite.group == false ) {
@@ -188,6 +191,9 @@ function load_sprite_editor() {
 
 	if ( selected_sprite.sprite != false ) {
 
+		/* Show fill sprite icon */
+		$( "#sprite_fill" ).css( "display", "block" );
+
 		/* Setup the sprite editor */
 		$( "#sprite_editor" ).html( "<table></table>" );
 		
@@ -211,20 +217,33 @@ function load_sprite_editor() {
 					return false;
 				}
 
-				/* Set the colour picker to show the currently selected colour */
-				$( this ).colpickSetColor( selected_sprite.sprite.data[ $( this ).attr( "col_id" ) ][ $( this ).parent().attr( "row_id" ) ], true );
+				/* Set the colour picker to show the currently selected colour, ignore if it's the fill icon */
+				if( $( this ).attr( "id" ) != "sprite_fill" )
+					$( this ).colpickSetColor( selected_sprite.sprite.data[ $( this ).attr( "col_id" ) ][ $( this ).parent().attr( "row_id" ) ], true );
 			},
 			onSubmit: function( hsb, hex, rgb, e ) {
 
-				/* After selecting the chosen colour, update the cell background */
-				$( this.el ).css("background", "#" + hex );
+				var sprite_fill = false;
+				if( $( this.el ).attr( "id" ) == "sprite_fill" ) {
+					
+					/* We're filling the entire sprite with the selected colour */
+					selected_sprite.sprite.data = Array.from( { length: 8 }, () => Array.from( { length: 8 }, () => hex ) );
+					sprite_fill = true;
+					
+					/* Update the sprite editor */
+					$( "#sprite_editor table tr td" ).css("background", "#" + hex );
+				} else {
 
-				/* Update the local array */
-				var sprite_row = $( this.el ).parent().attr( "row_id" );
-				var sprite_col = $( this.el ).attr( "col_id" );
+					/* We've selected a pixel colour, update the cell background */
+					$( this.el ).css("background", "#" + hex );
 
-				selected_sprite.sprite.data[ sprite_col ][ sprite_row ] = hex;
-				
+					/* Update the local array */
+					var sprite_row = $( this.el ).parent().attr( "row_id" );
+					var sprite_col = $( this.el ).attr( "col_id" );
+
+					selected_sprite.sprite.data[ sprite_col ][ sprite_row ] = hex;
+				}
+					
 				/* Update sprite paint preview */
 				load_sprite_preview();
 
@@ -238,9 +257,16 @@ function load_sprite_editor() {
 							/* Cell is the sprite we're looking for, found at (tile_row, tile_col) */
 							var tile = $( "#map_editor #map_editor_table .map_editor_table_row[row_id=" + tile_row + "] .map_editor_table_cell[col_id=" + tile_col + "]" );
 
-							/* Get the cell of the pixel that was changed and update it */
-							var pixel = $( tile.find( ".sprite_table tr[row_id=" + ( ( cell.sprite_reverse_y ) ? ( 7 - sprite_row ) : sprite_row ) + "] td[col_id=" + ( ( cell.sprite_reverse_x ) ? ( 7 - sprite_col ) : sprite_col ) + "]" ) );
-							pixel.css("background", "#" + hex );
+							if( sprite_fill ) {
+
+								/* We're filling this entire cell with the same colour */
+								$( tile.find( "td" ) ).css("background", "#" + hex );
+							} else {
+
+								/* Get the cell of the pixel that was changed and update it */
+								var pixel = $( tile.find( ".sprite_table tr[row_id=" + ( ( cell.sprite_reverse_y ) ? ( 7 - sprite_row ) : sprite_row ) + "] td[col_id=" + ( ( cell.sprite_reverse_x ) ? ( 7 - sprite_col ) : sprite_col ) + "]" ) );
+								pixel.css("background", "#" + hex );
+							}
 						}
 					} );
 				} );
@@ -276,6 +302,9 @@ function load_sprite_editor() {
 		/* Clear the editor */
 		$( "#sprite_editor" ).html( "Select a sprite" );
 
+		/* Clear fill sprite icon */
+		$( "#sprite_fill" ).css( "display", "none" );
+
 		/* Clear the paint preview */
 		clear_sprite_paint_preview();
 	}
@@ -292,7 +321,7 @@ function sprite_toolbar_event_listeners() {
 	clear_sprite_toolbar_event_listeners();
 
 	/* Sprite toolbar event listeners */
-	$( "#container #sidebar #sprite_list_toolbar i" ).click(function() {
+	$( "#container #sidebar #sprite_list_toolbar i:not( #sprite_fill )" ).click(function() {
 		
 		if( ( map_resizing.en == false ) && ( drawing_functions == false ) ) {
 

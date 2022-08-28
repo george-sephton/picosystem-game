@@ -3,50 +3,50 @@ var grass_bg = new Object();
 grass_bg.name = "Grass Background";
 grass_bg.order = 0;
 grass_bg.id = 0;
-grass_bg.data =   [["447733", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"],
-					["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "77DD66", "77DD66"],
-					["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66"],
-					["77DD66", "77DD66", "77DD66", "447733", "77DD66", "77DD66", "77DD66", "77DD66"],
-					["77DD66", "447733", "77DD66", "77DD66", "77DD66", "447733", "77DD66", "77DD66"],
-					["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"],
-					["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "447733", "77DD66"],
-					["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"]];
+grass_bg.data = 	   [["447733", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "447733", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["77DD66", "447733", "77DD66", "77DD66", "77DD66", "447733", "77DD66", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "447733", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"]];
 
 var g_grass_bg = new Object();
 g_grass_bg.name = "Grass Background";
-g_grass_bg.gorder = 1;
+g_grass_bg.gorder = 0;
 g_grass_bg.gid = 0;
 g_grass_bg.sprites = new Array( grass_bg );
 
 var mat_v = new Object();
 mat_v.name = "Mat Vertical";
-mat_v.order = 1;
-mat_v.id = 3;
-mat_v.data =       [["77DD66", "FF9933", "FF9933", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222"],
-					["77DD66", "FF9933", "FF9933", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677"],
-					["77DD66", "FF9933", "FF9933", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222"],
-					["77DD66", "FF9933", "FF9933", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677"],
-					["77DD66", "FF9933", "FF9933", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222"],
-					["77DD66", "FF9933", "FF9933", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677"],
-					["77DD66", "FF9933", "FF9933", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222"],
-					["77DD66", "FF9933", "FF9933", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677"]];
+mat_v.order = 0;
+mat_v.id = 0;
+mat_v.data =	       [["77DD66", "FF9933", "FF9933", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222"],
+						["77DD66", "FF9933", "FF9933", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677"],
+						["77DD66", "FF9933", "FF9933", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222"],
+						["77DD66", "FF9933", "FF9933", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677"],
+						["77DD66", "FF9933", "FF9933", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222"],
+						["77DD66", "FF9933", "FF9933", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677"],
+						["77DD66", "FF9933", "FF9933", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222"],
+						["77DD66", "FF9933", "FF9933", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677"]];
 
 var mat_h = new Object();
 mat_h.name = "Mat Horizontal";
-mat_h.order = 0;
+mat_h.order = 1;
 mat_h.id = 1;
-mat_h.data =       [["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"],
-					["FF9933", "FF9933", "FF9933", "FF9933", "FF9933", "FF9933", "FF9933", "FF9933"],
-					["FF9933", "FF9933", "FF9933", "FF9933", "FF9933", "FF9933", "FF9933", "FF9933"],
-					["EE2222", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677"],
-					["DD6677", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222"],
-					["EE2222", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677"],
-					["DD6677", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222"],
-					["EE2222", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677"]];
+mat_h.data =	       [["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["FF9933", "FF9933", "FF9933", "FF9933", "FF9933", "FF9933", "FF9933", "FF9933"],
+						["FF9933", "FF9933", "FF9933", "FF9933", "FF9933", "FF9933", "FF9933", "FF9933"],
+						["EE2222", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677"],
+						["DD6677", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222"],
+						["EE2222", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677"],
+						["DD6677", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222"],
+						["EE2222", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677", "EE2222", "DD6677"]];
 
 var g_mat = new Object();
 g_mat.name = "Mat";
-g_mat.gorder = 0;
+g_mat.gorder = 1;
 g_mat.gid = 1;
 g_mat.sprites = new Array( mat_v, mat_h );
 
@@ -54,81 +54,269 @@ var bollard_1 = new Object();
 bollard_1.name = "Bollard 1";
 bollard_1.order = 0;
 bollard_1.id = 0;
-bollard_1.data =   [["447733", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"],
-					["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "77DD66", "77DD66"],
-					["77DD66", "77DD66", "77DD66", "77DD66", "000011", "000011", "000011", "000011"],
-					["77DD66", "77DD66", "77DD66", "000011", "88FFBB", "447733", "88FFBB", "88FFBB"],
-					["77DD66", "447733", "000011", "88FFBB", "CCFFBB", "88FFBB", "447733", "88FFBB"],
-					["77DD66", "77DD66", "000011", "88FFBB", "CCFFBB", "CCFFBB", "447733", "88FFBB"],
-					["77DD66", "000011", "88FFBB", "CCFFBB", "CCFFBB", "CCFFBB", "88FFBB", "447733"],
-					["77DD66", "000011", "88FFBB", "CCFFBB", "CCFFBB", "CCFFBB", "CCFFBB", "447733"]];
+bollard_1.data =	   [["447733", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "77DD66", "000011", "000011", "000011", "000011"],
+						["77DD66", "77DD66", "77DD66", "000011", "88FFBB", "447733", "88FFBB", "88FFBB"],
+						["77DD66", "447733", "000011", "88FFBB", "CCFFBB", "88FFBB", "447733", "88FFBB"],
+						["77DD66", "77DD66", "000011", "88FFBB", "CCFFBB", "CCFFBB", "447733", "88FFBB"],
+						["77DD66", "000011", "88FFBB", "CCFFBB", "CCFFBB", "CCFFBB", "88FFBB", "447733"],
+						["77DD66", "000011", "88FFBB", "CCFFBB", "CCFFBB", "CCFFBB", "CCFFBB", "447733"]];
 
 var bollard_2 = new Object();
 bollard_2.name = "Bollard 2";
-bollard_2.order = 2;
+bollard_2.order = 1;
 bollard_2.id = 1;
-bollard_2.data =   [["77DD66", "000011", "88FFBB", "CCFFBB", "CCFFBB", "CCFFBB", "CCFFBB", "447733"],
-					["77DD66", "000011", "88FFBB", "CCFFBB", "CCFFBB", "CCFFBB", "88FFBB", "447733"],
-					["77DD66", "77DD66", "000011", "88FFBB", "CCFFBB", "CCFFBB", "447733", "88FFBB"],
-					["77DD66", "77DD66", "000011", "88FFBB", "CCFFBB", "88FFBB", "447733", "88FFBB"],
-					["77DD66", "77DD66", "77DD66", "000011", "88FFBB", "447733", "88FFBB", "88FFBB"],
-					["77DD66", "77DD66", "77DD66", "77DD66", "000011", "000011", "000011", "000011"],
-					["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "447733", "77DD66"],
-					["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"]];
+bollard_2.data =	   [["77DD66", "000011", "88FFBB", "CCFFBB", "CCFFBB", "CCFFBB", "CCFFBB", "447733"],
+						["77DD66", "000011", "88FFBB", "CCFFBB", "CCFFBB", "CCFFBB", "88FFBB", "447733"],
+						["77DD66", "77DD66", "000011", "88FFBB", "CCFFBB", "CCFFBB", "447733", "88FFBB"],
+						["77DD66", "77DD66", "000011", "88FFBB", "CCFFBB", "88FFBB", "447733", "88FFBB"],
+						["77DD66", "77DD66", "77DD66", "000011", "88FFBB", "447733", "88FFBB", "88FFBB"],
+						["77DD66", "77DD66", "77DD66", "77DD66", "000011", "000011", "000011", "000011"],
+						["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "447733", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"]];
 
 var bollard_3 = new Object();
 bollard_3.name = "Bollard 3";
-bollard_3.order = 1;
+bollard_3.order = 2;
 bollard_3.id = 2;
-bollard_3.data =   [["447733", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"],
-					["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "77DD66", "77DD66"],
-					["000011", "000011", "000011", "000011", "447733", "77DD66", "CCFFBB", "77DD66"],
-					["447733", "88FFBB", "88FFBB", "88FFBB", "000011", "447733", "77DD66", "77DD66"],
-					["88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", "447733", "77DD66"],
-					["88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", "447733", "77DD66"],
-					["88FFBB", "88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", "88FFBB"],
-					["DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "000011", "88FFBB"]];
+bollard_3.data =	   [["447733", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["000011", "000011", "000011", "000011", "447733", "77DD66", "CCFFBB", "77DD66"],
+						["447733", "88FFBB", "88FFBB", "88FFBB", "000011", "447733", "77DD66", "77DD66"],
+						["88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", "447733", "77DD66"],
+						["88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", "447733", "77DD66"],
+						["88FFBB", "88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", "88FFBB"],
+						["DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "000011", "88FFBB"]];
 
 var bollard_4 = new Object();
 bollard_4.name = "Bollard 4";
 bollard_4.order = 3;
 bollard_4.id = 3;
-bollard_4.data =   [["DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "000011", "88FFBB"],
-					["88FFBB", "88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", "88FFBB"],
-					["88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", "88FFBB", "77DD66"],
-					["88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", "88FFBB", "77DD66"],
-					["447733", "88FFBB", "88FFBB", "88FFBB", "000011", "88FFBB", "77DD66", "77DD66"],
-					["000011", "000011", "000011", "000011", "88FFBB", "77DD66", "77DD66", "77DD66"],
-					["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "447733", "77DD66"],
-					["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"]];
+bollard_4.data =	   [["DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "000011", "88FFBB"],
+						["88FFBB", "88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", "88FFBB"],
+						["88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", "88FFBB", "77DD66"],
+						["88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", "88FFBB", "77DD66"],
+						["447733", "88FFBB", "88FFBB", "88FFBB", "000011", "88FFBB", "77DD66", "77DD66"],
+						["000011", "000011", "000011", "000011", "88FFBB", "77DD66", "77DD66", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "447733", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"]];
 
 var g_bollard = new Object();
 g_bollard.name = "Bollard";
 g_bollard.gorder = 2;
-g_bollard.gid = 13;
+g_bollard.gid = 2;
 g_bollard.sprites = new Array( bollard_1, bollard_2, bollard_3, bollard_4 );
+
+var tree_top_l = new Object();
+tree_top_l.name = "Tree Top L";
+tree_top_l.order = 0;
+tree_top_l.id = 0;
+tree_top_l.data =	   [["447733", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "447733", "77DD66", "77DD66", "000011", "000011"],
+						["77DD66", "447733", "77DD66", "77DD66", "000011", "000011", "CCFFBB", "227733"],
+						["77DD66", "77DD66", "000011", "000011", "000011", "33BB44", "CCFFBB", "33BB44"],
+						["77DD66", "000011", "000011", "77DD66", "CCFFBB", "77DD66", "227733", "CCFFBB"],
+						["000011", "000011", "33BB44", "CCFFBB", "CCFFBB", "CCFFBB", "77DD66", "77DD66"]];
+
+var tree_top_r = new Object();
+tree_top_r.name = "Tree Top R";
+tree_top_r.order = 1;
+tree_top_r.id = 1;
+tree_top_r.data =	   [["000011", "000011", "33BB44", "CCFFBB", "CCFFBB", "CCFFBB", "77DD66", "77DD66"],
+						["77DD66", "000011", "000011", "77DD66", "CCFFBB", "77DD66", "227733", "CCFFBB"],
+						["77DD66", "77DD66", "000011", "000011", "000011", "33BB44", "CCFFBB", "33BB44"],
+						["77DD66", "77DD66", "77DD66", "77DD66", "000011", "000011", "CCFFBB", "227733"],
+						["77DD66", "447733", "77DD66", "77DD66", "77DD66", "77DD66", "000011", "000011"],
+						["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "447733", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"]];
+
+var tree_mid_l = new Object();
+tree_mid_l.name = "Tree Middle L";
+tree_mid_l.order = 2;
+tree_mid_l.id = 2;
+tree_mid_l.data =	   [["447733", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "000011", "000011", "000011", "000011", "000011"],
+						["000011", "000011", "000011", "CCFFBB", "33BB44", "33BB44", "33BB44", "447733"],
+						["227733", "447733", "447733", "77DD66", "CCFFBB", "447733", "77DD66", "33BB44"],
+						["227733", "33BB44", "447733", "447733", "33BB44", "CCFFBB", "CCFFBB", "33BB44"],
+						["33BB44", "227733", "227733", "33BB44", "447733", "77DD66", "CCFFBB", "77DD66"],
+						["227733", "227733", "33BB44", "33BB44", "447733", "33BB44", "33BB44", "77DD66"]];
+
+var tree_mid_r = new Object();
+tree_mid_r.name = "Tree Middle R";
+tree_mid_r.order = 3;
+tree_mid_r.id = 3;
+tree_mid_r.data =	   [["227733", "227733", "33BB44", "33BB44", "447733", "33BB44", "33BB44", "77DD66"],
+						["33BB44", "227733", "227733", "33BB44", "447733", "77DD66", "CCFFBB", "77DD66"],
+						["227733", "33BB44", "447733", "447733", "33BB44", "CCFFBB", "CCFFBB", "33BB44"],
+						["227733", "447733", "447733", "77DD66", "CCFFBB", "77DD66", "77DD66", "33BB44"],
+						["000011", "000011", "000011", "CCFFBB", "33BB44", "33BB44", "33BB44", "447733"],
+						["77DD66", "77DD66", "77DD66", "000011", "000011", "000011", "000011", "000011"],
+						["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "447733", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"]];
+
+var tree_bot_l = new Object();
+tree_bot_l.name = "Tree Bottom L";
+tree_bot_l.order = 4;
+tree_bot_l.id = 4;
+tree_bot_l.data =	   [["77DD66", "000011", "000011", "000011", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["000011", "000011", "33BB44", "227733", "000011", "77DD66", "77DD66", "77DD66"],
+						["000011", "33BB44", "33BB44", "227733", "227733", "000011", "CCFFBB", "77DD66"],
+						["33BB44", "447733", "447733", "227733", "227733", "000011", "77DD66", "77DD66"],
+						["447733", "447733", "77DD66", "77DD66", "227733", "227733", "000011", "77DD66"],
+						["33BB44", "447733", "77DD66", "77DD66", "227733", "227733", "227733", "000011"],
+						["33BB44", "447733", "447733", "77DD66", "77DD66", "227733", "227733", "000011"],
+						["447733", "447733", "447733", "77DD66", "77DD66", "227733", "227733", "000011"]];
+
+var tree_bot_r = new Object();
+tree_bot_r.name = "Tree Bottom R";
+tree_bot_r.order = 5;
+tree_bot_r.id = 5;
+tree_bot_r.data =	   [["447733", "447733", "447733", "77DD66", "77DD66", "227733", "227733", "000011"],
+						["33BB44", "447733", "447733", "77DD66", "77DD66", "227733", "227733", "000011"],
+						["33BB44", "447733", "77DD66", "77DD66", "227733", "227733", "227733", "000011"],
+						["447733", "447733", "77DD66", "77DD66", "227733", "227733", "000011", "77DD66"],
+						["33BB44", "447733", "447733", "227733", "227733", "000011", "77DD66", "77DD66"],
+						["000011", "33BB44", "33BB44", "227733", "227733", "000011", "77DD66", "77DD66"],
+						["000011", "000011", "33BB44", "227733", "000011", "77DD66", "447733", "77DD66"],
+						["77DD66", "000011", "000011", "000011", "77DD66", "77DD66", "77DD66", "77DD66"]];
+
+var tree_stump_l = new Object();
+tree_stump_l.name = "Tree Stump L";
+tree_stump_l.order = 6;
+tree_stump_l.id = 6;
+tree_stump_l.data =    [["447733", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "DDEE77", "77DD66", "77DD66", "CCFFBB", "77DD66"],
+						["77DD66", "77DD66", "DDEE77", "AABB00", "DDEE77", "77DD66", "77DD66", "77DD66"],
+						["77DD66", "DDEE77", "AABB00", "AABB00", "AABB00", "DDEE77", "77DD66", "77DD66"],
+						["AABB00", "AABB00", "000011", "AABB00", "AABB00", "AABB00", "DDEE77", "77DD66"],
+						["000011", "000011", "994499", "000011", "AABB00", "AABB00", "DDEE77", "77DD66"],
+						["663300", "663300", "663300", "994499", "000011", "AABB00", "DDEE77", "77DD66"]];
+
+var tree_stump_r = new Object();
+tree_stump_r.name = "Tree Stump R";
+tree_stump_r.order = 7;
+tree_stump_r.id = 7;
+tree_stump_r.data =    [["663300", "663300", "663300", "994499", "000011", "AABB00", "DDEE77", "77DD66"],
+						["000011", "000011", "994499", "000011", "AABB00", "AABB00", "DDEE77", "77DD66"],
+						["AABB00", "AABB00", "000011", "AABB00", "AABB00", "AABB00", "DDEE77", "77DD66"],
+						["77DD66", "DDEE77", "AABB00", "AABB00", "AABB00", "DDEE77", "77DD66", "77DD66"],
+						["77DD66", "447733", "DDEE77", "AABB00", "DDEE77", "447733", "77DD66", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "DDEE77", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "447733", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"]];
+
+var tree_mid_2_l = new Object();
+tree_mid_2_l.name = "Tree Middle 2 L";
+tree_mid_2_l.order = 8;
+tree_mid_2_l.id = 8;
+tree_mid_2_l.data =	   [["447733", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "000011", "000011", "000011", "000011", "000011"],
+						["000011", "000011", "000011", "CCFFBB", "33BB44", "33BB44", "000011", "000011"],
+						["227733", "447733", "447733", "77DD66", "000011", "000011", "CCFFBB", "227733"],
+						["227733", "33BB44", "000011", "000011", "000011", "33BB44", "CCFFBB", "33BB44"],
+						["33BB44", "000011", "000011", "77DD66", "CCFFBB", "77DD66", "227733", "CCFFBB"],
+						["000011", "000011", "33BB44", "CCFFBB", "CCFFBB", "CCFFBB", "77DD66", "77DD66"]];
+
+var tree_mid_2_r = new Object();
+tree_mid_2_r.name = "Tree Middle 2 R";
+tree_mid_2_r.order = 9;
+tree_mid_2_r.id = 9;
+tree_mid_2_r.data =	   [["000011", "000011", "33BB44", "CCFFBB", "CCFFBB", "CCFFBB", "77DD66", "77DD66"],
+						["33BB44", "000011", "000011", "77DD66", "CCFFBB", "77DD66", "227733", "CCFFBB"],
+						["227733", "33BB44", "000011", "000011", "000011", "33BB44", "CCFFBB", "33BB44"],
+						["227733", "447733", "447733", "77DD66", "000011", "000011", "CCFFBB", "227733"],
+						["000011", "000011", "000011", "CCFFBB", "33BB44", "33BB44", "000011", "000011"],
+						["77DD66", "77DD66", "77DD66", "000011", "000011", "000011", "000011", "000011"],
+						["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "447733", "77DD66"],
+						["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"]];
+
+var tree_top_2_l = new Object();
+tree_top_2_l.name = "Tree Top 2 L";
+tree_top_2_l.order = 10;
+tree_top_2_l.id = 10;
+tree_top_2_l.data =	   [["77DD66", "000011", "000011", "000011", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["000011", "000011", "33BB44", "227733", "000011", "77DD66", "77DD66", "77DD66"],
+						["000011", "33BB44", "33BB44", "000011", "000011", "000011", "000011", "000011"],
+						["000011", "000011", "000011", "CCFFBB", "33BB44", "33BB44", "000011", "000011"],
+						["227733", "447733", "447733", "77DD66", "000011", "000011", "CCFFBB", "227733"],
+						["227733", "33BB44", "000011", "000011", "000011", "33BB44", "CCFFBB", "33BB44"],
+						["33BB44", "000011", "000011", "77DD66", "CCFFBB", "77DD66", "227733", "CCFFBB"],
+						["000011", "000011", "33BB44", "CCFFBB", "CCFFBB", "CCFFBB", "77DD66", "77DD66"]];
+
+var tree_top_2_r = new Object();
+tree_top_2_r.name = "Tree Top 2 R";
+tree_top_2_r.order = 11;
+tree_top_2_r.id = 11;
+tree_top_2_r.data =	   [["000011", "000011", "33BB44", "CCFFBB", "CCFFBB", "CCFFBB", "77DD66", "77DD66"],
+						["33BB44", "000011", "000011", "77DD66", "CCFFBB", "77DD66", "227733", "CCFFBB"],
+						["227733", "33BB44", "000011", "000011", "000011", "33BB44", "CCFFBB", "33BB44"],
+						["227733", "447733", "447733", "77DD66", "000011", "000011", "CCFFBB", "227733"],
+						["000011", "000011", "000011", "CCFFBB", "33BB44", "33BB44", "000011", "000011"],
+						["000011", "33BB44", "33BB44", "000011", "000011", "000011", "000011", "000011"],
+						["000011", "000011", "33BB44", "227733", "000011", "77DD66", "447733", "77DD66"],
+						["77DD66", "000011", "000011", "000011", "77DD66", "77DD66", "77DD66", "77DD66"]];
+
+var tree_bot_2_l = new Object();
+tree_bot_2_l.name = "Tree Bottom 2 L";
+tree_bot_2_l.order = 12;
+tree_bot_2_l.id = 12;
+tree_bot_2_l.data =	   [["77DD66", "000011", "000011", "000011", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["000011", "000011", "33BB44", "227733", "000011", "77DD66", "77DD66", "77DD66"],
+						["000011", "33BB44", "33BB44", "000011", "000011", "000011", "000011", "000011"],
+						["000011", "000011", "000011", "CCFFBB", "33BB44", "33BB44", "33BB44", "447733"],
+						["227733", "447733", "447733", "77DD66", "CCFFBB", "447733", "77DD66", "33BB44"],
+						["227733", "33BB44", "447733", "447733", "33BB44", "CCFFBB", "CCFFBB", "33BB44"],
+						["33BB44", "227733", "227733", "33BB44", "447733", "77DD66", "CCFFBB", "77DD66"],
+						["227733", "227733", "33BB44", "33BB44", "447733", "33BB44", "33BB44", "77DD66"]];
+
+var tree_bot_2_r = new Object();
+tree_bot_2_r.name = "Tree Bottom 2 R";
+tree_bot_2_r.order = 13;
+tree_bot_2_r.id = 13;
+tree_bot_2_r.data =	   [["227733", "227733", "33BB44", "33BB44", "447733", "33BB44", "33BB44", "77DD66"],
+						["33BB44", "227733", "227733", "33BB44", "447733", "77DD66", "CCFFBB", "77DD66"],
+						["227733", "33BB44", "447733", "447733", "33BB44", "CCFFBB", "CCFFBB", "33BB44"],
+						["227733", "447733", "447733", "77DD66", "CCFFBB", "77DD66", "77DD66", "33BB44"],
+						["000011", "000011", "000011", "CCFFBB", "33BB44", "33BB44", "33BB44", "447733"],
+						["000011", "33BB44", "33BB44", "000011", "000011", "000011", "000011", "000011"],
+						["000011", "000011", "33BB44", "227733", "000011", "77DD66", "447733", "77DD66"],
+						["77DD66", "000011", "000011", "000011", "77DD66", "77DD66", "77DD66", "77DD66"]];
+
+var g_tree = new Object();
+g_tree.name = "Tree";
+g_tree.gorder = 3;
+g_tree.gid = 3;
+g_tree.sprites = new Array( tree_top_l, tree_top_r, tree_mid_l, tree_mid_r, tree_bot_l, tree_bot_r, tree_stump_l, tree_stump_r, tree_mid_2_l, tree_mid_2_r, tree_top_2_l, tree_top_2_r, tree_bot_2_l, tree_bot_2_r );
 
 var fence = new Object();
 fence.name = "Fence";
 fence.order = 0;
 fence.id = 0;
-fence.data =       [["77DD66", "77DD66", "000011", "000011", "77DD66", "77DD66", "77DD66", "77DD66"],
-					["77DD66", "000011", "77DD66", "77DD66", "000011", "000011", "CCFF88", "77DD66"],
-					["000011", "77DD66", "CCFF88", "CCFF88", "77DD66", "77DD66", "000011", "000011"],
-					["000011", "CCFF88", "CCFF88", "CCFF88", "CCFF88", "CCFF88", "77DD66", "000011"],
-					["000011", "CCFF88", "CCFF88", "CCFF88", "CCFF88", "CCFF88", "77DD66", "000011"],
-					["000011", "CCFF88", "CCFF88", "CCFF88", "CCFF88", "CCFF88", "77DD66", "000011"],
-					["77DD66", "000011", "CCFF88", "77DD66", "77DD66", "000011", "000011", "77DD66"],
-					["77DD66", "77DD66", "000011", "000011", "000011", "77DD66", "77DD66", "77DD66"]];
+fence.data =	       [["77DD66", "77DD66", "000011", "000011", "77DD66", "77DD66", "77DD66", "77DD66"],
+						["77DD66", "000011", "77DD66", "77DD66", "000011", "000011", "CCFF88", "77DD66"],
+						["000011", "77DD66", "CCFF88", "CCFF88", "77DD66", "77DD66", "000011", "000011"],
+						["000011", "CCFF88", "CCFF88", "CCFF88", "CCFF88", "CCFF88", "77DD66", "000011"],
+						["000011", "CCFF88", "CCFF88", "CCFF88", "CCFF88", "CCFF88", "77DD66", "000011"],
+						["000011", "CCFF88", "CCFF88", "CCFF88", "CCFF88", "CCFF88", "77DD66", "000011"],
+						["77DD66", "000011", "CCFF88", "77DD66", "77DD66", "000011", "000011", "77DD66"],
+						["77DD66", "77DD66", "000011", "000011", "000011", "77DD66", "77DD66", "77DD66"]];
 
 var g_fence = new Object();
 g_fence.name = "Fence";
-g_fence.gorder = 3;
-g_fence.gid = 8;
+g_fence.gorder = 4;
+g_fence.gid = 4;
 g_fence.sprites = new Array( fence );
 
 /* Store sprites in an array */
-var demo_sprites = new Array( g_grass_bg, g_mat, g_bollard, g_fence );
+var demo_sprites = new Array( g_grass_bg, g_mat, g_bollard, g_tree, g_fence );
 
 /* Demo map */
 var blank_tile = new Object();
@@ -175,3 +363,115 @@ var project = empty_project;
 
 /* Load demo project */
 var project = demo_project;
+
+function export_data() {
+
+	/* Convert our data to the correct format for the Picosystem */
+	var output = ""
+
+	output += "#pragma once\n\n";
+	output += "namespace picosystem {\n\n";
+
+	/* Start by exporting all the sprites */
+	sort_groups_by_gorder();
+
+	/* Loop through each sprite group */
+	$.each( project.sprites , function( gi, group ) {
+
+		output += "  const uint16_t " + group.name.toLowerCase().replace( / /g, "_" ) + "[" +  ( group.sprites.length * 64 ) + "] = {\n";
+		
+		sort_sprites_by_order( group.gid );
+
+		$.each( group.sprites, function( si, sprite ) {
+
+			/* Convert pixel values for Picosystem */
+			var convert_sprite = new Array();
+			$.extend( true, convert_sprite, sprite.data ); /* Clone array */
+
+			/* Loop through each row of the sprite */
+			$.each( convert_sprite, function( ri, sprite_row ) {
+
+				/* Loop through each pixel */
+				$.each( sprite_row, function( ci, sprite_cell ) {
+
+					/* Convert to int */
+					var sprite_cell_int = parseInt(sprite_cell, 16);
+					/* Convert 24-bit colour to 12-bit colour for the Picosystem */
+					sprite_cell_int = ( ((sprite_cell_int & 0xF0) >> 4) | ((sprite_cell_int & 0xF000) >> 8) | ((sprite_cell_int & 0xF00000) >> 12) );
+					/* Add to the output */
+					convert_sprite[ri][ci] = "0x"+sprite_cell_int.toString(16).padStart(3, '0');
+				} );
+			} );
+
+			/* Now convert array of values to string */
+			var sprite_array = convert_sprite.toString();
+			sprite_array = sprite_array.replace( /,/g, ", " );
+			sprite_array = sprite_array.replace( /((?:.*?\s){7}.*?)\s/g, "$1\n    " )
+			output += "    " + sprite_array + ",\n";
+		} );
+
+		output += "  };\n\n";
+	});
+
+	output += "  const uint16_t* _texture_map[" + project.sprites.length + "] {\n";
+
+	/* Loop through each sprite group */
+	$.each( project.sprites , function( i, group ) {
+
+		output += "    " + group.name.toLowerCase().replace( / /g, "_" ) + ", // " + i + "\n";
+	});
+
+	output += "  };\n\n";
+
+	/* Next let's export the maps */
+	sort_maps_by_order();
+
+	/* Loop through each map */
+	$.each( project.maps , function( i, map ) {
+
+		var map_name_conv = map.name.toLowerCase().replace( / /g, "_" );
+		output += "  const struct map_tile _" + map_name_conv + "[" + map.height + "][" + map.width + "] = {\n";
+
+		/* Loop through the map, one row at a time */
+		$.each( map.data, function( ri, row ) {
+
+			output += "    { ";
+			
+			/* Add each cell */
+			$.each( row, function( ci, cell ) {
+
+				/* Add in the data for each cell */
+				output += "{";
+				output += Number(cell.can_walk[0]) + ", " + Number(cell.can_walk[1]) + ", " + Number(cell.can_walk[2]) + ", " + Number(cell.can_walk[3]) + ", ";
+				output += Number(cell.sprite_gid) + ", " + Number(cell.sprite_id) + ", " + Number(cell.sprite_reverse_x) + ", " + Number(cell.sprite_reverse_y) + ", ";
+				output += Number(cell.exit_tile) + ", " + Number(cell.exit_map_id) + ", {";
+				output += cell.exit_map_dir[0] + ", " + cell.exit_map_dir[1] + "}, {";
+				output += cell.exit_map_pos[0] + ", " + cell.exit_map_pos[1] + "} ";
+				output += "}, "
+			} );
+
+			output += "},\n";
+		} );
+
+		output += "  };\n";
+  		output += "  struct map " + map_name_conv + " = { " + map.id + ", *_" + map_name_conv + ", " + map.height + ", " + map.width + " };\n\n"
+
+	} );
+
+	output += "  map map_list[" + project.maps.length + "] {\n";
+
+	/* Loop through each map */
+	$.each( project.maps , function( i, map ) {
+
+		output += "    " + map.name.toLowerCase().replace( / /g, "_" ) + ", // " + map.id + "\n";
+	});
+
+	output += "  };\n\n";
+	output += "}";
+
+	var blob = new Blob( [output], { type: "text/plain" } );
+	var file = document.createElement( "a" );
+	file.download = project.name.toLowerCase().replace( / /g, "_" ) + ".hpp";
+	file.href = window.URL.createObjectURL( blob );
+	file.click();
+}

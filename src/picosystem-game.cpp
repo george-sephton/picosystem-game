@@ -11,9 +11,8 @@ https://datacrystal.romhacking.net/wiki/Pok%C3%A9mon_Red/Blue:RAM_map
 #include <picosystem.hpp>
 #include <picosystem-game.hpp>
 // Include assets
-#include <maps.hpp>
+#include <demo_project.hpp>
 #include <sprites.hpp>
-#include <textures.hpp>
 
 using namespace picosystem;
 
@@ -51,7 +50,7 @@ void init() {
   play(1000, 500, 100);
 
   // Load the map
-  _current_map = &map_list[0];
+  _current_map = &map_list[1];
 
   // Set our initial location
   map_pos = {3, 3};

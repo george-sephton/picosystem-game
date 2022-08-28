@@ -222,7 +222,7 @@ body {
 	overflow: auto;
 }
 #container #toolbar #settings {
-	display: flex;
+	display: none;
 	flex-direction: column;
 	gap: 14px;
 	box-sizing: border-box;
@@ -381,22 +381,49 @@ body {
 	font-size: 20px;
 	width: 80px;
 }
+#container #toolbar #upload_settings {
+	display: none;
+	flex-direction: column;
+	gap: 14px;
+	box-sizing: border-box;
+}
+#container #toolbar #upload_settings #upload_message {
+	justify-content: flex-start;
+	align-items: center;
+	gap: 8px;
+	margin: 6px 0 0 0;
+}
+#container #toolbar #upload_settings #upload_confirm {
+	justify-content: flex-start;
+	align-items: center;
+	gap: 8px;
+	margin: 6px 0 0 0;
+}
+#container #toolbar #upload_settings #upload_confirm input {
+	padding: 8px;
+	border: 1px solid #666;
+	color: #fff;
+	background: #333;
+	border-radius: 10px;
+	font-size: 14px;
+}
+#container #toolbar #upload_settings #upload_confirm input:hover {
+	background: #8bb1c7;
+	color: #333;
+	cursor: pointer;
+}
 #container #map_editor_container {
 	max-width: 100%;
 	background:#fff;
 	box-sizing: border-box;
 	padding: 10px;
 	overflow: auto;
-	display: flex;
+	display: none;
 	flex-grow: 1;
 	justify-content: center;
 	align-items: center;
 }
 #container #map_editor_container #map_editor {
-	display: none;
-}
-#container #map_editor_container #map_editor_loading {
-	background:#fff;
 	display: none;
 }
 #container #map_editor_container #map_editor #map_editor_table {
@@ -428,7 +455,7 @@ body {
 	box-sizing: border-box;
 	padding: 10px;
 	overflow: auto;
-	display: flex;
+	display: none;
 	flex-grow: 1;
 }
 #container #map_list .sortable li {
@@ -443,4 +470,18 @@ body {
 	background: #8bb1c7;
 	height: 1.5em;
 	line-height: 1.2em;
+}
+#container #project_upload {
+	max-width: 100%;
+	background:#fff;
+	box-sizing: border-box;
+	padding: 10px;
+	overflow: auto;
+	display: none;
+	flex-grow: 1;
+}
+#container #project_upload #upload_input {
+	box-sizing: border-box;
+	width: 100%;
+	flex: 1;
 }

@@ -78,6 +78,7 @@
 						<i class="bi-type" func="rename"></i>
 						<i class="bi-back" func="duplicate"></i>
 						<i class="bi-trash" func="delete"></i>
+						<i class="bi-paint-bucket picker" id="sprite_fill" func="sprite-fill" style="display: none;"></i>
 					</div>
 				</div>
 				<div id="sprite_list_toolbar_rename">
@@ -97,7 +98,9 @@
 				<div id="toolbar">
 					<div id="settings">
 						<div id="controls">
-							<i class="bi-plus-square-fill project_functions" func="new"></i>
+							<i class="bi-plus-square-fill project_functions" func="new-map"></i>
+							<div class="toolbar_separator project_functions"></div>
+							<i class="bi-type project_functions" func="rename-project"></i>
 							<i class="bi-cloud-upload-fill project_functions" func="open"></i>
 							<i class="bi-cloud-download-fill project_functions " func="download"></i>
 							<i class="bi-file-earmark-code-fill project_functions" func="export"></i>
@@ -176,16 +179,25 @@
 							<input type="number" id="map_rows" name="map_rows" value="" min="3" max="40" onKeyDown="return false" />
 						</div>
 					</div>
+					<div id="upload_settings">
+						<div id="upload_message">
+							Paste your JSON file in the box below
+						</div>
+						<div id="upload_confirm">
+							<label id="map_confirm_prompt"></label>
+							<input type="button" id="map_done" value="Done"  />
+						</div>
+					</div>
 				</div>
 				<div id="map_editor_container">
 					<div id="map_editor"></div>
-					<div id="map_editor_loading">
-						Map Loading
-					</div>
 				</div>
 				<div id="map_list">
 					<ul class="sortable">
 					</ul>
+				</div>
+				<div id="project_upload">
+					<textarea id="upload_input"></textarea>
 				</div>
 			</div>
 		</div>

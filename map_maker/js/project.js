@@ -7,6 +7,8 @@ function load_project_view() {
 
 	$( "#container #content" ).css( "max-width", "100%" );
 
+	$( "#container #content #toolbar #upload_settings" ).css( "display", "none" );
+	$( "#container #content #toolbar #settings" ).css( "display", "flex" );
 	$( "#container #content #toolbar #settings #name_input_container" ).css( "display", "flex" );
 	$( "#container #content #toolbar #settings #name_input_container #name_input" ).attr( "disabled", "disabled" );
 	$( "#container #content #toolbar #settings #name_input_container #name_input" ).val( "" );
@@ -23,6 +25,7 @@ function load_project_view() {
 	$( "#container #content #map_editor_container #map_editor_loading" ).css( "display", "none" );
 
 	$( "#container #content #map_list" ).css( "display", "flex" );
+	$( "#container #content #project_upload" ).css( "display", "none" );
 
 	/* Show project icons */
 	$( ".project_functions" ).css( "display", "block" );
@@ -54,7 +57,7 @@ function load_map_list() {
 	$( "#map_list .sortable li" ).css( "color", "#000" );
 
 	/* Add project name */
-	$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "placeholder", project.name );
+	$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "placeholder", decodeURI( project.name ) );
 	
 	if( project.maps.length != 0 ) {
 
@@ -124,7 +127,7 @@ function project_toolbar_event_listeners() {
 		console.log( func );
 
 		switch( func ) {
-			case "new":
+			case "new-map":
 				
 				/* Reset toolbar for a clean start */
 				map_editor_toolbar_reset();
@@ -209,10 +212,138 @@ function project_toolbar_event_listeners() {
 						
 						/* Put things back the way they were */
 						$( "#container #toolbar #settings #name_input_container #name_input" ).val( "" );
-						$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "placeholder", project.name );
+						$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "placeholder", decodeURI( project.name ) );
 						$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "disabled", "disabled" );
 					}
 				} );
+				break;
+			case "rename-project":
+				
+				/* Reset toolbar for a clean start */
+				map_editor_toolbar_reset();
+
+				/* Disable controls - don't hide the name input */
+				disable_controls( false );
+
+				$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "placeholder", decodeURI( project.name ) );
+				$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "disabled", false );
+				$( "#container #toolbar #settings #name_input_container #name_input" ).focus();
+
+				/* Add event listeners */
+				$( "#container #toolbar #settings #name_input_container #name_input" ).on( "keyup blur", function( e ) {
+
+					/* Save the change */
+					if( e.key == "Enter" ) {
+
+						var project_name_value = encodeURI( $( this ).val() );
+						
+						if( project_name_value != "" ) {
+							project.name = project_name_value;
+						}
+
+						/* Re-enable controls */
+						enable_controls();
+
+						/* Remove event listeners */
+						$( "#container #toolbar #settings #name_input_container #name_input" ).unbind( "keyup blur" );
+						
+						/* Put things back the way they were */
+						$( "#container #toolbar #settings #name_input_container #name_input" ).val( "" );
+						$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "placeholder", decodeURI( project.name ) );
+						$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "disabled", "disabled" );
+					}
+					/* Discard change */
+					if( ( e.key == "Escape" ) || ( e.type == "blur" ) ) {
+
+						/* Re-enable controls */
+						enable_controls();
+
+						/* Remove event listeners */
+						$( "#container #toolbar #settings #name_input_container #name_input" ).unbind( "keyup blur" );
+						
+						/* Put things back the way they were */
+						$( "#container #toolbar #settings #name_input_container #name_input" ).val( "" );
+						$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "placeholder", decodeURI( project.name ) );
+						$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "disabled", "disabled" );
+					}
+				} );
+				break;
+			case "download":
+				var blob = new Blob( [ JSON.stringify( project ) ], { type: "text/json" } );
+				var file = document.createElement( "a" );
+				file.download = project.name.toLowerCase().replace( / /g, "_" ) + ".json";
+				file.href = window.URL.createObjectURL( blob );
+				file.click();
+				break;
+			case "open":
+				/* Disable controls */
+					disable_controls();
+
+					/* Show the confirmation prompt */
+					$( "#container #toolbar #settings #map_confirm #map_confirm_prompt" ).html( "Would you like to close this project and open a new one?" );
+
+					$( "#container #toolbar #settings #map_confirm input[type=button]" ).css( "display", "block" );
+					$( "#container #toolbar #settings #map_confirm #map_done" ).css( "display", "none" );
+
+					$( "#container #toolbar #settings #map_confirm" ).css( "display", "flex" );
+
+					/* Add event listeners */
+					$( "#container #toolbar #settings #map_confirm input[type=button]" ).on( "click" , function( e ) {
+						
+						if( $( this ).attr( "id" ) == "map_confirm_y" ) {
+
+							$( "#container #content #toolbar #settings" ).css( "display", "none" );
+							$( "#container #content #map_list" ).css( "display", "none" );
+							$( "#container #content #toolbar #upload_settings" ).css( "display", "flex" );
+							$( "#container #content #project_upload" ).css( "display", "flex" );
+
+							/* Upload toolbar event listener */
+							$( "#container #toolbar #upload_settings #upload_confirm #map_done" ).on( "click", function() {
+
+								if( $( "#container #project_upload #upload_input" ).val() != "" ) {
+
+									/* Convert JSON to object and set as the active project */
+									try {
+										var uploaded_project = JSON.parse( $( "#container #project_upload #upload_input" ).val() );
+										project = uploaded_project;
+
+										/* Clear the input */
+										$( "#container #project_upload #upload_input" ).val( "" )
+
+										/* Remove event listener */
+										$( "#container #toolbar #upload_settings #upload_confirm #map_done" ).unbind( "click" );
+
+										/* Re-enable controls */
+										enable_controls();
+
+										/* Load project view */
+										load_project_view();
+									} 
+									catch( exc ) {
+										/* Clear the input */
+										$( "#container #project_upload #upload_input" ).val( "" )
+									}									
+								}
+
+							} );
+
+						} else if( $( this ).attr( "id" ) == "map_confirm_n" ) {
+							
+							/* Re-enable controls */
+							enable_controls();
+						}
+
+						/* Remove event listeners */
+						$( "#container #toolbar #settings #map_confirm input[type=button]" ).unbind( "click" );
+
+						/* Hide the confirmation prompt */
+						$( "#container #toolbar #settings #map_confirm #map_confirm_prompt" ).html( "" );
+
+						$( "#container #toolbar #settings #map_confirm" ).css( "display", "none" );
+					});
+				break;
+			case "export":
+				export_data();
 				break;
 		}
 	} );
