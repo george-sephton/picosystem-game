@@ -111,13 +111,6 @@
 	color: #8bb1c7;
 	cursor: pointer;
 }
-#container #sidebar #texture_list_toolbar .resize_disabled {
-	color: #999;
-}
-#container #sidebar #texture_list_toolbar .resize_disabled:hover {
-	color: #999;
-	cursor: auto;
-}
 #container #sidebar #texture_list_toolbar #toolbar_left i {
 	margin: 0 8px 0 0;
 }
@@ -143,6 +136,7 @@
 	cursor: pointer;
 }
 #container #sidebar #texture_list .sortable .ui-texture  {
+	background: #fff;
 	margin-left: 20px;
 }
 #container #sidebar #texture_list .sortable .ui-texture:hover  {

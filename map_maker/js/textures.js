@@ -16,39 +16,41 @@ function load_texture_list() {
 	
 	/* Check if we are showing groups or textures */
 	if( selected_texture.group == false ) {
+		
 		/* Groups */
 		sort_texture_groups_by_gorder();
 
 		$.each( project.textures, function( key, value ) {
-			$( "#texture_list .sortable" ).append( '<li class="ui-state-default ui-group" g_texture_id="'+value.gid+'">'+value.gorder+': '+value.name+' ('+value.gid+')</li>' );
+			$( "#texture_list .sortable" ).append( '<li class="ui-state-default ui-group" g_texture_id="' + value.gid + '">' + value.name + '</li>' );
 		} );
 
 		/* Clear the current texture id */
 		selected_texture.texture = false;
 
 		/* Set the icons */
-		$( "#toolbar_new_group" ).css( "display", "block" );
-		$( "#toolbar_new_texture" ).css( "display", "none" );
-		$( "#toolbar_back" ).css( "display", "none" );
-		$( "#container #sidebar #texture_list_toolbar #toolbar_right" ).css( "display", "none" );
+		$( "#texture_list_toolbar #toolbar_left #toolbar_new_group" ).css( "display", "block" );
+		$( "#texture_list_toolbar #toolbar_left #toolbar_new_texture" ).css( "display", "none" );
+		$( "#texture_list_toolbar #toolbar_left #toolbar_back" ).css( "display", "none" );
+		$( "#texture_list_toolbar #toolbar_right" ).css( "display", "none" );
 
 	} else {
-		/* textures */
+		
+		/* Textures */
 		sort_textures_by_order( selected_texture.group.gid );
 
 		/* Add the group name */
-		$( "#texture_list .sortable" ).append( '<li class="ui-state-default ui-state-disabled ui-group" g_texture_id="'+selected_texture.group.gid+'">'+selected_texture.group.name+' ('+selected_texture.group.gid+')</li>' );
+		$( "#texture_list .sortable" ).append( '<li class="ui-state-default ui-state-disabled ui-group" g_texture_id="' + selected_texture.group.gid + '">' + selected_texture.group.name + '</li>' );
 
 		$.each( selected_texture.group.textures, function( key, value ) {
-			$( "#texture_list .sortable" ).append( '<li class="ui-state-default ui-texture" texture_id="'+value.id+'">'+value.name+'</li>' );
+			$( "#texture_list .sortable" ).append( '<li class="ui-state-default ui-texture" texture_id="' + value.id + '">' + value.name + '</li>' );
 		} );
 
 		if( selected_texture.texture == false ) {
 			/* Highlight parent group */
-			$( "#texture_list .sortable li[g_texture_id='"+selected_texture.group.gid+"']" ).css( "color", "#154561" );
+			$( "#texture_list .sortable li[g_texture_id='" + selected_texture.group.gid + "']" ).css( "color", "#154561" );
 		} else {
 			/* Highlight selected texture */
-			$( "#texture_list .sortable li[texture_id='"+selected_texture.texture.id+"']" ).css( "color", "#195170" );
+			$( "#texture_list .sortable li[texture_id='" + selected_texture.texture.id + "']" ).css( "color", "#195170" );
 
 			/* Store the texture state */
 			selected_texture.texture_reverse_x = false;
@@ -62,10 +64,10 @@ function load_texture_list() {
 		}
 
 		/* Set the icons */
-		$( "#toolbar_new_group" ).css( "display", "none" );
-		$( "#toolbar_new_texture" ).css( "display", "block" );
-		$( "#toolbar_back" ).css( "display", "block" );
-		$( "#container #sidebar #texture_list_toolbar #toolbar_right" ).css( "display", "flex" );
+		$( "#texture_list_toolbar #toolbar_left #toolbar_new_group" ).css( "display", "none" );
+		$( "#texture_list_toolbar #toolbar_left #toolbar_new_texture" ).css( "display", "block" );
+		$( "#texture_list_toolbar #toolbar_left #toolbar_back" ).css( "display", "block" );
+		$( "#texture_list_toolbar #toolbar_right" ).css( "display", "flex" );
 	}
 
 	/* Add event listeners to the list */
@@ -103,17 +105,20 @@ function texture_list_event_listeners() {
 	$( "#texture_list .sortable li" ).on( "click" , function( e ) {
 
 		/* Ignore clicks on the items in the texture list when resizing the canvas or erasing */
-		if( ( map_resizing.en == false ) && ( drawing_functions != 2 ) ) {
+		if( ( controls_disabled == false ) && ( drawing_functions != 2 ) ) {
 
 			if( selected_texture.group == false ) {
+
 				/* Top level click, no texture or group selected */
 				selected_texture.group = project.textures.find( obj => obj.gid == $( this ).attr( "g_texture_id" ) );
 				load_texture_list();
 			} else {
+
 				/* Group level click - either texture or parent group selected */
 				if( ( $( this ).hasClass( "ui-group" ) ) && ( drawing_functions == 1 ) ) {
 					/* Ignore clicks on groups when drawing */
 				} else {
+
 					if( $( this ).attr( "texture_id" ) != undefined) {
 						/* Set selected texture */
 						selected_texture.texture = selected_texture.group.textures.find( obj => obj.id == $( this ).attr( "texture_id" ) );
@@ -197,7 +202,7 @@ function load_texture_editor_colour_pickers() {
 			/* Leaving this in as occasionally the colour picker bugs out and I don't know why */
 			console.log( $( this ) );
 
-			if( ( map_resizing.en == true ) || ( drawing_functions != false ) ) {
+			if( ( controls_disabled == true ) || ( drawing_functions != false ) ) {
 				
 				/* Clear the drawing function now that we've avoided it re-opening after the user has finished with the paint tool */
 				if( drawing_functions == 4 )
@@ -397,7 +402,7 @@ function texture_toolbar_event_listeners() {
 	/* texture toolbar event listeners */
 	$( "#container #sidebar #texture_list_toolbar i:not( #texture_fill ):not( #texture_paint )" ).click(function() {
 		
-		if( ( map_resizing.en == false ) && ( drawing_functions == false ) ) {
+		if( ( controls_disabled == false ) && ( drawing_functions == false ) ) {
 
 			var func = $( this ).attr( "func" );
 			

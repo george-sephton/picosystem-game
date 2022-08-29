@@ -45,7 +45,7 @@ function load_map_editing_view() {
 	selected_texture.group = false;
 
 	drawing_functions = false;
-	map_resizing.en = false;
+	controls_disabled = false;
 
 	/* Load map editor */
 	load_map_editor();
@@ -74,7 +74,7 @@ function close_map_editing_view() {
 	selected_texture.group = false;
 	selected_map = false;
 	drawing_functions = false;
-	map_resizing.en = false;
+	controls_disabled = false;
 
 	/* Clear map editing elements */
 	$( "#container #sidebar #texture_list .sortable" ).html( "" );
@@ -94,12 +94,12 @@ function load_map_editor() {
 	$( "#container #map_editor_container #map_editor" ).html( '<table id="map_editor_table"></table>' );
 
 	/* Add map rows */
-	var show_rows = map_resizing.en ? map_resizing.new_height : selected_map.height;
+	var show_rows = controls_disabled ? map_resizing.new_height : selected_map.height;
 	for(i=0; i<show_rows; i++)
 		$( "#map_editor_table" ).append( '<tr row_id="' + i + '" class="map_editor_table_row"></tr>' );
 
 	/* Add map cells for each row */
-	var show_cols = map_resizing.en ? map_resizing.new_width : selected_map.width;
+	var show_cols = controls_disabled ? map_resizing.new_width : selected_map.width;
 	$( "#map_editor_table" ).children().each( function() {
 		for(i=0; i<show_cols; i++)
 			$( '<td col_id="'+i+'" class="map_editor_table_cell"></td>' ).appendTo( $(this) );
@@ -145,7 +145,7 @@ function load_map_editor() {
 		} else {
 
 			/* Whilst resizing, don't render the texture */
-			if(map_resizing.en == true) {	
+			if(controls_disabled == true) {	
 				$( this ).css( "background", "#327da8" );
 			} else {
 				/* Add the texture table */
@@ -289,7 +289,7 @@ function map_toolbar_event_listeners() {
 	$( "#container #toolbar #settings #controls i" ).click(function() {
 		
 		/* Functions disabled whilst map is being re-sized */
-		if( map_resizing.en == false ) {
+		if( controls_disabled == false ) {
 
 			var func = $( this ).attr( "func" );
 
@@ -571,7 +571,7 @@ function map_toolbar_event_listeners() {
 					break;
 				case "resize-canvas":
 
-					if( map_resizing.en == false ) {
+					if( controls_disabled == false ) {
 						
 						/* Enable resizing mode */
 						map_resizing.new_width = selected_map.width;
@@ -703,7 +703,7 @@ function map_toolbar_event_listeners() {
 	$( "#container #toolbar #map_paint_settings" ).on( "keyup change", function( e ) {
 		
 		/* Functions disabled whilst map is being re-sized */
-		if( map_resizing.en == false ) {
+		if( controls_disabled == false ) {
 			
 			var element = $( e.target );
 
@@ -1187,7 +1187,7 @@ function display_tile_info( tile_row, tile_col ) {
 
 function disable_controls( hide_name_input = true ) {
 	
-	map_resizing.en = true;
+	controls_disabled = true;
 
 	/* Disable all other controls */
 	$( "#container #toolbar #settings #controls i" ).addClass( "resize_disabled" );
@@ -1205,7 +1205,7 @@ function disable_controls( hide_name_input = true ) {
 
 function enable_controls() {
 	
-	map_resizing.en = false;
+	controls_disabled = false;
 
 	/* Re-enable all other controls */
 	$( "#container #toolbar #settings #controls i" ).removeClass( "resize_disabled" );

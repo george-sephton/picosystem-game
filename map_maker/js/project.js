@@ -46,8 +46,9 @@ function load_project_view() {
 	/* Load map list */
 	load_map_list();
 
-	/* Load project event listeners */
+	/* Toolbar event listeners */
 	project_toolbar_event_listeners();
+	sprite_toolbar_event_listeners();
 
 	/* Load sprite list */
 	load_sprite_list();
@@ -441,25 +442,153 @@ function load_sprite_list() {
 	/* Clear texture list */
 	$( "#sprite_list .sortable" ).html( "" );
 	$( "#sprite_list .sortable li" ).css( "color", "#000" );
-	
-	if( project.sprites.length != 0 ) {
 
-	 	/* Sort maps into order */
+	/* Clear fill and paint texture icons */
+	$( "#sprite_fill" ).css( "display", "none" );
+	$( "#sprite_paint" ).css( "display", "none" );
+	
+	/* Check if we are showing groups or sprites */
+	if( selected_sprite.group == false ) {
+		
+		/* Groups */
 		sort_sprite_groups_by_gorder();
 
-		/* Add all the maps to the list */
 		$.each( project.sprites, function( key, value ) {
-			$( "#sprite_list .sortable" ).append( '<li class="ui-state-default" map_id="' + value.id + '">' + value.name + '</li>' );
+			$( "#sprite_list .sortable" ).append( '<li class="ui-state-default ui-group" g_sprite_id="' + value.gid + '">' + value.gorder + ': ' + value.name + ' (' + value.gid + ')</li>' );
 		} );
 
-		/* Add event listeners to the list */
-		//map_list_event_listeners();
-	
-		/* Add sorting capability */
-		map_list_sortable();	
+		/* Clear the current sprite id */
+		selected_sprite.sprite = false;
+
+		/* Set the icons */
+		$( "#sprite_list_toolbar #toolbar_left #toolbar_new_group" ).css( "display", "block" );
+		$( "#sprite_list_toolbar #toolbar_left #toolbar_new_sprite" ).css( "display", "none" );
+		$( "#sprite_list_toolbar #toolbar_left #toolbar_back" ).css( "display", "none" );
+		$( "#sprite_list_toolbar #toolbar_right" ).css( "display", "none" );
+
+	} else {
+
+		/* Sprites */
+		sort_sprites_by_order( selected_sprite.group.gid );
+
+		/* Add the group name */
+		$( "#sprite_list .sortable" ).append( '<li class="ui-state-default ui-state-disabled ui-group" g_sprite_id="' + selected_sprite.group.gid + '">' + selected_sprite.group.name + ' (' + selected_sprite.group.gid + ')</li>' );
+
+		$.each( selected_sprite.group.sprites, function( key, value ) {
+			$( "#sprite_list .sortable" ).append( '<li class="ui-state-default ui-sprite" sprite_id="' + value.id + '">' + value.order + ': ' + value.name + ' (' + value.id + ')</li>' );
+		} );
+
+		if( selected_sprite.sprite == false ) {
+			/* Highlight parent group */
+			$( "#sprite_list .sortable li[g_sprite_id='" + selected_sprite.group.gid + "']" ).css( "color", "#154561" );
+		} else {
+			/* Highlight selected sprite */
+			$( "#sprite_list .sortable li[sprite_id='" + selected_sprite.sprite.id + "']" ).css( "color", "#195170" );
+		}
+
+		/* Set the icons */
+		$( "#sprite_list_toolbar #toolbar_left #toolbar_new_group" ).css( "display", "none" );
+		$( "#sprite_list_toolbar #toolbar_left #toolbar_new_sprite" ).css( "display", "block" );
+		$( "#sprite_list_toolbar #toolbar_left #toolbar_back" ).css( "display", "block" );
+		$( "#sprite_list_toolbar #toolbar_right" ).css( "display", "flex" );
 	}
 
-	/* Set the icons */
+	/* Add event listeners to the list */
+	sprite_list_event_listeners();
+	
+	/* Add sorting capability */
+	sprite_list_sortable();
+	
+	/* Reload sprite Editor */
+	//load_sprite_editor();
+
+	/* Disable hovering for draw functions */
+	/*if( drawing_functions == 1 )
+		$( "#container #sidebar #texture_list #texture_list .sortable .ui-group" ).addClass( "resize_disabled" );
+	else if( ( drawing_functions == 2 ) || ( drawing_functions == 3 ) )
+		$( "#container #sidebar #texture_list #texture_list .sortable li" ).addClass( "resize_disabled" );*/
+
+	/* Disable cursor on texture editor */
+	//if( drawing_functions != false )
+	//	$( ".picker" ).addClass( "auto_cursor" );
+}
+
+function clear_sprite_list_event_listeners() {
+	
+	$( "#sprite_list .sortable li" ).unbind( "click" );
+	$( "#sprite_lis" ).unbind( "click" ); /* For click out - not implemented */
+}
+
+function sprite_list_event_listeners() {
+	
+	/* Remove existing event listeners */
+	clear_sprite_list_event_listeners();
+
+	/* Add onClick event listeners */
+	$( "#sprite_list .sortable li" ).on( "click" , function( e ) {
+
+		/* Ignore clicks on the items in the sprite list when controls disabled */
+		if( controls_disabled == false ) {
+
+			if( selected_sprite.group == false ) {
+
+				/* Top level click, no sprite or group selected */
+				selected_sprite.group = project.sprites.find( obj => obj.gid == $( this ).attr( "g_sprite_id" ) );
+				load_sprite_list();
+			} else {
+
+				/* Group level click - either texture or parent group selected */
+				if( $( this ).hasClass( "ui-group" ) ) {
+					/* Ignore clicks on groups when drawing */
+				} else {
+
+					if( $( this ).attr( "sprite_id" ) != undefined) {
+						/* Set selected sprite */
+						selected_sprite.sprite = selected_sprite.group.sprites.find( obj => obj.id == $( this ).attr( "sprite_id" ) );
+					} else {	
+						/* Clear selected sprite */
+						selected_sprite.sprite = false;
+					}
+
+					/* Reload texture list */
+					load_sprite_list();
+				}
+			}
+		}
+	});
+}
+
+function clear_sprite_toolbar_event_listeners() {
+	
+	$( "#container #sidebar #texture_list_toolbar i:not( .picker )" ).unbind( "click" );
+}
+
+function sprite_toolbar_event_listeners() {
+
+	/* Remove all event listeners */
+	clear_sprite_toolbar_event_listeners();
+
+	/* texture toolbar event listeners */
+	$( "#container #content #project_view #sprite_editor_container #sprite_list_toolbar i:not( #texture_fill ):not( #texture_paint )" ).click(function() {
+		
+		if( ( controls_disabled == false ) && ( drawing_functions == false ) ) {
+
+			var func = $( this ).attr( "func" );
+			
+			switch( func ) {
+				case "back": /* Return to list of sprite groups */
+
+					selected_sprite.texture = false;
+					selected_sprite.group = false;
+					
+					/* Reload sprite list */
+					load_sprite_list();
+					break;
+
+				
+			}
+		}
+	});
 }
 
 function clear_sprite_list_sortable() {
@@ -476,8 +605,6 @@ function sprite_list_sortable() {
 	
 	/* Destroy existing sortable list */
 	clear_sprite_list_sortable();
-
-	
 }
 
 function load_sprite_editor_colour_pickers() {

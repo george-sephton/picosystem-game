@@ -41,6 +41,13 @@ body {
 .sortable li {
 	cursor: pointer;
 }
+.resize_disabled {
+	color: #999 !important;
+}
+.resize_disabled:hover {
+	color: #999 !important;
+	cursor: auto !important;
+}
 
 
 #container {

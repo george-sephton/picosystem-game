@@ -3,7 +3,6 @@
 	width: 100%;
 }
 #container #content #project_view .sortable li {
-	width: 100%;
 	box-sizing: border-box;
 	font-size: 1.2em;
 	margin: 0 0 5px 0;
@@ -43,6 +42,13 @@
 }
 #container #content #project_view #map_list_container #map_list {
 }
+#container #content #project_view #map_list_container #map_list .sortable li  {
+	background: #fff;
+}
+#container #content #project_view #map_list_container #map_list .sortable li:hover  {
+	background: #ccc;
+	cursor: pointer;
+}
 
 
 #container #content #project_view #sprite_list_container {
@@ -60,7 +66,25 @@
 	font-size: 22px;
 }
 #container #content #project_view #sprite_list_container #sprite_list {
+	box-sizing: border-box;
 }
+#container #content #project_view #sprite_list_container #sprite_list .sortable .ui-group  {
+	background: #ccc;
+}
+#container #content #project_view #sprite_list_container #sprite_list .sortable .ui-group:hover  {
+	background: #999;
+	cursor: pointer;
+}
+#container #content #project_view #sprite_list_container #sprite_list .sortable .ui-sprite  {
+	background: #fff;
+	margin-left: 20px;
+}
+#container #content #project_view #sprite_list_container #sprite_list .ui-sprite:hover  {
+	background: #ccc;
+	cursor: pointer;
+}
+
+
 #container #content #project_view #sprite_editor_container {
 	min-width: 600px;
 	max-width: 600px;

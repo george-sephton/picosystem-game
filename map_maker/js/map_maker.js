@@ -14,6 +14,11 @@ selected_texture.exit_map_id = false;
 selected_texture.exit_map_dir = [0, 0];
 selected_texture.exit_map_pos = [0, 0];
 
+/* Store the currently selected sprite */
+var selected_sprite = new Object();
+selected_sprite.sprite = false;
+selected_sprite.group = false;
+
 /* Store current map info */
 var selected_map = false;
 var map_cell_size = 10;
@@ -23,9 +28,11 @@ var drawing_functions = false;
 
 /* Store map resizing information */
 var map_resizing = new Object();
-map_resizing.en = false;
 map_resizing.new_width = 0;
 map_resizing.new_height = 0;
+
+/* Store if controls are disabled */
+var controls_disabled = false;
 
 function sanitise_input( input_text ) {
 
