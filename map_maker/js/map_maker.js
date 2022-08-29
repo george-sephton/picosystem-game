@@ -16,8 +16,12 @@ selected_texture.exit_map_pos = [0, 0];
 
 /* Store the currently selected sprite */
 var selected_sprite = new Object();
-selected_sprite.sprite = false;
-selected_sprite.group = false;
+//selected_sprite.sprite = false;
+//selected_sprite.group = false;
+
+/* Dev */
+selected_sprite.sprite = project.sprites[0].sprites[0];
+selected_sprite.group = project.sprites[0];
 
 /* Store current map info */
 var selected_map = false;

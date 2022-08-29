@@ -331,8 +331,6 @@ function texture_update( texture_fill, hex, texture_row, texture_col ) {
 
 function load_texture_editor() {
 	
-	/* Clear parent selector */
-	$( "#texture_parent_selector" ).html( "" );
 	/* Hide delete confirmation prompt and show the toolbar */
 	$( "#container #sidebar #texture_list_toolbar_delete" ).css( "display", "none" );
 	$( "#container #sidebar #texture_list_toolbar" ).css( "display", "flex" );

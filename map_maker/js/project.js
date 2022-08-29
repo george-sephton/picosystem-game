@@ -446,6 +446,7 @@ function load_sprite_list() {
 	/* Clear fill and paint texture icons */
 	$( "#sprite_fill" ).css( "display", "none" );
 	$( "#sprite_paint" ).css( "display", "none" );
+	$( "#sprite_erase" ).css( "display", "none" );
 	
 	/* Check if we are showing groups or sprites */
 	if( selected_sprite.group == false ) {
@@ -500,7 +501,7 @@ function load_sprite_list() {
 	sprite_list_sortable();
 	
 	/* Reload sprite Editor */
-	//load_sprite_editor();
+	load_sprite_editor();
 
 	/* Disable hovering for draw functions */
 	/*if( drawing_functions == 1 )
@@ -556,6 +557,52 @@ function sprite_list_event_listeners() {
 			}
 		}
 	});
+}
+
+function load_sprite_editor() {
+	
+	/* Hide delete confirmation prompt and show the toolbar */
+	//$( "#container #sidebar #texture_list_toolbar_delete" ).css( "display", "none" );
+	//$( "#container #sidebar #texture_list_toolbar" ).css( "display", "flex" );
+
+	if ( selected_sprite.sprite != false ) {
+
+		/* Show fill and paint texture icons */
+		$( "#sprite_fill" ).css( "display", "block" );
+		$( "#sprite_paint" ).css( "display", "block" );
+		$( "#sprite_erase" ).css( "display", "block" );
+
+		/* Show the editor */
+		$( "#container #content #project_view #sprite_editor_container #sprite_editor" ).css( "display", "flex" );
+		$( "#container #content #project_view #sprite_editor_container #sprite_editor_empty" ).css( "display", "none" );
+
+		/* Setup the texture editor */
+		$( "#sprite_editor table tr" ).children().each( function() {
+			
+			var pixel_value = selected_sprite.sprite.data[ $( this ).attr( "col_id" ) ][ $( this ).parent().attr( "row_id" ) ];
+
+			/* Check if it's not a transparent pixel */
+			if( pixel_value != "" ) {
+				$( this ).css( "background", "#" + pixel_value );
+				$( this ).removeClass( "trans_background" )
+			} else {
+				$( this ).css( "background", "#fff" );
+				$( this ).addClass( "trans_background" )
+			}
+		} );
+	} else {
+
+		/* Clear the editor */
+		$( "#container #content #project_view #sprite_editor_container #sprite_editor" ).css( "display", "none" );
+		$( "#container #content #project_view #sprite_editor_container #sprite_editor_empty" ).css( "display", "flex" );
+
+		/* Clear fill and paint texture icons */
+		$( "#texture_fill" ).css( "display", "none" );
+		$( "#texture_paint" ).css( "display", "none" );
+
+		/* Clear the paint preview */
+		clear_texture_paint_preview();
+	}
 }
 
 function clear_sprite_toolbar_event_listeners() {
@@ -622,7 +669,58 @@ function load_sprite_editor_colour_pickers() {
 			$( '<td col_id="'+i+'" class="picker"></td>' ).appendTo( $(this) );
 	} );
 
-	
+	/* Add in the colour pickers */
+	$( '.picker ' ).colpick( {
+		layout: "hex",
+		submit: "OK",
+		onShow: function( e ) {
+
+			/* Leaving this in as occasionally the colour picker bugs out and I don't know why */
+			console.log( $( this ) );
+
+			if( ( controls_disabled == true ) || ( drawing_functions != false ) ) {
+				
+				/* Clear the drawing function now that we've avoided it re-opening after the user has finished with the paint tool */
+				if( drawing_functions == 4 )
+					drawing_functions = false;
+
+				/* Hide the colour picker */
+				return false;
+			}
+
+			/* Set the colour picker to show the currently selected colour, ignore if it's the fill icon */
+			//if( ( $( this ).attr( "id" ) != "texture_fill" ) && ( $( this ).attr( "id" ) != "texture_paint" ) )
+			//	$( this ).colpickSetColor( selected_texture.texture.data[ $( this ).attr( "col_id" ) ][ $( this ).parent().attr( "row_id" ) ], true );
+		},
+		onSubmit: function( hsb, hex, rgb, e ) {
+
+			var sprite_fill = false;
+			if( $( this.el ).attr( "id" ) == "sprite_fill" ) {
+				
+				
+			} else if( $( this.el ).attr( "id" ) == "sprite_paint" ) {
+
+				
+			} else {
+
+				/* We've selected a pixel colour, update the cell background */
+				$( this.el ).css("background", "#" + hex );
+				$( this.el ).removeClass( "trans_background" )
+
+				/* Update the local array */
+				var sprite_row = $( this.el ).parent().attr( "row_id" );
+				var sprite_col = $( this.el ).attr( "col_id" );
+
+				selected_sprite.sprite.data[ sprite_col ][ sprite_row ] = hex;
+			}
+			
+			//if( !drawing_functions )
+				//texture_update( sprite_fill, hex, texture_row, texture_col );
+				
+			/* Hide the colour picker */
+			$( e ).colpickHide();
+		}
+	} );
 }
 
 function sort_sprite_groups_by_gid() {
