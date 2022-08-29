@@ -20,6 +20,16 @@ function load_map_editing_view() {
 	$( "#container #content #toolbar #map_paint_settings" ).css( "display", "none" );
 	$( "#container #content #toolbar #map_size_settings" ).css( "display", "none" );
 
+	$( "#container #content #project_view #sprite_editor_container #sprite_editor" ).css( "display", "none" );
+	$( "#container #content #project_view #sprite_editor_container #sprite_editor_empty" ).css( "display", "none" );
+	$( "#container #content #project_view #sprite_editor_container #sprite_list_toolbar" ).css( "display", "none" );
+	$( "#container #content #project_view #sprite_editor_container #sprite_list_toolbar #toolbar_right" ).css( "display", "none" );
+
+	$( "#container #content #project_view" ).css( "display", "none" );
+	$( "#container #content #project_view #sprite_editor_container" ).css( "display", "none" );
+	$( "#container #content #project_view #sprite_list_container" ).css( "display", "none" );
+	$( "#container #content #project_view #map_list_container" ).css( "display", "none" );
+
 	$( "#container #content #map_editor_container" ).css( "display", "flex" );
 	$( "#container #content #map_editor_container #map_editor" ).css( "display", "none" );
 
@@ -685,8 +695,6 @@ function map_toolbar_event_listeners() {
 		}
 
 	});
-
-	/* Add event listeners to the tile settings panel */
 
 	/* Remove all event listeners */
 	$( "#container #toolbar #map_paint_settings" ).unbind( "keyup change" );

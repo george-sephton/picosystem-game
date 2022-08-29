@@ -17,7 +17,7 @@ function load_texture_list() {
 	/* Check if we are showing groups or textures */
 	if( selected_texture.group == false ) {
 		/* Groups */
-		sort_groups_by_gorder();
+		sort_texture_groups_by_gorder();
 
 		$.each( project.textures, function( key, value ) {
 			$( "#texture_list .sortable" ).append( '<li class="ui-state-default ui-group" g_texture_id="'+value.gid+'">'+value.gorder+': '+value.name+' ('+value.gid+')</li>' );
@@ -458,11 +458,11 @@ function texture_toolbar_event_listeners() {
 									new_group.name = new_name;
 
 									/* Get new GID value */
-									sort_groups_by_gid();
+									sort_texture_groups_by_gid();
 									new_group.gid = ( project.textures.length != 0 ) ? ( project.textures[project.textures.length - 1].gid + 1 ) : 0;
 
 									/* Get new order value */
-									sort_groups_by_gorder();
+									sort_texture_groups_by_gorder();
 									new_group.gorder = ( project.textures.length != 0 ) ? ( project.textures[project.textures.length - 1].gorder + 1 ) : 0;
 									/* Note we sort by order 2nd so the array goes back to the correct order */
 
@@ -782,14 +782,14 @@ function texture_list_sortable() {
 	} );
 }
 
-function sort_groups_by_gid() {
+function sort_texture_groups_by_gid() {
 	
 	project.textures.sort( function( a, b ) {
 		return ((a.gid < b.gid) ? -1 : ((a.gid > b.gid) ? 1 : 0));
 	} );
 }
 
-function sort_groups_by_gorder() {
+function sort_texture_groups_by_gorder() {
 	
 	project.textures.sort( function( a, b ) {
 		return ((a.gorder < b.gorder) ? -1 : ((a.gorder > b.gorder) ? 1 : 0));

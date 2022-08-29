@@ -36,16 +36,17 @@ function sanitise_input( input_text ) {
 /* Document load */
 $( function() {
 
-	/* Load colour pickers, only called once */
+	/* Load editors and colour pickers, only called once */
 	load_texture_editor_colour_pickers();
+	load_sprite_editor_colour_pickers();
 
-	//load_project_view();
+	load_project_view();
 
 	/* Debug */
-	selected_map = project.maps.find( obj => obj.id == 0 );
+	/*selected_map = project.maps.find( obj => obj.id == 0 );
 	load_map_editing_view();
 
 	selected_texture.group = project.textures.find( obj => obj.gid == 0 );
 	selected_texture.texture = selected_texture.group.textures.find( obj => obj.id == 0 );
-	load_texture_list();
+	load_texture_list();*/
 } );

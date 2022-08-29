@@ -21,7 +21,7 @@ using namespace picosystem;
 // ---------------------------------------------------------------------------------
 #define map_rendering_offsets         false    // Displays player position on map and no of calculated empty rows & columns
 #define player_movement               false    // Displays player position
-#define player_position               true    // Draws coloured boxes to indicate if player can move or if there are obstacles, edge of map or exit tiles
+#define player_position               false    // Draws coloured boxes to indicate if player can move or if there are obstacles, edge of map or exit tiles
 #define exit_map_info                 false    // Displays information about the map to load if exiting current map
 #define animation_info                false    // Displays information about the running animation
 

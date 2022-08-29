@@ -20,6 +20,18 @@ function load_project_view() {
 	$( "#container #content #toolbar #map_paint_settings" ).css( "display", "none" );
 	$( "#container #content #toolbar #map_size_settings" ).css( "display", "none" );
 
+	$( "#container #content #project_view #sprite_editor_container #sprite_editor" ).css( "display", "none" );
+	$( "#container #content #project_view #sprite_editor_container #sprite_editor_empty" ).css( "display", "flex" );
+	$( "#container #content #project_view #sprite_editor_container #sprite_list_toolbar" ).css( "display", "flex" );
+	$( "#container #content #project_view #sprite_editor_container #sprite_list_toolbar #toolbar_right" ).css( "display", "none" );
+	$( "#container #content #project_view #sprite_editor_container #sprite_list_toolbar #toolbar_new_sprite" ).css( "display", "none" );
+	$( "#container #content #project_view #sprite_editor_container #sprite_list_toolbar #toolbar_back" ).css( "display", "none" );
+
+	$( "#container #content #project_view" ).css( "display", "flex" );
+	$( "#container #content #project_view #sprite_editor_container" ).css( "display", "flex" );
+	$( "#container #content #project_view #sprite_list_container" ).css( "display", "flex" );
+	$( "#container #content #project_view #map_list_container" ).css( "display", "flex" );
+
 	$( "#container #content #map_editor_container" ).css( "display", "none" );
 	$( "#container #content #map_editor_container #map_editor" ).css( "display", "none" );
 	$( "#container #content #map_editor_container #map_editor_loading" ).css( "display", "none" );
@@ -36,6 +48,9 @@ function load_project_view() {
 
 	/* Load project event listeners */
 	project_toolbar_event_listeners();
+
+	/* Load sprite list */
+	load_sprite_list();
 }
 
 function close_project_view() {
@@ -384,8 +399,6 @@ function map_list_sortable() {
 
 		/* Add each map object in order */
 		var i = 0;
-
-		/* We're sorting groups */
 		$.each( $( "#map_list .sortable" ).children(), function( k, v ) {
 			
 			/* Get texture objects in sort order */
@@ -420,5 +433,99 @@ function sort_maps_by_id() {
 	
 	project.maps.sort( function( a, b ) {
 		return ((a.id < b.id) ? -1 : ((a.id > b.id) ? 1 : 0));
+	} );
+}
+
+function load_sprite_list() {
+
+	/* Clear texture list */
+	$( "#sprite_list .sortable" ).html( "" );
+	$( "#sprite_list .sortable li" ).css( "color", "#000" );
+	
+	if( project.sprites.length != 0 ) {
+
+	 	/* Sort maps into order */
+		sort_sprite_groups_by_gorder();
+
+		/* Add all the maps to the list */
+		$.each( project.sprites, function( key, value ) {
+			$( "#sprite_list .sortable" ).append( '<li class="ui-state-default" map_id="' + value.id + '">' + value.name + '</li>' );
+		} );
+
+		/* Add event listeners to the list */
+		//map_list_event_listeners();
+	
+		/* Add sorting capability */
+		map_list_sortable();	
+	}
+
+	/* Set the icons */
+}
+
+function clear_sprite_list_sortable() {
+	
+	if ( $( "#sprite_list .sortable" ).hasClass( "ui-sortable" ) ) {
+		$( "#sprite_list .sortable" ).sortable( "destroy" );
+	}
+	$( "#sprite_list .sortable" ).unbind( "sortstart" );
+	$( "#sprite_list .sortable" ).unbind( "sortstop" );
+	$( "#sprite_list .sortable" ).unbind( "selectstart" );
+}
+
+function sprite_list_sortable() {
+	
+	/* Destroy existing sortable list */
+	clear_sprite_list_sortable();
+
+	
+}
+
+function load_sprite_editor_colour_pickers() {
+
+	/* Setup the sprite editor and colour pickers, function should only be called once */
+	$( "#sprite_editor" ).html( "<table></table>" );
+	
+	/* Add 8 rows */
+	for(i=0; i<16; i++)
+		$( "#sprite_editor table" ).append( '<tr row_id="' + i + '"></tr>' );
+
+	/* Add 8 cells for each row and set background color */
+	$( "#sprite_editor table" ).children().each( function() {
+		for(i=0; i<16; i++)
+			$( '<td col_id="'+i+'" class="picker"></td>' ).appendTo( $(this) );
+	} );
+
+	
+}
+
+function sort_sprite_groups_by_gid() {
+	
+	project.sprites.sort( function( a, b ) {
+		return ((a.gid < b.gid) ? -1 : ((a.gid > b.gid) ? 1 : 0));
+	} );
+}
+
+function sort_sprite_groups_by_gorder() {
+	
+	project.sprites.sort( function( a, b ) {
+		return ((a.gorder < b.gorder) ? -1 : ((a.gorder > b.gorder) ? 1 : 0));
+	} );
+}
+
+function sort_sprites_by_id( gid ) {
+	
+	var sort_group = project.sprites.find( obj => obj.gid == gid );
+
+	sort_group.sprites.sort( function( a, b ) {
+		return ((a.id < b.id) ? -1 : ((a.id > b.id) ? 1 : 0));
+	} );
+}
+
+function sort_sprites_by_order( gid ) {
+	
+	var sort_group = project.sprites.find( obj => obj.gid == gid );
+
+	sort_group.sprites.sort( function( a, b ) {
+		return ((a.order < b.order) ? -1 : ((a.order > b.order) ? 1 : 0));
 	} );
 }
