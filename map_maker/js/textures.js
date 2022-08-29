@@ -32,7 +32,6 @@ function load_texture_list() {
 		$( "#toolbar_back" ).css( "display", "none" );
 		$( "#container #sidebar #texture_list_toolbar #toolbar_right" ).css( "display", "none" );
 
-
 	} else {
 		/* textures */
 		sort_textures_by_order( selected_texture.group.gid );
@@ -131,6 +130,13 @@ function texture_list_event_listeners() {
 	});
 }
 
+function clear_texture_paint_preview() {
+	
+	/* Clear the texture paint preview */
+	$( "#container #toolbar #map_paint_preview" ).html( "" );
+	$( "#container #toolbar #map_paint_preview" ).css( "display", "none" );
+}
+
 function load_texture_preview() {
 
 	/* Setup the texture paint preview */
@@ -167,16 +173,125 @@ function load_texture_preview() {
 	if( ( drawing_functions == 1 ) || ( drawing_functions == 3 ) ) set_map_tile_settings_styles();
 }
 
-function clear_texture_paint_preview() {
-	
-	/* Clear the texture paint preview */
-	$( "#container #toolbar #map_paint_preview" ).html( "" );
-	$( "#container #toolbar #map_paint_preview" ).css( "display", "none" );
-}
+function load_texture_editor_colour_pickers() {
 
-function clear_texture_editor_colour_pickers() {
+	/* Setup the texture editor and colour pickers, function should only be called once */
+	$( "#texture_editor" ).html( "<table></table>" );
 	
-	$( '.colpick_hex' ).remove();
+	/* Add 8 rows */
+	for(i=0; i<8; i++)
+		$( "#texture_editor table" ).append( '<tr row_id="' + i + '"></tr>' );
+
+	/* Add 8 cells for each row and set background color */
+	$( "#texture_editor table" ).children().each( function() {
+		for(i=0; i<8; i++)
+			$( '<td col_id="'+i+'" class="picker"></td>' ).appendTo( $(this) );
+	} );
+
+	/* Add in the colour pickers */
+	$( '.picker ' ).colpick( {
+		layout: "hex",
+		submit: "OK",
+		onShow: function( e ) {
+
+			/* Leaving this in as occasionally the colour picker bugs out and I don't know why */
+			console.log( $( this ) );
+
+			if( ( map_resizing.en == true ) || ( drawing_functions != false ) ) {
+				
+				/* Clear the drawing function now that we've avoided it re-opening after the user has finished with the paint tool */
+				if( drawing_functions == 4 )
+					drawing_functions = false;
+
+				/* Hide the colour picker */
+				return false;
+			}
+
+			/* Set the colour picker to show the currently selected colour, ignore if it's the fill icon */
+			if( ( $( this ).attr( "id" ) != "texture_fill" ) && ( $( this ).attr( "id" ) != "texture_paint" ) )
+				$( this ).colpickSetColor( selected_texture.texture.data[ $( this ).attr( "col_id" ) ][ $( this ).parent().attr( "row_id" ) ], true );
+		},
+		onSubmit: function( hsb, hex, rgb, e ) {
+
+			var texture_fill = false;
+			if( $( this.el ).attr( "id" ) == "texture_fill" ) {
+				
+				/* We're filling the entire texture with the selected colour */
+				selected_texture.texture.data = Array.from( { length: 8 }, () => Array.from( { length: 8 }, () => hex ) );
+				texture_fill = true;
+				
+				/* Update the texture editor */
+				$( "#texture_editor table tr td" ).css("background", "#" + hex );
+			} else if( $( this.el ).attr( "id" ) == "texture_paint" ) {
+
+				/* We're painting the texture  */
+				drawing_functions = 3;
+
+				/* Reset toolbar for a clean start */
+				map_editor_toolbar_reset();
+				
+				/* Disable controls */
+				disable_controls( false );
+
+				/* Set paint brush as selected tool */
+				$( ".picker" ).removeClass( "auto_cursor" );
+				$( "#texture_paint" ).removeClass( "resize_disabled" );
+				$( "#texture_paint" ).addClass( "selected_tool" );
+
+				/* Add hover functionality to map editor */
+				$( "#container #sidebar #texture_editor table tr td" ).addClass( "map_editor_table_cell_draw" );
+
+				/* Add event listeners to the cells of the texture editor */
+				$( "#container #sidebar #texture_editor table tr td" ).on( "mouseup", function() {
+
+					/* Update the cell background */
+					$( this ).css("background", "#" + hex );
+
+					/* Update the local array */
+					var texture_row = $( this ).parent().attr( "row_id" );
+					var texture_col = $( this ).attr( "col_id" );
+
+					selected_texture.texture.data[ texture_col ][ texture_row ] = hex;
+
+					/* Update the preview and the map */
+					texture_update( texture_fill, hex, texture_row, texture_col );
+				} );
+
+				/* Add event listener to paint icon to stop the painting */
+				$( "#texture_paint" ).on( "mouseup", function() {
+
+					/* Re-enable controls */
+					enable_controls();
+
+					/* Remove paint brush as selected tool */
+					$( "#texture_paint" ).removeClass( "selected_tool" );
+
+					/* Unbind event listeners */
+					$( "#texture_paint" ).unbind( "mouseup" );
+					$( "#container #sidebar #texture_editor table tr td" ).unbind( "mouseup" );
+
+					/* Set to 4 as this click will trigger the colour picker to re-open, and we don't want that to happen */
+					drawing_functions = 4;
+				} );
+			} else {
+
+				/* We've selected a pixel colour, update the cell background */
+				$( this.el ).css("background", "#" + hex );
+
+				/* Update the local array */
+				var texture_row = $( this.el ).parent().attr( "row_id" );
+				var texture_col = $( this.el ).attr( "col_id" );
+
+				selected_texture.texture.data[ texture_col ][ texture_row ] = hex;
+			}
+			
+			if( !drawing_functions )
+				texture_update( texture_fill, hex, texture_row, texture_col );
+				
+			/* Hide the colour picker */
+			$( e ).colpickHide();
+		}
+	} );
 }
 
 function texture_update( texture_fill, hex, texture_row, texture_col ) {
@@ -210,9 +325,6 @@ function texture_update( texture_fill, hex, texture_row, texture_col ) {
 }
 
 function load_texture_editor() {
-
-	/* Remove existing colour pickers */
-	clear_texture_editor_colour_pickers();
 	
 	/* Clear parent selector */
 	$( "#texture_parent_selector" ).html( "" );
@@ -226,118 +338,14 @@ function load_texture_editor() {
 		$( "#texture_fill" ).css( "display", "block" );
 		$( "#texture_paint" ).css( "display", "block" );
 
+		/* Show the editor */
+		$( "#texture_editor" ).css( "display", "flex" );
+		$( "#texture_editor_empty" ).css( "display", "none" );
+
 		/* Setup the texture editor */
-		$( "#texture_editor" ).html( "<table></table>" );
-		
-		/* Add 8 rows */
-		for(i=0; i<8; i++)
-			$( "#texture_editor table" ).append( '<tr row_id="' + i + '"></tr>' );
-
-		/* Add 8 cells for each row and set background color */
-		$( "#texture_editor table" ).children().each( function() {
-			for(i=0; i<8; i++)
-				$( '<td col_id="'+i+'" class="picker"></td>' ).appendTo( $(this) ).css( "background", "#" + selected_texture.texture.data[i][ $( this ).attr( "row_id" ) ]);
-		} );
-
-		/* Add in the colour pickers */
-		$( '.picker' ).colpick( {
-			layout: "hex",
-			submit: "OK",
-			onShow: function( e ) {
-				if( ( map_resizing.en == true ) || ( drawing_functions != false ) ) {
-					
-					/* Clear the drawing function now that we've avoided it re-opening after the user has finished with the paint tool */
-					if( drawing_functions == 4 )
-						drawing_functions = false;
-
-					/* Hide the colour picker */
-					return false;
-				}
-
-				/* Set the colour picker to show the currently selected colour, ignore if it's the fill icon */
-				if( ( $( this ).attr( "id" ) != "texture_fill" ) && ( $( this ).attr( "id" ) != "texture_paint" ) )
-					$( this ).colpickSetColor( selected_texture.texture.data[ $( this ).attr( "col_id" ) ][ $( this ).parent().attr( "row_id" ) ], true );
-			},
-			onSubmit: function( hsb, hex, rgb, e ) {
-
-				var texture_fill = false;
-				if( $( this.el ).attr( "id" ) == "texture_fill" ) {
-					
-					/* We're filling the entire texture with the selected colour */
-					selected_texture.texture.data = Array.from( { length: 8 }, () => Array.from( { length: 8 }, () => hex ) );
-					texture_fill = true;
-					
-					/* Update the texture editor */
-					$( "#texture_editor table tr td" ).css("background", "#" + hex );
-				} else if( $( this.el ).attr( "id" ) == "texture_paint" ) {
-
-					/* We're painting the texture  */
-					drawing_functions = 3;
-
-					/* Reset toolbar for a clean start */
-					map_editor_toolbar_reset();
-					
-					/* Disable controls */
-					disable_controls( false );
-
-					/* Set paint brush as selected tool */
-					$( ".picker" ).removeClass( "auto_cursor" );
-					$( "#texture_paint" ).removeClass( "resize_disabled" );
-					$( "#texture_paint" ).addClass( "selected_tool" );
-
-					/* Add hover functionality to map editor */
-					$( "#container #sidebar #texture_editor table tr td" ).addClass( "map_editor_table_cell_draw" );
-
-					/* Add event listeners to the cells of the texture editor */
-					$( "#container #sidebar #texture_editor table tr td" ).on( "mouseup", function() {
-
-						/* Update the cell background */
-						$( this ).css("background", "#" + hex );
-
-						/* Update the local array */
-						var texture_row = $( this ).parent().attr( "row_id" );
-						var texture_col = $( this ).attr( "col_id" );
-
-						selected_texture.texture.data[ texture_col ][ texture_row ] = hex;
-
-						/* Update the preview and the map */
-						texture_update( texture_fill, hex, texture_row, texture_col );
-					} );
-
-					/* Add event listener to paint icon to stop the painting */
-					$( "#texture_paint" ).on( "mouseup", function() {
-
-						/* Re-enable controls */
-						enable_controls();
-
-						/* Remove paint brush as selected tool */
-						$( "#texture_paint" ).removeClass( "selected_tool" );
-
-						/* Unbind event listeners */
-						$( "#texture_paint" ).unbind( "mouseup" );
-						$( "#container #sidebar #texture_editor table tr td" ).unbind( "mouseup" );
-
-						/* Set to 4 as this click will trigger the colour picker to re-open, and we don't want that to happen */
-						drawing_functions = 4;
-					} );
-				} else {
-
-					/* We've selected a pixel colour, update the cell background */
-					$( this.el ).css("background", "#" + hex );
-
-					/* Update the local array */
-					var texture_row = $( this.el ).parent().attr( "row_id" );
-					var texture_col = $( this.el ).attr( "col_id" );
-
-					selected_texture.texture.data[ texture_col ][ texture_row ] = hex;
-				}
-				
-				if( !drawing_functions )
-					texture_update( texture_fill, hex, texture_row, texture_col );
-					
-				/* Hide the colour picker */
-				$( e ).colpickHide();
-			}
+		$( "#texture_editor table tr" ).children().each( function() {
+			
+			$( this ).css( "background", "#" + selected_texture.texture.data[ $( this ).attr( "col_id" ) ][ $( this ).parent().attr( "row_id" ) ]);
 		} );
 
 		/* Show texture paint preview */
@@ -364,7 +372,8 @@ function load_texture_editor() {
 		});
 	} else {
 		/* Clear the editor */
-		$( "#texture_editor" ).html( "Select a texture" );
+		$( "#texture_editor" ).css( "display", "none" );
+		$( "#texture_editor_empty" ).css( "display", "flex" );
 
 		/* Clear fill and paint texture icons */
 		$( "#texture_fill" ).css( "display", "none" );
@@ -377,7 +386,7 @@ function load_texture_editor() {
 
 function clear_texture_toolbar_event_listeners() {
 	
-	$( "#container #sidebar #texture_list_toolbar i" ).unbind( "click" );
+	$( "#container #sidebar #texture_list_toolbar i:not( .picker )" ).unbind( "click" );
 }
 
 function texture_toolbar_event_listeners() {

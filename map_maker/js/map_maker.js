@@ -36,6 +36,9 @@ function sanitise_input( input_text ) {
 /* Document load */
 $( function() {
 
+	/* Load colour pickers, only called once */
+	load_texture_editor_colour_pickers();
+
 	//load_project_view();
 
 	/* Debug */

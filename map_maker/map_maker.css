@@ -73,7 +73,17 @@ body {
 	background:#fff;
 	box-sizing: border-box;
 	padding: 10px;
-	display: flex;
+	display: none;
+	align-items: center;
+	justify-content: center;
+}
+#container #sidebar #texture_editor_empty {
+	width: 100%;
+	min-height: 380px;
+	background:#fff;
+	box-sizing: border-box;
+	padding: 10px;
+	display: none;
 	align-items: center;
 	justify-content: center;
 }

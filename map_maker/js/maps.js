@@ -54,7 +54,6 @@ function close_map_editing_view() {
 	clear_map_toolbar_event_listeners();
 	clear_texture_toolbar_event_listeners();
 	clear_texture_list_event_listeners();
-	clear_texture_editor_colour_pickers();
 	clear_map_editor_event_listeners();
 
 	/* Disable sorting on texture list */
@@ -69,7 +68,6 @@ function close_map_editing_view() {
 
 	/* Clear map editing elements */
 	$( "#container #sidebar #texture_list .sortable" ).html( "" );
-	$( "#container #sidebar #texture_editor" ).html( "" );
 	$( "#container #content #map_editor_container #map_editor" ).html( "" );
 }
 
