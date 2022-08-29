@@ -9,11 +9,27 @@ body {
 .auto_cursor {
 	cursor: auto !important;
 }
+.selected_tool {
+	color: #8bb1c7 !important;
+	font-size: 28px !important;
+}
+.selected_tool:hover {
+	color: #666;
+	cursor: pointer;
+}
 .project_functions {
 	display: block;
 }
 .map_editing_functions {
 	display: block;
+}
+.map_editor_table_cell {
+	border: 1px solid #666 !important;
+	padding: 0px !important;
+}
+.map_editor_table_cell_draw:hover {
+	border: 1px solid #f00 !important;
+	cursor: crosshair !important;
 }
 .sortable {
 	list-style-type: none;
@@ -240,14 +256,6 @@ body {
 	color: #8bb1c7;
 	cursor: pointer;
 }
-#container #toolbar #settings #controls .selected_tool {
-	color: #8bb1c7;
-	font-size: 28px;
-}
-#container #toolbar #settings #controls .selected_tool:hover {
-	color: #666;
-	cursor: pointer;
-}
 #container #toolbar #settings #controls .resize_disabled {
 	color: #999;
 }
@@ -431,16 +439,6 @@ body {
 	padding: 0px;
 	margin: 0px;
 	border-spacing: 1px;
-}
-#container #map_editor_container #map_editor #map_editor_table .map_editor_table_row {
-}
-#container #map_editor_container #map_editor #map_editor_table .map_editor_table_row .map_editor_table_cell {
-	border: 1px solid #666;
-	padding: 0px;
-}
-#container #map_editor_container #map_editor #map_editor_table .map_editor_table_row .map_editor_table_cell_draw:hover {
-	border: 1px solid #f00;
-	cursor: crosshair;
 }
 #container #map_editor_container #map_editor #map_editor_table .sprite_table {
 	border-spacing: 0;

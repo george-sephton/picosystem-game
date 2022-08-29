@@ -10,8 +10,9 @@ function load_sprite_list() {
 	$( "#map_toolbar_flip_h" ).css( "display", "none" );
 	$( "#map_toolbar_flip_v" ).css( "display", "none" );
 
-	/* Clear fill sprite icon */
+	/* Clear fill and paint sprite icons */
 	$( "#sprite_fill" ).css( "display", "none" );
+	$( "#sprite_paint" ).css( "display", "none" );
 	
 	/* Check if we are showing groups or sprites */
 	if( selected_sprite.group == false ) {
@@ -80,7 +81,7 @@ function load_sprite_list() {
 	/* Disable hovering for draw functions */
 	if( drawing_functions == 1 )
 		$( "#container #sidebar #sprite_list #sprite_list .sortable .ui-group" ).addClass( "resize_disabled" );
-	else if( drawing_functions == 2 )
+	else if( ( drawing_functions == 2 ) || ( drawing_functions == 3 ) )
 		$( "#container #sidebar #sprite_list #sprite_list .sortable li" ).addClass( "resize_disabled" );
 
 	/* Disable cursor on sprite editor */
@@ -163,7 +164,7 @@ function load_sprite_preview() {
 	} );
 
 	/* Add styling if painting */
-	if( ( drawing_functions == 1 ) ) set_map_tile_settings_styles();
+	if( ( drawing_functions == 1 ) || ( drawing_functions == 3 ) ) set_map_tile_settings_styles();
 }
 
 function clear_sprite_paint_preview() {
@@ -176,6 +177,36 @@ function clear_sprite_paint_preview() {
 function clear_sprite_editor_colour_pickers() {
 	
 	$( '.colpick_hex' ).remove();
+}
+
+function sprite_update( sprite_fill, hex, sprite_row, sprite_col ) {
+
+	/* Update sprite paint preview and any cells on the map */
+	load_sprite_preview();
+
+	/* Loop through each row of the map */
+	$.each( selected_map.data, function( tile_row, row ) {
+
+		/* Loop through each col of the map */
+		$.each( row, function( tile_col, cell ) {
+
+			if( ( cell.sprite_gid == selected_sprite.group.gid ) && ( cell.sprite_id == selected_sprite.sprite.id ) ) {
+				/* Cell is the sprite we're looking for, found at (tile_row, tile_col) */
+				var tile = $( "#map_editor #map_editor_table .map_editor_table_row[row_id=" + tile_row + "] .map_editor_table_cell[col_id=" + tile_col + "]" );
+
+				if( sprite_fill ) {
+
+					/* We're filling this entire cell with the same colour */
+					$( tile.find( "td" ) ).css("background", "#" + hex );
+				} else {
+
+					/* Get the cell of the pixel that was changed and update it */
+					var pixel = $( tile.find( ".sprite_table tr[row_id=" + ( ( cell.sprite_reverse_y ) ? ( 7 - sprite_row ) : sprite_row ) + "] td[col_id=" + ( ( cell.sprite_reverse_x ) ? ( 7 - sprite_col ) : sprite_col ) + "]" ) );
+					pixel.css("background", "#" + hex );
+				}
+			}
+		} );
+	} );
 }
 
 function load_sprite_editor() {
@@ -191,8 +222,9 @@ function load_sprite_editor() {
 
 	if ( selected_sprite.sprite != false ) {
 
-		/* Show fill sprite icon */
+		/* Show fill and paint sprite icons */
 		$( "#sprite_fill" ).css( "display", "block" );
+		$( "#sprite_paint" ).css( "display", "block" );
 
 		/* Setup the sprite editor */
 		$( "#sprite_editor" ).html( "<table></table>" );
@@ -213,12 +245,17 @@ function load_sprite_editor() {
 			submit: "OK",
 			onShow: function( e ) {
 				if( ( map_resizing.en == true ) || ( drawing_functions != false ) ) {
+					
+					/* Clear the drawing function now that we've avoided it re-opening after the user has finished with the paint tool */
+					if( drawing_functions == 4 )
+						drawing_functions = false;
+
 					/* Hide the colour picker */
 					return false;
 				}
 
 				/* Set the colour picker to show the currently selected colour, ignore if it's the fill icon */
-				if( $( this ).attr( "id" ) != "sprite_fill" )
+				if( ( $( this ).attr( "id" ) != "sprite_fill" ) && ( $( this ).attr( "id" ) != "sprite_paint" ) )
 					$( this ).colpickSetColor( selected_sprite.sprite.data[ $( this ).attr( "col_id" ) ][ $( this ).parent().attr( "row_id" ) ], true );
 			},
 			onSubmit: function( hsb, hex, rgb, e ) {
@@ -232,6 +269,57 @@ function load_sprite_editor() {
 					
 					/* Update the sprite editor */
 					$( "#sprite_editor table tr td" ).css("background", "#" + hex );
+				} else if( $( this.el ).attr( "id" ) == "sprite_paint" ) {
+
+					/* We're painting the sprite  */
+					drawing_functions = 3;
+
+					/* Reset toolbar for a clean start */
+					map_editor_toolbar_reset();
+					
+					/* Disable controls */
+					disable_controls( false );
+
+					/* Set paint brush as selected tool */
+					$( ".picker" ).removeClass( "auto_cursor" );
+					$( "#sprite_paint" ).removeClass( "resize_disabled" );
+					$( "#sprite_paint" ).addClass( "selected_tool" );
+
+					/* Add hover functionality to map editor */
+					$( "#container #sidebar #sprite_editor table tr td" ).addClass( "map_editor_table_cell_draw" );
+
+					/* Add event listeners to the cells of the sprite editor */
+					$( "#container #sidebar #sprite_editor table tr td" ).on( "mouseup", function() {
+
+						/* Update the cell background */
+						$( this ).css("background", "#" + hex );
+
+						/* Update the local array */
+						var sprite_row = $( this ).parent().attr( "row_id" );
+						var sprite_col = $( this ).attr( "col_id" );
+
+						selected_sprite.sprite.data[ sprite_col ][ sprite_row ] = hex;
+
+						/* Update the preview and the map */
+						sprite_update( sprite_fill, hex, sprite_row, sprite_col );
+					} );
+
+					/* Add event listener to paint icon to stop the painting */
+					$( "#sprite_paint" ).on( "mouseup", function() {
+
+						/* Re-enable controls */
+						enable_controls();
+
+						/* Remove paint brush as selected tool */
+						$( "#sprite_paint" ).removeClass( "selected_tool" );
+
+						/* Unbind event listeners */
+						$( "#sprite_paint" ).unbind( "mouseup" );
+						$( "#container #sidebar #sprite_editor table tr td" ).unbind( "mouseup" );
+
+						/* Set to 4 as this click will trigger the colour picker to re-open, and we don't want that to happen */
+						drawing_functions = 4;
+					} );
 				} else {
 
 					/* We've selected a pixel colour, update the cell background */
@@ -243,34 +331,10 @@ function load_sprite_editor() {
 
 					selected_sprite.sprite.data[ sprite_col ][ sprite_row ] = hex;
 				}
+				
+				if( !drawing_functions )
+					sprite_update( sprite_fill, hex, sprite_row, sprite_col );
 					
-				/* Update sprite paint preview */
-				load_sprite_preview();
-
-				/* Loop through each row of the map */
-				$.each( selected_map.data, function( tile_row, row ) {
-
-					/* Loop through each col of the map */
-					$.each( row, function( tile_col, cell ) {
-
-						if( ( cell.sprite_gid == selected_sprite.group.gid ) && ( cell.sprite_id == selected_sprite.sprite.id ) ) {
-							/* Cell is the sprite we're looking for, found at (tile_row, tile_col) */
-							var tile = $( "#map_editor #map_editor_table .map_editor_table_row[row_id=" + tile_row + "] .map_editor_table_cell[col_id=" + tile_col + "]" );
-
-							if( sprite_fill ) {
-
-								/* We're filling this entire cell with the same colour */
-								$( tile.find( "td" ) ).css("background", "#" + hex );
-							} else {
-
-								/* Get the cell of the pixel that was changed and update it */
-								var pixel = $( tile.find( ".sprite_table tr[row_id=" + ( ( cell.sprite_reverse_y ) ? ( 7 - sprite_row ) : sprite_row ) + "] td[col_id=" + ( ( cell.sprite_reverse_x ) ? ( 7 - sprite_col ) : sprite_col ) + "]" ) );
-								pixel.css("background", "#" + hex );
-							}
-						}
-					} );
-				} );
-
 				/* Hide the colour picker */
 				$( e ).colpickHide();
 			}
@@ -302,8 +366,9 @@ function load_sprite_editor() {
 		/* Clear the editor */
 		$( "#sprite_editor" ).html( "Select a sprite" );
 
-		/* Clear fill sprite icon */
+		/* Clear fill and paint sprite icons */
 		$( "#sprite_fill" ).css( "display", "none" );
+		$( "#sprite_paint" ).css( "display", "none" );
 
 		/* Clear the paint preview */
 		clear_sprite_paint_preview();
@@ -321,7 +386,7 @@ function sprite_toolbar_event_listeners() {
 	clear_sprite_toolbar_event_listeners();
 
 	/* Sprite toolbar event listeners */
-	$( "#container #sidebar #sprite_list_toolbar i:not( #sprite_fill )" ).click(function() {
+	$( "#container #sidebar #sprite_list_toolbar i:not( #sprite_fill ):not( #sprite_paint )" ).click(function() {
 		
 		if( ( map_resizing.en == false ) && ( drawing_functions == false ) ) {
 

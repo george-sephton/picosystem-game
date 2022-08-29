@@ -249,6 +249,7 @@ function map_editor_toolbar_reset() {
 	$( "#container #map_editor_container #map_editor #map_editor_table .map_editor_table_row .map_editor_table_cell" ).removeClass( "map_editor_table_cell_draw" );
 
 	/* Trigger changes to update UI */
+	$( "#exit_tile_en" ).prop( "checked", false );
 	$( "#exit_tile_en" ).trigger( "change" );
 
 	/* Reset preview panel */

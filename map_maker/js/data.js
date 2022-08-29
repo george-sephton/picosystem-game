@@ -331,7 +331,7 @@ blank_tile.exit_map_dir = [0, 0];
 blank_tile.exit_map_pos = [0, 0];
 
 var map1 = new Object();
-map1.id = 3;
+map1.id = 0;
 map1.order = 0;
 map1.name = "Demo Map";
 map1.width = 5;
@@ -339,7 +339,7 @@ map1.height = 5;
 map1.data = Array.from( { length: map1.height }, () => Array.from( { length: map1.width }, () => Object.assign( {}, blank_tile ) ) );
 
 var map2 = new Object();
-map2.id = 14;
+map2.id = 1;
 map2.order = 1;
 map2.name = "Large Demo Map";
 map2.width = 16;

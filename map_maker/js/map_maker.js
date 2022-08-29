@@ -36,13 +36,13 @@ function sanitise_input( input_text ) {
 /* Document load */
 $( function() {
 
-	load_project_view();
+	//load_project_view();
 
 	/* Debug */
-	/*selected_map = project.maps.find( obj => obj.id == 3 );
+	selected_map = project.maps.find( obj => obj.id == 0 );
 	load_map_editing_view();
 
 	selected_sprite.group = project.sprites.find( obj => obj.gid == 0 );
 	selected_sprite.sprite = selected_sprite.group.sprites.find( obj => obj.id == 0 );
-	load_sprite_list();*/
+	load_sprite_list();
 } );
