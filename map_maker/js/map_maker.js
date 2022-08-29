@@ -1,18 +1,18 @@
-/* Store the currently selected sprite */
-var selected_sprite = new Object();
-selected_sprite.sprite = false;
-selected_sprite.group = false;
+/* Store the currently selected texture */
+var selected_texture = new Object();
+selected_texture.texture = false;
+selected_texture.group = false;
 
-/* Store the sprite state */
-selected_sprite.sprite_reverse_x = false;
-selected_sprite.sprite_reverse_y = false;
+/* Store the texture state */
+selected_texture.texture_reverse_x = false;
+selected_texture.texture_reverse_y = false;
 
 /* Store tile information */
-selected_sprite.can_walk = [true, true, true, true];
-selected_sprite.exit_tile = false;
-selected_sprite.exit_map_id = false;
-selected_sprite.exit_map_dir = [0, 0];
-selected_sprite.exit_map_pos = [0, 0];
+selected_texture.can_walk = [true, true, true, true];
+selected_texture.exit_tile = false;
+selected_texture.exit_map_id = false;
+selected_texture.exit_map_dir = [0, 0];
+selected_texture.exit_map_pos = [0, 0];
 
 /* Store current map info */
 var selected_map = false;
@@ -42,7 +42,7 @@ $( function() {
 	selected_map = project.maps.find( obj => obj.id == 0 );
 	load_map_editing_view();
 
-	selected_sprite.group = project.sprites.find( obj => obj.gid == 0 );
-	selected_sprite.sprite = selected_sprite.group.sprites.find( obj => obj.id == 0 );
-	load_sprite_list();
+	selected_texture.group = project.textures.find( obj => obj.gid == 0 );
+	selected_texture.texture = selected_texture.group.textures.find( obj => obj.id == 0 );
+	load_texture_list();
 } );

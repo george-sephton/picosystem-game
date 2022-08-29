@@ -2,8 +2,8 @@ function load_project_view() {
 
 	/* Show project view elements */
 	$( "#container #sidebar" ).css( "display", "none" );
-	$( "#container #sidebar #sprite_list_toolbar_rename" ).css( "display", "none" );
-	$( "#container #sidebar #sprite_list_toolbar_delete" ).css( "display", "none" );
+	$( "#container #sidebar #texture_list_toolbar_rename" ).css( "display", "none" );
+	$( "#container #sidebar #texture_list_toolbar_delete" ).css( "display", "none" );
 
 	$( "#container #content" ).css( "max-width", "100%" );
 
@@ -52,7 +52,7 @@ function close_project_view() {
 
 function load_map_list() {
 
-	/* Clear sprite list */
+	/* Clear texture list */
 	$( "#map_list .sortable" ).html( "" );
 	$( "#map_list .sortable li" ).css( "color", "#000" );
 
@@ -66,7 +66,7 @@ function load_map_list() {
 
 		/* Add all the maps to the list */
 		$.each( project.maps, function( key, value ) {
-			$( "#map_list .sortable" ).append( '<li class="ui-state-default" map_id="' + value.id + '">' + value.order + ': ' + value.name + ' (' + value.id + ')</li>' );
+			$( "#map_list .sortable" ).append( '<li class="ui-state-default" map_id="' + value.id + '">' + value.name + '</li>' );
 		} );
 
 		/* Add event listeners to the list */
@@ -78,9 +78,9 @@ function load_map_list() {
 
 	/* Set the icons */
 	$( "#toolbar_new_group" ).css( "display", "block" );
-	$( "#toolbar_new_sprite" ).css( "display", "none" );
+	$( "#toolbar_new_texture" ).css( "display", "none" );
 	$( "#toolbar_back" ).css( "display", "none" );
-	$( "#container #sidebar #sprite_list_toolbar #toolbar_right" ).css( "display", "none" );
+	$( "#container #sidebar #texture_list_toolbar #toolbar_right" ).css( "display", "none" );
 }
 
 function clear_map_list_event_listeners() {
@@ -157,10 +157,10 @@ function project_toolbar_event_listeners() {
 							/* Give it a blank canvas */
 							var blank_tile = new Object();
 							blank_tile.can_walk = [true, true, true, true];
-							blank_tile.sprite_gid = undefined;
-							blank_tile.sprite_id = undefined;
-							blank_tile.sprite_reverse_x = false;
-							blank_tile.sprite_reverse_y = false;
+							blank_tile.texture_gid = undefined;
+							blank_tile.texture_id = undefined;
+							blank_tile.texture_reverse_x = false;
+							blank_tile.texture_reverse_y = false;
 							blank_tile.exit_tile = false;
 							blank_tile.exit_map_id = false;
 							blank_tile.exit_map_dir = [0, 0];
@@ -388,7 +388,7 @@ function map_list_sortable() {
 		/* We're sorting groups */
 		$.each( $( "#map_list .sortable" ).children(), function( k, v ) {
 			
-			/* Get sprite objects in sort order */
+			/* Get texture objects in sort order */
 			var map_obj = project.maps.find( obj => obj.id == $( v ).attr( "map_id" ) );
 
 			/* Give it it's new order and increment */
@@ -402,7 +402,7 @@ function map_list_sortable() {
 		/* Set the new order in the local array */
 		project.maps = newOrderArray;
 					
-		/* Reload sprite list */
+		/* Reload texture list */
 		load_map_list();
 
 		/* Re-instate onClick event listener */

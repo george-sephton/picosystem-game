@@ -67,7 +67,7 @@ body {
 	flex-direction: column;
 	width: 100%;
 }
-#container #sidebar #sprite_editor {
+#container #sidebar #texture_editor {
 	width: 100%;
 	min-height: 380px;
 	background:#fff;
@@ -77,19 +77,19 @@ body {
 	align-items: center;
 	justify-content: center;
 }
-#container #sidebar #sprite_editor table {
+#container #sidebar #texture_editor table {
 	width: 100%;
 	height: 100%;
 	border: 1px solid #000;
 }
-#container #sidebar #sprite_editor table tr td {
+#container #sidebar #texture_editor table tr td {
 	border: 1px solid #000;
 }
-#container #sidebar #sprite_editor table tr td:hover {
+#container #sidebar #texture_editor table tr td:hover {
 	background: #fff;
 	cursor: pointer;
 }
-#container #sidebar #sprite_list_toolbar {
+#container #sidebar #texture_list_toolbar {
 	width: 100%;
 	background:#fff;
 	box-sizing: border-box;
@@ -101,7 +101,7 @@ body {
 	justify-content: space-between;
 	align-items: center;
 }
-#container #sidebar #sprite_list_toolbar_rename {
+#container #sidebar #texture_list_toolbar_rename {
 	width: 100%;
 	background:#fff;
 	box-sizing: border-box;
@@ -109,14 +109,14 @@ body {
 	height: 60px;
 	display: none;
 }
-#container #sidebar #sprite_list_toolbar_rename input {
+#container #sidebar #texture_list_toolbar_rename input {
 	width: 100%;
 	font-size: 20px;
 	border: 0px;
 	background: #FFF;
 	border-radius: 10px;
 }
-#container #sidebar #sprite_list_toolbar_delete {
+#container #sidebar #texture_list_toolbar_delete {
 	width: 100%;
 	background:#fff;
 	box-sizing: border-box;
@@ -127,7 +127,7 @@ body {
 	align-items: center;
 	gap: 8px;
 }
-#container #sidebar #sprite_list_toolbar_delete input {
+#container #sidebar #texture_list_toolbar_delete input {
 	padding: 8px;
 	border: 1px solid #666;
 	color: #fff;
@@ -135,48 +135,48 @@ body {
 	border-radius: 10px;
 	font-size: 14px;
 }
-#container #sidebar #sprite_list_toolbar_delete input:hover {
+#container #sidebar #texture_list_toolbar_delete input:hover {
 	background: #8bb1c7;
 	color: #333;
 	cursor: pointer;
 }
-#container #sidebar #sprite_list_toolbar #toolbar_left {
+#container #sidebar #texture_list_toolbar #toolbar_left {
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-end;
 	align-items: center;
 }
-#container #sidebar #sprite_list_toolbar #toolbar_right {
+#container #sidebar #texture_list_toolbar #toolbar_right {
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-end;
 	align-items: center;
 }
-#container #sidebar #sprite_list_toolbar i {
+#container #sidebar #texture_list_toolbar i {
 	color: #333;
 	font-size: 28px;
 }
-#container #sidebar #sprite_list_toolbar i:hover {
+#container #sidebar #texture_list_toolbar i:hover {
 	color: #8bb1c7;
 	cursor: pointer;
 }
-#container #sidebar #sprite_list_toolbar .resize_disabled {
+#container #sidebar #texture_list_toolbar .resize_disabled {
 	color: #999;
 }
-#container #sidebar #sprite_list_toolbar .resize_disabled:hover {
+#container #sidebar #texture_list_toolbar .resize_disabled:hover {
 	color: #999;
 	cursor: auto;
 }
-#container #sidebar #sprite_list_toolbar #toolbar_left i {
+#container #sidebar #texture_list_toolbar #toolbar_left i {
 	margin: 0 8px 0 0;
 }
-#container #sidebar #sprite_list_toolbar #toolbar_right i {
+#container #sidebar #texture_list_toolbar #toolbar_right i {
 	margin: 0 0 0 8px;
 }
-#toolbar_new_group, #toolbar_new_sprite, #toolbar_back {
+#toolbar_new_group, #toolbar_new_texture, #toolbar_back {
 	display: flex;
 }
-#container #sidebar #sprite_list {
+#container #sidebar #texture_list {
 	width: 100%;
 	background:#fff;
 	flex: 1;
@@ -184,41 +184,41 @@ body {
 	padding: 10px;
 	overflow: auto;
 }
-#container #sidebar #sprite_list .sortable .ui-group  {
+#container #sidebar #texture_list .sortable .ui-group  {
 	background: #ccc;
 }
-#container #sidebar #sprite_list .sortable .ui-group:hover  {
+#container #sidebar #texture_list .sortable .ui-group:hover  {
 	background: #999;
 	cursor: pointer;
 }
-#container #sidebar #sprite_list .sortable .ui-sprite  {
+#container #sidebar #texture_list .sortable .ui-texture  {
 	margin-left: 20px;
 }
-#container #sidebar #sprite_list .sortable .ui-sprite:hover  {
+#container #sidebar #texture_list .sortable .ui-texture:hover  {
 	background: #ccc;
 	cursor: pointer;
 }
-#container #sidebar #sprite_list .sortable li {
+#container #sidebar #texture_list .sortable li {
 	font-size: 1.2em;
 	margin: 0 0 5px 0;
 	padding: 5px;
 	line-height: 1.2em;
 	border: 1px solid #666;
 }
-#container #sidebar #sprite_list .sortable .resize_disabled  {
+#container #sidebar #texture_list .sortable .resize_disabled  {
 	cursor: default;
 	background: #ccc;
 }
-#container #sidebar #sprite_list .sortable .resize_disabled:hover  {
+#container #sidebar #texture_list .sortable .resize_disabled:hover  {
 	cursor: default;
 	background: #ccc;
 }
-#container #sidebar #sprite_list .sortable .ui-state-group-highlight {
+#container #sidebar #texture_list .sortable .ui-state-group-highlight {
 	background: #8bb1c7;
 	height: 1.5em;
 	line-height: 1.2em;
 }
-#container #sidebar #sprite_list .sortable .ui-state-sprite-highlight {
+#container #sidebar #texture_list .sortable .ui-state-texture-highlight {
 	background: #8bb1c7;
 	height: 1.5em;
 	line-height: 1.2em;
@@ -440,7 +440,7 @@ body {
 	margin: 0px;
 	border-spacing: 1px;
 }
-#container #map_editor_container #map_editor #map_editor_table .sprite_table {
+#container #map_editor_container #map_editor #map_editor_table .texture_table {
 	border-spacing: 0;
 	width: 100%;
 	height: 100%;

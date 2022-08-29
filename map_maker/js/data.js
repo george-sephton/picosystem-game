@@ -1,4 +1,4 @@
-/* Initialise list of demo sprites */
+/* Initialise list of demo textures */
 var grass_bg = new Object();
 grass_bg.name = "Grass Background";
 grass_bg.order = 0;
@@ -16,7 +16,7 @@ var g_grass_bg = new Object();
 g_grass_bg.name = "Grass Background";
 g_grass_bg.gorder = 0;
 g_grass_bg.gid = 0;
-g_grass_bg.sprites = new Array( grass_bg );
+g_grass_bg.textures = new Array( grass_bg );
 
 var mat_v = new Object();
 mat_v.name = "Mat Vertical";
@@ -48,7 +48,7 @@ var g_mat = new Object();
 g_mat.name = "Mat";
 g_mat.gorder = 1;
 g_mat.gid = 1;
-g_mat.sprites = new Array( mat_v, mat_h );
+g_mat.textures = new Array( mat_v, mat_h );
 
 var bollard_1 = new Object();
 bollard_1.name = "Bollard 1";
@@ -106,7 +106,7 @@ var g_bollard = new Object();
 g_bollard.name = "Bollard";
 g_bollard.gorder = 2;
 g_bollard.gid = 2;
-g_bollard.sprites = new Array( bollard_1, bollard_2, bollard_3, bollard_4 );
+g_bollard.textures = new Array( bollard_1, bollard_2, bollard_3, bollard_4 );
 
 var tree_top_l = new Object();
 tree_top_l.name = "Tree Top L";
@@ -294,7 +294,7 @@ var g_tree = new Object();
 g_tree.name = "Tree";
 g_tree.gorder = 3;
 g_tree.gid = 3;
-g_tree.sprites = new Array( tree_top_l, tree_top_r, tree_mid_l, tree_mid_r, tree_bot_l, tree_bot_r, tree_stump_l, tree_stump_r, tree_mid_2_l, tree_mid_2_r, tree_top_2_l, tree_top_2_r, tree_bot_2_l, tree_bot_2_r );
+g_tree.textures = new Array( tree_top_l, tree_top_r, tree_mid_l, tree_mid_r, tree_bot_l, tree_bot_r, tree_stump_l, tree_stump_r, tree_mid_2_l, tree_mid_2_r, tree_top_2_l, tree_top_2_r, tree_bot_2_l, tree_bot_2_r );
 
 var fence = new Object();
 fence.name = "Fence";
@@ -313,18 +313,18 @@ var g_fence = new Object();
 g_fence.name = "Fence";
 g_fence.gorder = 4;
 g_fence.gid = 4;
-g_fence.sprites = new Array( fence );
+g_fence.textures = new Array( fence );
 
-/* Store sprites in an array */
-var demo_sprites = new Array( g_grass_bg, g_mat, g_bollard, g_tree, g_fence );
+/* Store textures in an array */
+var demo_textures = new Array( g_grass_bg, g_mat, g_bollard, g_tree, g_fence );
 
 /* Demo map */
 var blank_tile = new Object();
 blank_tile.can_walk = [true, true, true, true];
-blank_tile.sprite_gid = 0;
-blank_tile.sprite_id = 0;
-blank_tile.sprite_reverse_x = false;
-blank_tile.sprite_reverse_y = false;
+blank_tile.texture_gid = 0;
+blank_tile.texture_id = 0;
+blank_tile.texture_reverse_x = false;
+blank_tile.texture_reverse_y = false;
 blank_tile.exit_tile = false;
 blank_tile.exit_map_id = false;
 blank_tile.exit_map_dir = [0, 0];
@@ -351,12 +351,12 @@ var demo_maps = new Array( map1, map2 );
 
 var demo_project = new Object();
 demo_project.name = "Demo Project";
-demo_project.sprites = demo_sprites;
+demo_project.textures = demo_textures;
 demo_project.maps = demo_maps;
 
 var empty_project = new Object();
 empty_project.name = "New Project";
-empty_project.sprites = new Array();
+empty_project.textures = new Array();
 empty_project.maps = new Array();
 
 var project = empty_project;
@@ -372,51 +372,51 @@ function export_data() {
 	output += "#pragma once\n\n";
 	output += "namespace picosystem {\n\n";
 
-	/* Start by exporting all the sprites */
+	/* Start by exporting all the textures */
 	sort_groups_by_gorder();
 
-	/* Loop through each sprite group */
-	$.each( project.sprites , function( gi, group ) {
+	/* Loop through each texture group */
+	$.each( project.textures , function( gi, group ) {
 
-		output += "  const uint16_t " + group.name.toLowerCase().replace( / /g, "_" ) + "[" +  ( group.sprites.length * 64 ) + "] = {\n";
+		output += "  const uint16_t " + group.name.toLowerCase().replace( / /g, "_" ) + "[" +  ( group.textures.length * 64 ) + "] = {\n";
 		
-		sort_sprites_by_order( group.gid );
+		sort_textures_by_order( group.gid );
 
-		$.each( group.sprites, function( si, sprite ) {
+		$.each( group.textures, function( si, texture ) {
 
 			/* Convert pixel values for Picosystem */
-			var convert_sprite = new Array();
-			$.extend( true, convert_sprite, sprite.data ); /* Clone array */
+			var convert_texture = new Array();
+			$.extend( true, convert_texture, texture.data ); /* Clone array */
 
-			/* Loop through each row of the sprite */
-			$.each( convert_sprite, function( ri, sprite_row ) {
+			/* Loop through each row of the texture */
+			$.each( convert_texture, function( ri, texture_row ) {
 
 				/* Loop through each pixel */
-				$.each( sprite_row, function( ci, sprite_cell ) {
+				$.each( texture_row, function( ci, texture_cell ) {
 
 					/* Convert to int */
-					var sprite_cell_int = parseInt(sprite_cell, 16);
+					var texture_cell_int = parseInt(texture_cell, 16);
 					/* Convert 24-bit colour to 12-bit colour for the Picosystem */
-					sprite_cell_int = ( ((sprite_cell_int & 0xF0) >> 4) | ((sprite_cell_int & 0xF000) >> 8) | ((sprite_cell_int & 0xF00000) >> 12) );
+					texture_cell_int = ( ((texture_cell_int & 0xF0) >> 4) | ((texture_cell_int & 0xF000) >> 8) | ((texture_cell_int & 0xF00000) >> 12) );
 					/* Add to the output */
-					convert_sprite[ri][ci] = "0x"+sprite_cell_int.toString(16).padStart(3, '0');
+					convert_texture[ri][ci] = "0x"+texture_cell_int.toString(16).padStart(3, '0');
 				} );
 			} );
 
 			/* Now convert array of values to string */
-			var sprite_array = convert_sprite.toString();
-			sprite_array = sprite_array.replace( /,/g, ", " );
-			sprite_array = sprite_array.replace( /((?:.*?\s){7}.*?)\s/g, "$1\n    " )
-			output += "    " + sprite_array + ",\n";
+			var texture_array = convert_texture.toString();
+			texture_array = texture_array.replace( /,/g, ", " );
+			texture_array = texture_array.replace( /((?:.*?\s){7}.*?)\s/g, "$1\n    " )
+			output += "    " + texture_array + ",\n";
 		} );
 
 		output += "  };\n\n";
 	});
 
-	output += "  const uint16_t* _texture_map[" + project.sprites.length + "] {\n";
+	output += "  const uint16_t* _texture_map[" + project.textures.length + "] {\n";
 
-	/* Loop through each sprite group */
-	$.each( project.sprites , function( i, group ) {
+	/* Loop through each texture group */
+	$.each( project.textures , function( i, group ) {
 
 		output += "    " + group.name.toLowerCase().replace( / /g, "_" ) + ", // " + i + "\n";
 	});
@@ -443,7 +443,7 @@ function export_data() {
 				/* Add in the data for each cell */
 				output += "{";
 				output += Number(cell.can_walk[0]) + ", " + Number(cell.can_walk[1]) + ", " + Number(cell.can_walk[2]) + ", " + Number(cell.can_walk[3]) + ", ";
-				output += Number(cell.sprite_gid) + ", " + Number(cell.sprite_id) + ", " + Number(cell.sprite_reverse_x) + ", " + Number(cell.sprite_reverse_y) + ", ";
+				output += Number(cell.texture_gid) + ", " + Number(cell.texture_id) + ", " + Number(cell.texture_reverse_x) + ", " + Number(cell.texture_reverse_y) + ", ";
 				output += Number(cell.exit_tile) + ", " + Number(cell.exit_map_id) + ", {";
 				output += cell.exit_map_dir[0] + ", " + cell.exit_map_dir[1] + "}, {";
 				output += cell.exit_map_pos[0] + ", " + cell.exit_map_pos[1] + "} ";
@@ -463,7 +463,7 @@ function export_data() {
 	/* Loop through each map */
 	$.each( project.maps , function( i, map ) {
 
-		output += "    " + map.name.toLowerCase().replace( / /g, "_" ) + ", // " + map.id + "\n";
+		output += "    " + map.name.toLowerCase().replace( / /g, "_" ) + ", // " + i + "\n";
 	});
 
 	output += "  };\n\n";
