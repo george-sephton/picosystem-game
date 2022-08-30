@@ -288,7 +288,7 @@ function map_toolbar_event_listeners() {
 	/* Map toolbar event listeners */
 	$( "#container #toolbar #settings #controls i" ).click(function() {
 		
-		/* Functions disabled whilst map is being re-sized */
+		/* Check if functions are disabled */
 		if( controls_disabled == false ) {
 
 			var func = $( this ).attr( "func" );
@@ -297,6 +297,7 @@ function map_toolbar_event_listeners() {
 								
 				/* We are moving to another function whilst painting/erasing, reset everything */
 				map_editor_toolbar_reset();
+
 				/* Disable drawing functions */
 				drawing_functions = false;
 			}
@@ -1190,9 +1191,15 @@ function disable_controls( hide_name_input = true ) {
 	controls_disabled = true;
 
 	/* Disable all other controls */
-	$( "#container #toolbar #settings #controls i" ).addClass( "resize_disabled" );
-	$( "#container #sidebar #texture_list_toolbar i" ).addClass( "resize_disabled" );
-	$( "#container #sidebar #texture_list .sortable li" ).addClass( "resize_disabled" );
+	$( "#toolbar #settings #controls i" ).addClass( "resize_disabled" );
+	$( "#project_view #map_list .sortable li" ).addClass( "resize_disabled" );
+
+	$( "#sidebar #texture_list_toolbar i" ).addClass( "resize_disabled" );
+	$( "#sidebar #texture_list .sortable li" ).addClass( "resize_disabled" );
+
+	$( "#project_view #sprite_list_toolbar i" ).addClass( "resize_disabled" );
+	$( "#project_view #sprite_list .sortable li" ).addClass( "resize_disabled" );
+
 	$( ".picker" ).addClass( "auto_cursor" );
 
 	/* Disable sorting on texture list */
@@ -1208,9 +1215,15 @@ function enable_controls() {
 	controls_disabled = false;
 
 	/* Re-enable all other controls */
-	$( "#container #toolbar #settings #controls i" ).removeClass( "resize_disabled" );
-	$( "#container #sidebar #texture_list_toolbar i" ).removeClass( "resize_disabled" );
-	$( "#container #sidebar #texture_list .sortable li" ).removeClass( "resize_disabled" );
+	$( "#toolbar #settings #controls i" ).removeClass( "resize_disabled" );
+	$( "#project_view #map_list .sortable li" ).removeClass( "resize_disabled" );
+	
+	$( "#sidebar #texture_list_toolbar i" ).removeClass( "resize_disabled" );
+	$( "#sidebar #texture_list .sortable li" ).removeClass( "resize_disabled" );
+
+	$( "#project_view #sprite_list_toolbar i" ).removeClass( "resize_disabled" );
+	$( "#project_view #sprite_list .sortable li" ).removeClass( "resize_disabled" );
+
 	$( ".picker" ).removeClass( "auto_cursor" );
 
 	/* Re-show flip icons and texture preview */
@@ -1220,7 +1233,7 @@ function enable_controls() {
 	}
 
 	/* Re-add sorting */
-	texture_list_sortable();
+	//texture_list_sortable();
 
 	/* Show the other toolbar elements */
 	$( "#container #toolbar #settings #name_input_container" ).css( "display", "flex" );

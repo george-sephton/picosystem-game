@@ -15,6 +15,14 @@
 	height: 1.5em;
 	line-height: 1.2em;
 }
+#container #content #project_view .sortable .resize_disabled  {
+	cursor: default !important;
+	background: #ccc !important;
+}
+#container #content #project_view .sortable .resize_disabled:hover  {
+	cursor: default !important;
+	background: #ccc !important;
+}
 
 
 #container #content #project_view {
@@ -48,6 +56,14 @@
 #container #content #project_view #map_list_container #map_list .sortable li:hover  {
 	background: #ccc;
 	cursor: pointer;
+}
+#container #content #project_view #map_list_container #map_list .sortable .resize_disabled  {
+	cursor: default;
+	background: #ccc;
+}
+#container #content #project_view #map_list_container #map_list .sortable .resize_disabled:hover  {
+	cursor: default;
+	background: #ccc;
 }
 
 
