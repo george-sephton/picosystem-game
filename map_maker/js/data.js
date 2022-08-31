@@ -672,22 +672,84 @@ var project = demo_project;
 function export_data() {
 
 	/* Convert our data to the correct format for the Picosystem */
-	var output = ""
+	var output = "";
+	var h_output = "";
 
 	output += "#pragma once\n\n";
 	output += "namespace picosystem {\n\n";
 
-	/* Start by exporting all the textures */
-	sort_groups_by_gorder();
+	/* Start by exporting all the sprites */
+	output += "  /*********************************************************************************\n";
+	output += "    Sprites\n";
+	output += "  *********************************************************************************/\n";
+
+	h_output += "// sprites\n";
+
+	sort_sprite_groups_by_gorder();
+
+	/* Loop through each sprite group */
+	$.each( project.sprites , function( gi, group ) {
+
+		output += "  const uint16_t " + group.name.toLowerCase().replace( / /g, "_" ) + "[" +  ( group.sprites.length * group.size * group.size ) + "] = {\n";
+		h_output += "const extern uint16_t " + group.name.toLowerCase().replace( / /g, "_" ) + "[" +  ( group.sprites.length * group.size * group.size ) + "];\n"
+		
+		sort_sprites_by_order( group.gid );
+
+		$.each( group.sprites, function( si, sprite ) {
+
+			/* Convert pixel values for Picosystem */
+			var convert_sprite = new Array();
+			$.extend( true, convert_sprite, sprite.data ); /* Clone array */
+
+			/* Loop through each row of the texture */
+			$.each( convert_sprite, function( ri, sprite_row ) {
+
+				/* Loop through each pixel */
+				$.each( sprite_row, function( ci, sprite_cell ) {
+
+					/* Convert to int */
+					var sprite_cell_int = parseInt(sprite_cell, 16);
+					/* Convert 24-bit colour to 12-bit colour for the Picosystem */
+					sprite_cell_int = ( ((sprite_cell_int & 0xF0) >> 4) | ((sprite_cell_int & 0xF000) >> 8) | ((sprite_cell_int & 0xF00000) >> 12) );
+					/* Add to the output */
+					convert_sprite[ri][ci] = "0x"+sprite_cell_int.toString(16).padStart(3, '0');
+				} );
+			} );
+
+			/* Now convert array of values to string */
+			var sprite_array = convert_sprite.toString();
+			sprite_array = sprite_array.replace( /,/g, ", " );
+
+			/* Add line breaks depending on sprite size */
+			if( group.size == 16 )
+				sprite_array = sprite_array.replace( /((?:.*?\s){15}.*?)\s/g, "$1\n    " )
+			else
+				sprite_array = sprite_array.replace( /((?:.*?\s){7}.*?)\s/g, "$1\n    " )
+
+			output += "    " + sprite_array + ",\n";
+		} );
+
+		output += "  };\n\n";
+	} );
+
+	/* Next export all the textures */
+	output += "  /*********************************************************************************\n";
+	output += "    Textures\n";
+	output += "  *********************************************************************************/\n";
+
+	h_output += "\n// textures\n";
+
+	sort_texture_groups_by_gorder();
 
 	/* Loop through each texture group */
 	$.each( project.textures , function( gi, group ) {
 
 		output += "  const uint16_t " + group.name.toLowerCase().replace( / /g, "_" ) + "[" +  ( group.textures.length * 64 ) + "] = {\n";
+		h_output += "const extern uint16_t " + group.name.toLowerCase().replace( / /g, "_" ) + "[" +  ( group.textures.length * 64 ) + "];\n";
 		
 		sort_textures_by_order( group.gid );
 
-		$.each( group.textures, function( si, texture ) {
+		$.each( group.textures, function( ti, texture ) {
 
 			/* Convert pixel values for Picosystem */
 			var convert_texture = new Array();
@@ -716,7 +778,7 @@ function export_data() {
 		} );
 
 		output += "  };\n\n";
-	});
+	} );
 
 	output += "  const uint16_t* _texture_map[" + project.textures.length + "] {\n";
 
@@ -724,11 +786,19 @@ function export_data() {
 	$.each( project.textures , function( i, group ) {
 
 		output += "    " + group.name.toLowerCase().replace( / /g, "_" ) + ", // " + i + "\n";
-	});
+	} );
+
+	h_output += "\n// texture map\n";
+	h_output += "const extern uint16_t* _texture_map[" + project.textures.length + "];\n";
+	
 
 	output += "  };\n\n";
 
 	/* Next let's export the maps */
+	output += "  /*********************************************************************************\n";
+	output += "    Maps\n";
+	output += "  *********************************************************************************/\n";
+
 	sort_maps_by_order();
 
 	/* Loop through each map */
@@ -769,7 +839,7 @@ function export_data() {
 	$.each( project.maps , function( i, map ) {
 
 		output += "    " + map.name.toLowerCase().replace( / /g, "_" ) + ", // " + i + "\n";
-	});
+	} );
 
 	output += "  };\n\n";
 	output += "}";
@@ -779,4 +849,6 @@ function export_data() {
 	file.download = project.name.toLowerCase().replace( / /g, "_" ) + ".hpp";
 	file.href = window.URL.createObjectURL( blob );
 	file.click();
+
+	console.log( h_output ); // Not used
 }

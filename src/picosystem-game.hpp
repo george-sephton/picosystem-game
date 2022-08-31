@@ -71,21 +71,8 @@ namespace picosystem {
   
   // fonts
   const extern uint8_t _default_font[480];
-
-  // sprites
-  const extern uint16_t _player_m_sprite[1536];
-  const extern uint16_t _player_f_sprite[1536];
-  const extern uint16_t _exit_arrow_sprite[128];
-
-  // textures
-  const extern uint16_t _grass_texture[64];
-  const extern uint16_t _fence_texture[64];
-  const extern uint16_t _fence_bollard_texture[256];
-  const extern uint16_t _door_mat_texture[128];
-  const extern uint16_t _large_tree_texture[896];
-  // texture map
-  const extern uint16_t* _texture_map[5];
-
+  
+  // animation
   extern animation_settings animation;
   
   // ---------------------------------------------------------------------------------

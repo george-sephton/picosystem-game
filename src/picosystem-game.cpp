@@ -12,7 +12,6 @@ https://datacrystal.romhacking.net/wiki/Pok%C3%A9mon_Red/Blue:RAM_map
 #include <picosystem-game.hpp>
 // Include assets
 #include <demo_project.hpp>
-#include <sprites.hpp>
 
 using namespace picosystem;
 
@@ -50,7 +49,7 @@ void init() {
   play(1000, 500, 100);
 
   // Load the map
-  _current_map = &map_list[1];
+  _current_map = &map_list[0];
 
   // Set our initial location
   map_pos = {3, 3};
@@ -228,13 +227,13 @@ void draw(uint32_t tick) {
 
   // Draw an exit arrow if we're stood on an exit tile
   if(exit_tile.travel_n)
-    draw_sprite((uint16_t*)_exit_arrow_sprite, 0, false, true, 56, 48, 8);
+    draw_sprite((uint16_t*)arrow, 0, false, true, 56, 48, 8);
   if(exit_tile.travel_e)
-    draw_sprite((uint16_t*)_exit_arrow_sprite, 1, true, false, 64, 56, 8);
+    draw_sprite((uint16_t*)arrow, 1, true, false, 64, 56, 8);
   if(exit_tile.travel_s)
-    draw_sprite((uint16_t*)_exit_arrow_sprite, 0, false, false, 56, 64, 8);
+    draw_sprite((uint16_t*)arrow, 0, false, false, 56, 64, 8);
   if(exit_tile.travel_w)
-    draw_sprite((uint16_t*)_exit_arrow_sprite, 1, false, false, 48, 56, 8);
+    draw_sprite((uint16_t*)arrow, 1, false, false, 48, 56, 8);
 
   // Draw the player in the centre square (8, 8)
   if((player.walk_dir.x == 0) && (player.walk_dir.y == 0)) {
@@ -242,31 +241,31 @@ void draw(uint32_t tick) {
     // The player is currently stood still, let's draw them facing the right direction
     if((player.face_dir.x == 0) && (player.face_dir.y == 1)) {
       // Facing N
-      draw_sprite((uint16_t*)_player_m_sprite, 4, false, false, 52, 52, 16);
+      draw_sprite((uint16_t*)male_player, 4, false, false, 52, 52, 16);
     } else if((player.face_dir.x == -1) && (player.face_dir.y == 0)) {
       // Facing W
-      draw_sprite((uint16_t*)_player_m_sprite, 2, false, false, 52, 52, 16);
+      draw_sprite((uint16_t*)male_player, 2, false, false, 52, 52, 16);
     } else if((player.face_dir.x == 1) && (player.face_dir.y == 0)) {
       // Facing E
-      draw_sprite((uint16_t*)_player_m_sprite, 2, true, false, 52, 52, 16);
+      draw_sprite((uint16_t*)male_player, 2, true, false, 52, 52, 16);
     } else {
       // Facing S - also default value
-      draw_sprite((uint16_t*)_player_m_sprite, 0, false, false, 52, 52, 16);
+      draw_sprite((uint16_t*)male_player, 0, false, false, 52, 52, 16);
     }
   
   // Player is walking, draw the walking sprite
   } else if((player.walk_dir.x == 0) && (player.walk_dir.y == 1)) {
     // Walking N
-    draw_sprite((uint16_t*)_player_m_sprite, 5, player.reverse_walking_render, false, 52, 52, 16);
+    draw_sprite((uint16_t*)male_player, 5, player.reverse_walking_render, false, 52, 52, 16);
   } else if((player.walk_dir.x == 1) && (player.walk_dir.y == 0)) {
     // Walking E
-    draw_sprite((uint16_t*)_player_m_sprite, (2 + player.reverse_walking_render), true, false, 52, 52, 16);
+    draw_sprite((uint16_t*)male_player, (2 + player.reverse_walking_render), true, false, 52, 52, 16);
   } else if((player.walk_dir.x == 0) && (player.walk_dir.y == -1)) {
     // Walking S
-    draw_sprite((uint16_t*)_player_m_sprite, 1, player.reverse_walking_render, false, 52, 52, 16);
+    draw_sprite((uint16_t*)male_player, 1, player.reverse_walking_render, false, 52, 52, 16);
   } else if((player.walk_dir.x == -1) && (player.walk_dir.y == 0)) {
     // Walking W
-    draw_sprite((uint16_t*)_player_m_sprite, (2 + player.reverse_walking_render), false, false, 52, 52, 16);
+    draw_sprite((uint16_t*)male_player, (2 + player.reverse_walking_render), false, false, 52, 52, 16);
   }
 
   // An animation is running
