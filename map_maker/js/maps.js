@@ -237,7 +237,8 @@ function map_editor_toolbar_reset() {
 	$( "#container #sidebar #texture_list_toolbar i" ).removeClass( "resize_disabled" );
 	$( "#container #sidebar #texture_list .sortable li" ).removeClass( "resize_disabled" );
 	/* Re-enable colour picker */
-	$( ".picker" ).removeClass( "auto_cursor" );
+	$( ".sprite_picker" ).removeClass( "auto_cursor" );
+	$( ".texture_picker" ).removeClass( "auto_cursor" );
 
 	$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_x" ).val( "" );
 	$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_x" ).css( "background", "#fff" );
@@ -292,6 +293,10 @@ function map_toolbar_event_listeners() {
 		if( controls_disabled == false ) {
 
 			var func = $( this ).attr( "func" );
+			
+			/* Hide delete confirmation prompt and show the toolbar */
+			$( "#container #sidebar #texture_list_toolbar_delete" ).css( "display", "none" );
+			$( "#container #sidebar #texture_list_toolbar" ).css( "display", "flex" );
 
 			if( ( func != "paint") && ( func != "erase" ) && ( func != "zoom-in" ) && ( func != "zoom-out" ) && ( func != "flip-v" ) && ( func != "flip-h" ) && ( drawing_functions != false ) ) {
 								
@@ -454,7 +459,6 @@ function map_toolbar_event_listeners() {
 
 						$( "#container #toolbar #settings #map_confirm" ).css( "display", "none" );
 					});
-
 					break;
 				case "paint":
 				case "erase":
@@ -505,7 +509,6 @@ function map_toolbar_event_listeners() {
 
 					/* Load map editor event listeners */
 					map_editor_event_listeners();
-
 					break;
 				case "fill":
 				case "clear":
@@ -568,7 +571,6 @@ function map_toolbar_event_listeners() {
 
 						$( "#container #toolbar #settings #map_confirm" ).css( "display", "none" );
 					});
-
 					break;
 				case "resize-canvas":
 
@@ -665,7 +667,6 @@ function map_toolbar_event_listeners() {
 							}
 						} );
 					}
-					
 					break;
 				case "flip-h":
 					selected_texture.texture_reverse_y = !selected_texture.texture_reverse_y;
@@ -690,7 +691,6 @@ function map_toolbar_event_listeners() {
 
 					$( "#map_editor_table .map_editor_table_row .map_editor_table_cell" ).css( "min-width", (map_cell_size * 5)+"px" );
 					$( "#map_editor_table .map_editor_table_row .map_editor_table_cell" ).css( "height", (map_cell_size * 5)+"px" );
-
 					break;
 			}
 		}
@@ -867,7 +867,8 @@ function map_editor_start_drawing() {
 	$( "#container #sidebar #texture_list_toolbar i" ).addClass( "resize_disabled" );
 	
 	/* Disable colour picker */
-	$( ".picker" ).addClass( "auto_cursor" );
+	$( ".sprite_picker" ).addClass( "auto_cursor" );
+	$( ".texture_picker" ).addClass( "auto_cursor" );
 
 	/* Disable sorting on texture list */
 	clear_texture_list_sortable();
@@ -1200,7 +1201,18 @@ function disable_controls( hide_name_input = true ) {
 	$( "#project_view #sprite_list_toolbar i" ).addClass( "resize_disabled" );
 	$( "#project_view #sprite_list .sortable li" ).addClass( "resize_disabled" );
 
-	$( ".picker" ).addClass( "auto_cursor" );
+	$( ".sprite_picker" ).addClass( "auto_cursor" );
+	$( ".texture_picker" ).addClass( "auto_cursor" );
+
+
+	/* Sprites: Hide delete and new group confirmation prompt and show the toolbar */
+	$( "#container #content #project_view #sprite_editor_container #sprite_list_toolbar_delete" ).css( "display", "none" );
+	$( "#container #content #project_view #sprite_editor_container #sprite_list_toolbar_new_group" ).css( "display", "none" );
+	$( "#container #content #project_view #sprite_editor_container #sprite_list_toolbar" ).css( "display", "flex" );
+
+	/* Textures: Hide delete confirmation prompt and show the toolbar */
+	$( "#container #sidebar #texture_list_toolbar_delete" ).css( "display", "none" );
+	$( "#container #sidebar #texture_list_toolbar" ).css( "display", "flex" );
 
 	/* Disable sorting on texture list */
 	clear_texture_list_sortable();
@@ -1224,7 +1236,8 @@ function enable_controls() {
 	$( "#project_view #sprite_list_toolbar i" ).removeClass( "resize_disabled" );
 	$( "#project_view #sprite_list .sortable li" ).removeClass( "resize_disabled" );
 
-	$( ".picker" ).removeClass( "auto_cursor" );
+	$( ".sprite_picker" ).removeClass( "auto_cursor" );
+	$( ".texture_picker" ).removeClass( "auto_cursor" );
 
 	/* Re-show flip icons and texture preview */
 	if( selected_texture.texture == false ) {

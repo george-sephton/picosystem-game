@@ -193,7 +193,7 @@ function load_texture_editor_colour_pickers() {
 	/* Add 8 cells for each row and set background color */
 	$( "#texture_editor table" ).children().each( function() {
 		for(i=0; i<8; i++)
-			$( '<td col_id="'+i+'" class="texture_picker picker"></td>' ).appendTo( $(this) );
+			$( '<td col_id="'+i+'" class="texture_picker"></td>' ).appendTo( $(this) );
 	} );
 
 	/* Add in the colour pickers */
@@ -430,9 +430,8 @@ function texture_toolbar_event_listeners() {
 					/* Reload texture list */
 					load_texture_list();
 					break;
-
 				case "new": /* Create a new texture */
-				case "new-group": /* Create a new group */
+				case "new-group": /* Create a new texture group */
 				case "rename": /* Rename selected texture */
 				case "duplicate": /* Duplicated selected texture */
 
@@ -473,11 +472,12 @@ function texture_toolbar_event_listeners() {
 							if( ( func == "new" ) || ( func == "new-group" ) || ( func == "duplicate" ) ) {
 								
 								if(( selected_texture.group == false ) || ( ( selected_texture.texture == false ) && ( func == "duplicate" ) ) ) {
+									
 									/* We are creating a new group or duplicating an exisiting group */
 									var new_group = new Object();
 									new_group.name = new_name;
 
-									/* Get new GID value */
+									/* Get new ID value */
 									sort_texture_groups_by_gid();
 									new_group.gid = ( project.textures.length != 0 ) ? ( project.textures[project.textures.length - 1].gid + 1 ) : 0;
 
@@ -487,10 +487,12 @@ function texture_toolbar_event_listeners() {
 									/* Note we sort by order 2nd so the array goes back to the correct order */
 
 									if( ( selected_texture.texture == false ) && ( func == "duplicate" ) ) {
+										
 										/* Duplicate existing textures into our new group */
 										new_group.textures = new Array();
 										$.extend( true, new_group.textures, selected_texture.group.textures ); /* Clone array */
 									} else {
+										
 										/* Create a blank texture to initialise the group */
 										var new_texture = new Object();
 										new_texture.name = new_name;
@@ -510,11 +512,12 @@ function texture_toolbar_event_listeners() {
 									selected_texture.group = new_group;
 
 								} else {
+
 									/* We are creating or duplicating a texture */
 									var new_texture = new Object();
 									new_texture.name = new_name;
 
-									/* Get new GID value */
+									/* Get new ID value */
 									sort_textures_by_id( selected_texture.group.gid );
 									new_texture.id = selected_texture.group.textures[selected_texture.group.textures.length - 1].id + 1;
 
@@ -524,10 +527,12 @@ function texture_toolbar_event_listeners() {
 									/* Note we sort by order 2nd so the array goes back to the correct order */
 
 									if( func == "duplicate" ) {
+										
 										/* Copy selected texture */
 										new_texture.data = new Array();
 										$.extend( true, new_texture.data, selected_texture.texture.data ); /* Clone array */
 									} else {
+										
 										/* Create a blank canvas */
 										new_texture.data = Array.from( { length: 8 }, () => Array.from( { length: 8 }, () => "ffffff" ) );
 									}
@@ -572,7 +577,6 @@ function texture_toolbar_event_listeners() {
 						}
 					});
 					break;
-
 				case "delete": /* Delete the selected texture */
 
 					/* Show the confirmation prompt */
@@ -589,7 +593,7 @@ function texture_toolbar_event_listeners() {
 							
 							/* Unbind event listeners */
 							$( document ).unbind( "keyup" );
-							$( "#container #sidebar #texture_list_toolbar_delete #texture_delete_y" ).unbind( "click" );
+							$( "#container #sidebar #texture_list_toolbar_delete input[type=button]" ).unbind( "click" );
 						}
 					});
 
@@ -598,7 +602,7 @@ function texture_toolbar_event_listeners() {
 
 						if( selected_texture.texture == false ) {
 
-							/* Delete selected group from local array */
+							/* Delete selected texture group from local array */
 							project.textures = project.textures.filter(obj => obj.gid != selected_texture.group.gid);
 
 							/* Reorder the groups in local array */
@@ -643,7 +647,7 @@ function texture_toolbar_event_listeners() {
 							} );
 
 							/* Reload map editor */
-							load_map_editor();							
+							load_map_editor();
 
 							if( selected_texture.group.textures.length == 0 ) {
 
@@ -684,20 +688,21 @@ function texture_toolbar_event_listeners() {
 						
 						/* Unbind event listeners */
 						$( document ).unbind( "keyup" );
-						$( "#container #sidebar #texture_list_toolbar_delete #texture_delete_y" ).unbind( "click" );
+						$( "#container #sidebar #texture_list_toolbar_delete input[type=button]" ).unbind( "click" );
 						
 						/* Reload texture list */
 						load_texture_list();
 					} );
 
 					$( "#container #sidebar #texture_list_toolbar_delete #texture_delete_n" ).click( function() {
+						
 						/* Exit delete texture confirmation */
 						$( "#container #sidebar #texture_list_toolbar" ).css( "display", "flex" );
 						$( "#container #sidebar #texture_list_toolbar_delete" ).css( "display", "none" );
 						
 						/* Unbind event listeners */
 						$( document ).unbind( "keyup" );
-						$( "#container #sidebar #texture_list_toolbar_delete #texture_delete_y" ).unbind( "click" );
+						$( "#container #sidebar #texture_list_toolbar_delete input[type=button]" ).unbind( "click" );
 					} );
 					break;
 			}

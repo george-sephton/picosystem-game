@@ -16,12 +16,8 @@ selected_texture.exit_map_pos = [0, 0];
 
 /* Store the currently selected sprite */
 var selected_sprite = new Object();
-//selected_sprite.sprite = false;
-//selected_sprite.group = false;
-
-/* Dev */
-selected_sprite.sprite = project.sprites[0].sprites[0];
-selected_sprite.group = project.sprites[0];
+selected_sprite.sprite = false;
+selected_sprite.group = false;
 
 /* Store current map info */
 var selected_map = false;
@@ -50,14 +46,18 @@ $( function() {
 	/* Load editors and colour pickers, only called once */
 	load_texture_editor_colour_pickers();
 	load_sprite_editor_colour_pickers();
+	
+	/* Dev */
+	//selected_sprite.sprite = project.sprites[0].sprites[0];
+	//selected_sprite.group = project.sprites[0];
 
-	//load_project_view();
+	load_project_view();
 
 	/* Debug */
-	selected_map = project.maps.find( obj => obj.id == 0 );
+	/*selected_map = project.maps.find( obj => obj.id == 0 );
 	load_map_editing_view();
 
 	selected_texture.group = project.textures.find( obj => obj.gid == 0 );
 	selected_texture.texture = selected_texture.group.textures.find( obj => obj.id == 0 );
-	load_texture_list();
+	load_texture_list();*/
 } );

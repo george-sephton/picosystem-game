@@ -12,6 +12,9 @@ body {
 .auto_cursor {
 	cursor: auto !important;
 }
+.oob {
+	cursor: auto !important;
+}
 .selected_tool {
 	color: #8bb1c7 !important;
 	font-size: 28px !important;

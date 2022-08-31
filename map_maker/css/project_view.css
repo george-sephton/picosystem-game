@@ -184,6 +184,30 @@
 	color: #333;
 	cursor: pointer;
 }
+#container #content #project_view #sprite_editor_container #sprite_list_toolbar_new_group {
+	width: 100%;
+	background:#fff;
+	box-sizing: border-box;
+	padding: 10px;
+	height: 60px;
+	display: none;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+}
+#container #content #project_view #sprite_editor_container #sprite_list_toolbar_new_group input {
+	padding: 8px;
+	border: 1px solid #666;
+	color: #fff;
+	background: #333;
+	border-radius: 10px;
+	font-size: 14px;
+}
+#container #content #project_view #sprite_editor_container #sprite_list_toolbar_new_group input:hover {
+	background: #8bb1c7;
+	color: #333;
+	cursor: pointer;
+}
 #container #content #project_view #sprite_editor_container #sprite_list_toolbar #toolbar_left {
 	display: flex;
 	flex-direction: row;
