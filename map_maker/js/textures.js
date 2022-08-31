@@ -695,7 +695,7 @@ function texture_toolbar_event_listeners() {
 					} );
 
 					$( "#container #sidebar #texture_list_toolbar_delete #texture_delete_n" ).click( function() {
-						
+
 						/* Exit delete texture confirmation */
 						$( "#container #sidebar #texture_list_toolbar" ).css( "display", "flex" );
 						$( "#container #sidebar #texture_list_toolbar_delete" ).css( "display", "none" );
@@ -745,7 +745,7 @@ function texture_list_sortable() {
 	$( "#texture_list .sortable" ).on( "sortstart", function( e, ui ) {
 
 		/* Temporarily ignore onClick event listener */
-		$( this ).css("pointer-events", "none");
+		$( this ).css( "pointer-events", "none" );
 	} );
 	$( "#texture_list .sortable" ).on( "sortstop", function( e, ui ) {
 		/* Once drag and drop ends, save the new order */
@@ -777,7 +777,6 @@ function texture_list_sortable() {
 
 			/* Set the new order in the local array */
 			selected_texture.group.textures = newOrderArray;
-
 		} else {
 
 			/* We're sorting groups */
@@ -796,14 +795,13 @@ function texture_list_sortable() {
 
 			/* Set the new order in the local array */
 			project.textures = newOrderArray;
-
 		}
 					
 		/* Reload texture list */
 		load_texture_list();
 
 		/* Re-instate onClick event listener */
-		$( this ).css("pointer-events", "auto");
+		$( this ).css( "pointer-events", "auto" );
 	} );
 }
 

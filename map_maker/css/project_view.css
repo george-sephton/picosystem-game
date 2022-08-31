@@ -10,10 +10,16 @@
 	line-height: 1.2em;
 	border: 1px solid #666;
 }
-#container #content #project_view .sortable .ui-state-highlight {
-	background: #8bb1c7;
-	height: 1.5em;
-	line-height: 1.2em;
+#container #content #project_view .sortable .ui-state-highlight, #container #content #project_view .sortable .ui-state-group-highlight {
+	background: #8bb1c7 !important;
+	height: 1.5em !important;
+	line-height: 1.2em !important;
+}
+#container #content #project_view .sortable .ui-state-sprite-highlight {
+	background: #8bb1c7 !important;
+	height: 1.5em !important;
+	line-height: 1.2em !important;
+	margin-left: 20px !important;
 }
 #container #content #project_view .sortable .resize_disabled  {
 	cursor: default !important;

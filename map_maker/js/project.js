@@ -492,7 +492,7 @@ function load_sprite_list() {
 		sort_sprites_by_order( selected_sprite.group.gid );
 
 		/* Add the group name */
-		$( "#sprite_list .sortable" ).append( '<li class="ui-state-default ui-group" g_sprite_id="' + selected_sprite.group.gid + '">' + selected_sprite.group.name + ' (' + selected_sprite.group.gid + ')</li>' );
+		$( "#sprite_list .sortable" ).append( '<li class="ui-state-default ui-state-disabled ui-group" g_sprite_id="' + selected_sprite.group.gid + '">' + selected_sprite.group.name + ' (' + selected_sprite.group.gid + ')</li>' );
 
 		$.each( selected_sprite.group.sprites, function( key, value ) {
 			$( "#sprite_list .sortable" ).append( '<li class="ui-state-default ui-sprite" sprite_id="' + value.id + '">' + value.order + ': ' + value.name + ' (' + value.id + ')</li>' );
@@ -1029,13 +1029,84 @@ function sprite_list_sortable() {
 	/* Destroy existing sortable list */
 	clear_sprite_list_sortable();
 
+	if( selected_sprite.group == false ) {
+		var sort_highlight_class = "ui-state-group-highlight";
+	} else {
+		var sort_highlight_class = "ui-state-sprite-highlight";
+	}
 
+	/* Turn sprite list into a sortable list */
+	$( "#sprite_list .sortable" ).sortable( {
+		placeholder: sort_highlight_class,
+		items: "li:not(.ui-state-disabled)",
+		delay: 200
+	} );
+	$( "#sprite_list .sortable" ).disableSelection();
 
+	/* Add sortable list event listeners */
+	$( "#sprite_list .sortable" ).on( "sortstart", function( e, ui ) {
 
+		/* Temporarily ignore onClick event listener */
+		$( this ).css( "pointer-events", "none" );
+	} );
+	$( "#sprite_list .sortable" ).on( "sortstop", function( e, ui ) {
+		/* Once drag and drop ends, save the new order */
 
+		/* Store the currently selected sprite */
+		var temp_selected_sprite = (selected_sprite != 0) ? selected_sprite.id : -1;
 
+		/* Create a new blank array that will temporarily hold the new order */
+		var newOrderArray = new Array();
 
+		/* Add each sprite object in order */
+		var i = 0;
 
+		if( selected_sprite.group != false ) {
+
+			/* We're sorting sprites */
+			$.each( $( "#sprite_list .sortable" ).children( ":not(.ui-state-disabled)" ), function( k, v ) {
+
+				console.log( $( v ) );
+
+				/* Get sprite objects in sort order */
+				var sprite_obj = selected_sprite.group.sprites.find( obj => obj.id == $( v ).attr( "sprite_id" ) );
+
+				/* Give it it's new order and increment */
+				sprite_obj.order = i;
+				i++;
+
+				/* Add it to the temporary array */
+				newOrderArray.push( sprite_obj );
+			} );
+
+			/* Set the new order in the local array */
+			selected_sprite.group.sprites = newOrderArray;
+		} else {
+
+			/* We're sorting groups */
+			$.each( $( "#sprite_list .sortable" ).children(), function( k, v ) {
+				
+				/* Get sprite objects in sort order */
+				var sprite_obj = project.sprites.find( obj => obj.gid == $( v ).attr( "g_sprite_id" ) );
+
+				/* Give it it's new order and increment */
+				sprite_obj.gorder = i;
+				i++;
+
+				/* Add it to the temporary array */
+				newOrderArray.push( sprite_obj );
+			} );
+
+			/* Set the new order in the local array */
+			project.sprites = newOrderArray;
+		}
+					
+		/* Reload sprite list */
+		load_sprite_list();
+
+		/* Re-instate onClick event listener */
+		$( this ).css( "pointer-events", "auto" );
+	} );
 }
 
 function load_sprite_editor_colour_pickers() {
