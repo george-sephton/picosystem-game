@@ -196,16 +196,16 @@ function load_map_editor() {
 							$( this ).find( ".texture_table" ).css( "border", "3px solid #ff0" );
 							break;
 						case "0,1": /* Exit when walking north */
-							$( this ).find( ".texture_table" ).css( "border-bottom", "3px solid #ff0" );
-							break;
-						case "1,0": /* Exit when walking east */
-							$( this ).find( ".texture_table" ).css( "border-left", "3px solid #ff0" );
-							break;
-						case "0,-1": /* Exit when walking south */
 							$( this ).find( ".texture_table" ).css( "border-top", "3px solid #ff0" );
 							break;
-						case "-1,0": /* Exit when walking west */
+						case "1,0": /* Exit when walking east */
 							$( this ).find( ".texture_table" ).css( "border-right", "3px solid #ff0" );
+							break;
+						case "0,-1": /* Exit when walking south */
+							$( this ).find( ".texture_table" ).css( "border-bottom", "3px solid #ff0" );
+							break;
+						case "-1,0": /* Exit when walking west */
+							$( this ).find( ".texture_table" ).css( "border-left", "3px solid #ff0" );
 							break;
 					}
 				}
@@ -954,19 +954,19 @@ function map_editor_event_listeners() {
 						$( this ).find( ".texture_table" ).css( "border", "3px solid #ff0" );
 						break;
 					case "n": /* Exit when walking north */
-						$( this ).find( ".texture_table" ).css( "border-bottom", "3px solid #ff0" );
+						$( this ).find( ".texture_table" ).css( "border-top", "3px solid #ff0" );
 						selected_texture.exit_map_dir = [0, 1];
 						break;
 					case "e": /* Exit when walking east */
-						$( this ).find( ".texture_table" ).css( "border-left", "3px solid #ff0" );
+						$( this ).find( ".texture_table" ).css( "border-right", "3px solid #ff0" );
 						selected_texture.exit_map_dir = [1, 0];
 						break;
 					case "s": /* Exit when walking south */
-						$( this ).find( ".texture_table" ).css( "border-top", "3px solid #ff0" );
+						$( this ).find( ".texture_table" ).css( "border-bottom", "3px solid #ff0" );
 						selected_texture.exit_map_dir = [0, -1];
 						break;
 					case "w": /* Exit when walking west */
-						$( this ).find( ".texture_table" ).css( "border-right", "3px solid #ff0" );
+						$( this ).find( ".texture_table" ).css( "border-left", "3px solid #ff0" );
 						selected_texture.exit_map_dir = [-1, 0];
 						break;
 				}
@@ -1081,19 +1081,19 @@ function set_map_tile_settings_styles( direct_update = false ) {
 		/* Set styling for an exit tile and select the correct value from the dropdown menu */
 		switch( selected_texture.exit_map_dir.join() ) {
 			case "0,1": /* Exit when walking north */
-				$( "#container #toolbar #map_paint_preview table" ).css( "border-bottom", "2px solid #ff0" );
+				$( "#container #toolbar #map_paint_preview table" ).css( "border-top", "2px solid #ff0" );
 				$( "#container #toolbar #map_paint_settings #exit_tile_map_dir" ).val( "n" );
 				break;
 			case "1,0": /* Exit when walking east */
-				$( "#container #toolbar #map_paint_preview table" ).css( "border-left", "2px solid #ff0" );
+				$( "#container #toolbar #map_paint_preview table" ).css( "border-rightt", "2px solid #ff0" );
 				$( "#container #toolbar #map_paint_settings #exit_tile_map_dir" ).val( "e" );
 				break;
 			case "0,-1": /* Exit when walking south */
-				$( "#container #toolbar #map_paint_preview table" ).css( "border-top", "2px solid #ff0" );
+				$( "#container #toolbar #map_paint_preview table" ).css( "border-bottom", "2px solid #ff0" );
 				$( "#container #toolbar #map_paint_settings #exit_tile_map_dir" ).val( "s" );
 				break;
 			case "-1,0": /* Exit when walking west */
-				$( "#container #toolbar #map_paint_preview table" ).css( "border-right", "2px solid #ff0" );
+				$( "#container #toolbar #map_paint_preview table" ).css( "border-left", "2px solid #ff0" );
 				$( "#container #toolbar #map_paint_settings #exit_tile_map_dir" ).val( "w" );
 				break;
 			default:  /* Exit any direction */

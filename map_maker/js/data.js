@@ -815,11 +815,17 @@ function export_data() {
 			/* Add each cell */
 			$.each( row, function( ci, cell ) {
 
+				/* Get the selected texture and map as we need to print the order not the ID */
+				var cell_output_texture_group = project.textures.find( obj => obj.gid == cell.texture_gid );
+				var cell_output_texture = cell_output_texture_group.textures.find( obj => obj.id == cell.texture_id );
+				var cell_output_map = project.maps.find( obj => obj.id == cell.exit_map_id );
+
 				/* Add in the data for each cell */
 				output += "{";
 				output += Number(cell.can_walk[0]) + ", " + Number(cell.can_walk[1]) + ", " + Number(cell.can_walk[2]) + ", " + Number(cell.can_walk[3]) + ", ";
-				output += Number(cell.texture_gid) + ", " + Number(cell.texture_id) + ", " + Number(cell.texture_reverse_x) + ", " + Number(cell.texture_reverse_y) + ", ";
-				output += Number(cell.exit_tile) + ", " + Number(cell.exit_map_id) + ", {";
+				output += Number(cell_output_texture_group.gorder) + ", " + Number(cell_output_texture.order) + ", ";
+				output += Number(cell.texture_reverse_x) + ", " + Number(cell.texture_reverse_y) + ", ";
+				output += Number(cell.exit_tile) + ", " + Number(cell_output_map.order) + ", {";
 				output += cell.exit_map_dir[0] + ", " + cell.exit_map_dir[1] + "}, {";
 				output += cell.exit_map_pos[0] + ", " + cell.exit_map_pos[1] + "} ";
 				output += "}, "

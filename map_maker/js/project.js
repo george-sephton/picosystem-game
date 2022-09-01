@@ -320,9 +320,10 @@ function project_toolbar_event_listeners() {
 							if( $( this ).attr( "id" ) == "map_confirm_y" ) {
 
 								$( "#container #content #toolbar #settings" ).css( "display", "none" );
-								$( "#container #content #map_list" ).css( "display", "none" );
 								$( "#container #content #toolbar #upload_settings" ).css( "display", "flex" );
 								$( "#container #content #project_upload" ).css( "display", "flex" );
+
+								$( "#container #content #project_view" ).css( "display", "none" );
 
 								/* Upload toolbar event listener */
 								$( "#container #toolbar #upload_settings #upload_confirm #map_done" ).on( "click", function() {
