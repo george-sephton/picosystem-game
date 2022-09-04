@@ -1195,7 +1195,7 @@ function disable_controls( hide_name_input = true ) {
 	$( "#toolbar #settings #controls i" ).addClass( "resize_disabled" );
 	$( "#project_view #map_list .sortable li" ).addClass( "resize_disabled" );
 
-	$( "#sidebar #texture_list_toolbar i" ).addClass( "resize_disabled" );
+	$( "#sidebar #texture_list_toolbar i:not( #colour_ind )" ).addClass( "resize_disabled" );
 	$( "#sidebar #texture_list .sortable li" ).addClass( "resize_disabled" );
 
 	$( "#project_view #sprite_list_toolbar i" ).addClass( "resize_disabled" );

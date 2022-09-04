@@ -180,12 +180,21 @@ void draw(uint32_t tick) {
   #if player_movement 
   // Draw coloured squares to indicate player's allowed movement 
   if(exit_tile.travel_n) {
+    
+    // Blue tile since this is an exit tile 
     draw_rec(56, 48, 8, 8, rgb(0x00F));
   } else {
+
     if(map_pos.y != 0) {
+
+      // Green tile as we are allow to walk in this direction
       if(allowed_movement.travel_n) draw_rec(56, 48, 8, 8, rgb(0x0F0)); //N
+
+      // Red tile as we're not allowed to walk in this direction
       else draw_rec(56, 48, 8, 8, rgb(0xF00));
     } else {
+
+      // Yellow tile as this is the edge of the map
       draw_rec(56, 48, 8, 8, rgb(0xFF0));
     }
   }
@@ -225,14 +234,14 @@ void draw(uint32_t tick) {
   }
   #endif
 
-  // Draw an exit arrow if we're stood on an exit tile
-  if(exit_tile.travel_n)
+  // Draw an exit arrow if we're stood on an exit tile at the edge of the map
+  if((exit_tile.travel_n) && (map_pos.y == 0))
     draw_sprite((uint16_t*)arrow, 0, false, true, 56, 48, 8);
-  if(exit_tile.travel_e)
+  if((exit_tile.travel_e) && (map_pos.x == (_current_map->map_width - 1)))
     draw_sprite((uint16_t*)arrow, 1, true, false, 64, 56, 8);
-  if(exit_tile.travel_s)
+  if((exit_tile.travel_s) && (map_pos.y == (_current_map->map_height - 1)))
     draw_sprite((uint16_t*)arrow, 0, false, false, 56, 64, 8);
-  if(exit_tile.travel_w)
+  if((exit_tile.travel_w) && (map_pos.x == 0))
     draw_sprite((uint16_t*)arrow, 1, false, false, 48, 56, 8);
 
   // Draw the player in the centre square (8, 8)

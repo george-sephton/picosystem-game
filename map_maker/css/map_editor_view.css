@@ -107,9 +107,12 @@
 	color: #333;
 	font-size: 28px;
 }
-#container #sidebar #texture_list_toolbar i:hover {
+#container #sidebar #texture_list_toolbar i:hover:not( #colour_ind ) {
 	color: #8bb1c7;
 	cursor: pointer;
+}
+#container #sidebar #texture_list_toolbar #colour_ind {
+	display: none;
 }
 #container #sidebar #texture_list_toolbar #toolbar_left i {
 	margin: 0 8px 0 0;
@@ -182,7 +185,7 @@
 	flex-direction: row;
 	gap: 8px;
 }
-#container #toolbar #settings #controls i {
+#container #toolbar #settings #controls i{
 	color: #333;
 	font-size: 28px;
 }

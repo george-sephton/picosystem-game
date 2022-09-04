@@ -236,6 +236,11 @@ function load_texture_editor_colour_pickers() {
 				/* We're painting the texture  */
 				drawing_functions = 3;
 
+				/* Show colour indicator briefly */
+				$( "#container #sidebar #texture_list_toolbar #colour_ind" ).css( "display", "block" );
+				$( "#container #sidebar #texture_list_toolbar #colour_ind" ).css( "color", "#"+hex );
+				$( "#container #sidebar #texture_list_toolbar #colour_ind" ).fadeOut( 750 );
+
 				/* Reset toolbar for a clean start */
 				map_editor_toolbar_reset();
 				
@@ -251,24 +256,39 @@ function load_texture_editor_colour_pickers() {
 				$( "#texture_editor table tr td" ).addClass( "map_editor_table_cell_draw" );
 
 				/* Add event listeners to the cells of the texture editor */
-				$( "#texture_editor table tr td" ).on( "mouseup", function() {
+				$( "#texture_editor table tr td" ).on( "mouseup", function( e ) {
 
-					/* Update the cell background */
-					$( this ).css("background", "#" + hex );
+					if( e.which == 3) {
 
-					/* Get the row and column */
-					var texture_row = $( this ).parent().attr( "row_id" );
-					var texture_col = $( this ).attr( "col_id" );
+						/* Right click, let's switch colours */
+						hex = selected_texture.texture.data[ $( this ).attr( "col_id" ) ][ $( this ).parent().attr( "row_id" ) ];
 
-					/* Set the colour in the local array */
-					selected_texture.texture.data[ texture_col ][ texture_row ] = hex;
+						/* Show colour indicator briefly */
+						$( "#container #sidebar #texture_list_toolbar #colour_ind" ).css( "display", "block" );
+						$( "#container #sidebar #texture_list_toolbar #colour_ind" ).css( "color", "#"+hex );
+						$( "#container #sidebar #texture_list_toolbar #colour_ind" ).fadeOut( 750 );
+					} else {
 
-					/* Update the preview and the map */
-					texture_update( texture_fill, hex, texture_row, texture_col );
+						/* Carry on as normal and update the cell background */
+						$( this ).css("background", "#" + hex );
 
-					/* Reset the selected picker */
-					selected_picker = false;
+						/* Get the row and column */
+						var texture_row = $( this ).parent().attr( "row_id" );
+						var texture_col = $( this ).attr( "col_id" );
+
+						/* Set the colour in the local array */
+						selected_texture.texture.data[ texture_col ][ texture_row ] = hex;
+
+						/* Update the preview and the map */
+						texture_update( texture_fill, hex, texture_row, texture_col );
+
+						/* Reset the selected picker */
+						selected_picker = false;
+					}
 				} );
+
+				/* Remove default context menu when drawing */
+				$( "#texture_editor table tr td" ).on( "contextmenu" , function( e ) { return false; } );
 
 				/* Add event listener to paint icon to stop the painting */
 				$( "#texture_paint" ).on( "mouseup", function() {
@@ -286,6 +306,7 @@ function load_texture_editor_colour_pickers() {
 					/* Unbind event listeners */
 					$( "#texture_paint" ).unbind( "mouseup" );
 					$( "#texture_editor table tr td" ).unbind( "mouseup" );
+					$( "#texture_editor table tr td" ).unbind( "contextmenu" );
 
 					/* Set to 4 as this click will trigger the colour picker to re-open, and we don't want that to happen */
 					drawing_functions = 4;
