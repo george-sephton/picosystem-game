@@ -963,7 +963,7 @@ function sprite_toolbar_event_listeners() {
 					
 					if( drawing_functions != 2) {
 
-						/* Switch to erasing */
+						/* Switch to sprite erasing */
 						drawing_functions = 2;
 
 						/* Reset toolbar for a clean start */

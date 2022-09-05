@@ -231,6 +231,7 @@ function load_texture_editor_colour_pickers() {
 				
 				/* Update the texture editor */
 				$( "#texture_editor table tr td" ).css("background", "#" + hex );
+				$( "#texture_editor table tr td" ).removeClass( "trans_background" );
 			} else if( selected_picker.attr( "id" ) == "texture_paint" ) {
 
 				/* We're painting the texture  */
@@ -271,6 +272,7 @@ function load_texture_editor_colour_pickers() {
 
 						/* Carry on as normal and update the cell background */
 						$( this ).css("background", "#" + hex );
+						$( this ).removeClass( "trans_background" );
 
 						/* Get the row and column */
 						var texture_row = $( this ).parent().attr( "row_id" );
@@ -315,6 +317,7 @@ function load_texture_editor_colour_pickers() {
 
 				/* We've selected a pixel colour, update the cell background */
 				selected_picker.css("background", "#" + hex );
+				selected_picker.removeClass( "trans_background" );
 
 				/* Get the row and column */
 				var texture_row = selected_picker.parent().attr( "row_id" );
@@ -359,7 +362,11 @@ function texture_update( texture_fill, hex, texture_row, texture_col ) {
 
 					/* Get the cell of the pixel that was changed and update it */
 					var pixel = $( tile.find( ".texture_table tr[row_id=" + ( ( cell.texture_reverse_y ) ? ( 7 - texture_row ) : texture_row ) + "] td[col_id=" + ( ( cell.texture_reverse_x ) ? ( 7 - texture_col ) : texture_col ) + "]" ) );
-					pixel.css("background", "#" + hex );
+					
+					if( hex != "" )
+						pixel.css("background", "#" + hex );
+					else 
+						pixel.css("background", "#ccc" );
 				}
 			}
 		} );
@@ -438,7 +445,7 @@ function texture_toolbar_event_listeners() {
 	$( "#container #sidebar #texture_list_toolbar i:not( .texture_picker )" ).click(function() {
 		
 		/* Ignore clicks if controls are disabled */
-		if( ( controls_disabled == false ) && ( drawing_functions == false ) ) {
+		if( ( ( controls_disabled == false ) && ( drawing_functions == false ) ) || ( drawing_functions == 5 ) ) {
 
 			var func = $( this ).attr( "func" );
 			
@@ -450,6 +457,61 @@ function texture_toolbar_event_listeners() {
 					
 					/* Reload texture list */
 					load_texture_list();
+					break;
+				case "texture-erase": /* Erase pixels */
+
+					if( drawing_functions != 5 ) {
+
+						/* Switch to sprite erasing */
+						drawing_functions = 5;
+
+						/* Reset toolbar for a clean start */
+						map_editor_toolbar_reset();
+						
+						/* Disable controls */
+						disable_controls( false );
+
+						/* Set eraser as selected tool */
+						$( "#texture_erase" ).removeClass( "resize_disabled" );
+						$( "#texture_erase" ).addClass( "selected_tool" );
+
+						/* Add hover functionality to map editor */
+						$( "#texture_editor table tr td" ).addClass( "map_editor_table_cell_draw" );
+
+						/* Add event listener for the erase tool */
+						$( "#texture_editor .map_editor_table_cell_draw" ).on( "mouseup" , function( e ) {
+
+							/* Clear the pixel in the editor */
+							$( this ).css( "background", false );
+							$( this ).addClass( "trans_background" );
+
+							/* Get the row and column */
+							var pixel_row = $( this ).parent().attr( "row_id" );
+							var pixel_col = $( this ).attr( "col_id" );
+
+							/* Clear the pixel in the local array */
+							selected_texture.texture.data[ pixel_col ][ pixel_row ] = "";
+
+							/* Update the preview */
+							texture_update( false, "", pixel_row, pixel_col )
+						} );
+
+					} else {
+						/* Clear erase tool */				
+						drawing_functions = false;
+
+						/* Re-enable controls */
+						enable_controls();
+
+						/* Remove event listener */
+						$( "#texture_editor .map_editor_table_cell_draw" ).unbind( "mouseup" );
+
+						/* Remove paint brush as selected tool */
+						$( "#texture_erase" ).removeClass( "selected_tool" );
+						$( "#texture_editor table tr td" ).removeClass( "map_editor_table_cell_draw" );
+					}
+					
+					
 					break;
 				case "new": /* Create a new texture */
 				case "new-group": /* Create a new texture group */

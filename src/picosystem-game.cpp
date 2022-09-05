@@ -52,7 +52,7 @@ void init() {
   _current_map = &map_list[0];
 
   // Set our initial location
-  map_pos = {3, 3};
+  map_pos = {3, 4};
   // We're not moving
   player.walk_dir.x = 0;
   player.walk_dir.y = 0;

@@ -172,7 +172,10 @@ function load_map_editor() {
 							col_sel = 7 - i;
 						}
 
-						$( '<td col_id="'+i+'"></td>' ).appendTo( $(this) ).css( "background", "#" + texture_obj.data[col_sel][row_sel] );	
+						if( texture_obj.data[col_sel][row_sel] != "" ) 
+							$( '<td col_id="'+i+'"></td>' ).appendTo( $(this) ).css( "background", "#" + texture_obj.data[col_sel][row_sel] );
+						else
+							$( '<td col_id="'+i+'"></td>' ).appendTo( $(this) ).css( "background", "#ccc" );	
 					}
 				} );
 
@@ -468,7 +471,7 @@ function map_toolbar_event_listeners() {
 					
 					/* Tool selection behaviour */
 					if( ( func == "paint" ) && (drawing_functions != 1) ) {
-						/* Switch to painting */
+						/* Switch to map painting */
 						drawing_functions = 1;
 						map_editor_start_drawing();
 
@@ -488,7 +491,7 @@ function map_toolbar_event_listeners() {
 						/* Disable groups in texture list */
 						$( "#container #sidebar #texture_list .sortable .ui-group" ).addClass( "resize_disabled" );
 					} else if( ( func == "erase" ) && (drawing_functions != 2) ) {
-						/* Switch to erasing */
+						/* Switch to map erasing */
 						drawing_functions = 2;
 						map_editor_start_drawing();
 
