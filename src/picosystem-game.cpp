@@ -102,7 +102,7 @@ void draw(uint32_t tick) {
   // Draw the map tiles, start by looping through the 15 rows of the display (y-direction)
   for(_draw_y=0; _draw_y < 15; _draw_y++) {
     
-    // Only draw if there's map tiles to be draw
+    // Only draw if there's map tiles to be drawn
     if( (_draw_y >= _y_offset_n) && (_draw_y < (15 - _y_offset_p)) ) {
       
       // Next loop through the 15 columns of the display (x-direction)
@@ -116,7 +116,7 @@ void draw(uint32_t tick) {
             draw_sprite((uint16_t*)_texture_map[_current_map->bg_sprite], _current_map->bg_sprite_offset, 0, 0, (_draw_x * 8), (_draw_y * 8), 8);
 
           //Make sure there's a sprite to draw
-          if( (*map_tiles_ptr).sprite != -1 )
+          if( ( (*map_tiles_ptr).sprite != -1 ) && ( (*map_tiles_ptr).top_layer == false) )
             draw_sprite((uint16_t*)_texture_map[(*map_tiles_ptr).sprite], (*map_tiles_ptr).sprite_offset, (*map_tiles_ptr).sprite_reverse_x, (*map_tiles_ptr).sprite_reverse_y, (_draw_x * 8), (_draw_y * 8), 8);
 
           // If we've drawn a tile, increment the pointer (unless we're at the last column of the display, don't want to accidentally cause a hard fault)
@@ -128,9 +128,7 @@ void draw(uint32_t tick) {
         // Also if we're drawing the last row, then don't move the pointer either
         if(_draw_y != 14) map_tiles_ptr += ( _current_map->map_width - 14 + _x_offset_n + ((_x_offset_p > 1) ? (_x_offset_p - 1) : 0) );
       }
-
     }
-
   }
   
   // Get a pointer to the current tile
@@ -282,6 +280,49 @@ void draw(uint32_t tick) {
   } else if((player.walk_dir.x == -1) && (player.walk_dir.y == 0)) {
     // Walking W
     draw_sprite((uint16_t*)male_player, (2 + player.reverse_walking_render), false, false, 52, 52, 16);
+  }
+
+  // Now draw any top layer tiles as these are rendered on top of the player
+  
+  // Go back to the start of the current map
+  const struct map_tile (*map_tiles_ptr2) = _current_map->map_tiles_ptr;
+  // Move the map pointer to the column first tile to draw
+  if(_x_offset_n == 0)
+    map_tiles_ptr2 += (map_pos.x - 7);
+  // and move the pointer to the row of the first tile to draw
+  if(_y_offset_n == 0)
+     map_tiles_ptr2 += ((map_pos.y - 7) * _current_map->map_width);
+
+  // Loopg through the 15 rows of the display (y-direction)
+  for(_draw_y=0; _draw_y < 15; _draw_y++) {
+    
+    // Only draw if there's map tiles to be drawn
+    if( (_draw_y >= _y_offset_n) && (_draw_y < (15 - _y_offset_p)) ) {
+      
+      // Next loop through the 15 columns of the display (x-direction)
+      for(_draw_x=0; _draw_x < 15; _draw_x++) {
+
+        // Again, make sure we're drawing the map titles in the correct places
+        if( (_draw_x >= _x_offset_n) && ((map_pos.x + _draw_x - 6) <= _current_map->map_width) ) {
+          
+          //Make sure there's a sprite to draw
+          if( ( (*map_tiles_ptr2).sprite != -1 ) && ( (*map_tiles_ptr2).top_layer == true) )
+            
+            //draw_rec((_draw_x * 8), (_draw_y * 8), 8, 8, rgb(0x00F));
+            draw_sprite((uint16_t*)_texture_map[(*map_tiles_ptr2).sprite], (*map_tiles_ptr2).sprite_offset, (*map_tiles_ptr2).sprite_reverse_x, (*map_tiles_ptr2).sprite_reverse_y, (_draw_x * 8), (_draw_y * 8), 8);
+
+          // If we've drawn a tile, increment the pointer (unless we're at the last column of the display, don't want to accidentally cause a hard fault)
+          if(_draw_x != 14) map_tiles_ptr2++;
+        }
+      }
+      // Increment the pointer as we move to the next row on the dislay, but don't move the pointers if the map width fits entirely on the display
+      if((_x_offset_p == 0) || (_x_offset_n == 0)) {
+        // Also if we're drawing the last row, then don't move the pointer either
+        if(_draw_y != 14) map_tiles_ptr2 += ( _current_map->map_width - 14 + _x_offset_n + ((_x_offset_p > 1) ? (_x_offset_p - 1) : 0) );
+      }
+
+    }
+
   }
 
   // An animation is running

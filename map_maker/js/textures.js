@@ -743,6 +743,7 @@ function texture_toolbar_event_listeners() {
 										map_tile.texture_reverse_y = false;
 										map_tile.exit_tile = false;
 										map_tile.exit_map_id = false;
+										map_tile.top_layer = false;
 										map_tile.exit_map_dir = [0, 0];
 										map_tile.exit_map_pos = [0, 0];
 									}

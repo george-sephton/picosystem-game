@@ -301,11 +301,21 @@
 }
 #container #toolbar #map_paint_settings .select-input {
 	font-size: 16px;
-	width: 120px;
 	background: #FFF;
 	border-radius: 10px;
 	border: 1px solid #666;
 	padding: 4px;
+}
+#container #toolbar #map_paint_settings #top_layer_en {
+	margin-left: 3px;
+}
+#container #toolbar #map_paint_settings #exit_tile_map_id {
+	font-size: 16px;
+	width: 190px;
+}
+#container #toolbar #map_paint_settings #exit_tile_map_dir {
+	font-size: 16px;
+	width: 130px;
 }
 #container #toolbar #map_paint_settings #map_exit_tile_en label {
 	min-width: 30px;

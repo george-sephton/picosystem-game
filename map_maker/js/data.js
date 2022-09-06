@@ -630,6 +630,7 @@ blank_tile.texture_reverse_x = false;
 blank_tile.texture_reverse_y = false;
 blank_tile.exit_tile = false;
 blank_tile.exit_map_id = false;
+blank_tile.top_layer = false;
 blank_tile.exit_map_dir = [0, 0];
 blank_tile.exit_map_pos = [0, 0];
 
@@ -862,6 +863,7 @@ function export_data() {
 					var cell_output_map = project.maps.find( obj => obj.id == cell.exit_map_id );
 
 					/* Add in the data for each cell */
+					output += Number(cell.top_layer) + ", ";
 					output += Number(cell.can_walk[0]) + ", " + Number(cell.can_walk[1]) + ", " + Number(cell.can_walk[2]) + ", " + Number(cell.can_walk[3]) + ", ";
 					output += Number(cell_output_texture_group.gorder) + ", " + Number(cell_output_texture.order) + ", ";
 					output += Number(cell.texture_reverse_x) + ", " + Number(cell.texture_reverse_y) + ", ";
@@ -871,7 +873,7 @@ function export_data() {
 				} else {
 
 					/* Empty cell */
-					output += "1, 1, 1, 1, -1, 0, 0, 0, 0, 0, {0, 0}, {0, 0} ";
+					output += "0, 1, 1, 1, 1, -1, 0, 0, 0, 0, 0, {0, 0}, {0, 0} ";
 				}
 				output += "}, ";		
 			} );

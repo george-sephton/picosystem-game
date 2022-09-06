@@ -201,7 +201,7 @@ function load_map_editor() {
 							col_sel = 7 - i;
 						}
 
-						if( texture_obj.data[col_sel][row_sel] == undefined ) {
+						if( ( texture_obj.data[col_sel][row_sel] == "" ) || ( texture_obj.data[col_sel][row_sel] == undefined ) ) {
 
 							/* Transparent pixel */
 							$( '<td col_id="'+i+'"></td>' ).appendTo( $(this) ).css( "background", "#ccc" );
@@ -525,6 +525,7 @@ function map_toolbar_event_listeners() {
 						selected_texture.can_walk = [true, true, true, true];
 						selected_texture.exit_tile = false;
 						selected_texture.exit_map_id = false;
+						selected_texture.top_layer = false;
 						selected_texture.exit_map_dir = [0, 0];
 						selected_texture.exit_map_pos = [0, 0];
 
@@ -593,6 +594,7 @@ function map_toolbar_event_listeners() {
 							}
 							fill_tile.exit_tile = false;
 							fill_tile.exit_map_id = false;
+							fill_tile.top_layer = false;
 							fill_tile.exit_map_dir = [0, 0];
 							fill_tile.exit_map_pos = [0, 0];
 
@@ -669,6 +671,7 @@ function map_toolbar_event_listeners() {
 							blank_tile.texture_reverse_y = false;
 							blank_tile.exit_tile = false;
 							blank_tile.exit_map_id = false;
+							blank_tile.top_layer = false;
 							blank_tile.exit_map_dir = [0, 0];
 							blank_tile.exit_map_pos = [0, 0];
 
@@ -788,8 +791,16 @@ function map_toolbar_event_listeners() {
 						$( "#exit_tile_map_id" ).empty();
 					}
 					break;
+				case "top_layer_en":
+					/* Update tile top layer */
+					if( !element.prop( "checked" ) ) {
+						selected_texture.top_layer = false;
+					} else {
+						selected_texture.top_layer = true;
+					}
+					break;
 				case "exit_tile_n":
-					/* Updated tile direction N */
+					/* Update tile direction N */
 					if( !element.prop( "checked" ) ) {
 						selected_texture.can_walk[0] = false;
 					} else {
@@ -797,7 +808,7 @@ function map_toolbar_event_listeners() {
 					}
 					break;
 				case "exit_tile_e":
-					/* Updated tile direction E */
+					/* Update tile direction E */
 					if( !element.prop( "checked" ) ) {
 						selected_texture.can_walk[1] = false;
 					} else {
@@ -805,7 +816,7 @@ function map_toolbar_event_listeners() {
 					}
 					break;
 				case "exit_tile_s":
-					/* Updated tile direction S */
+					/* Update tile direction S */
 					if( !element.prop( "checked" ) ) {
 						selected_texture.can_walk[2] = false;
 					} else {
@@ -813,7 +824,7 @@ function map_toolbar_event_listeners() {
 					}
 					break;
 				case "exit_tile_w":
-					/* Updated tile direction W */
+					/* Update tile direction W */
 					if( !element.prop( "checked" ) ) {
 						selected_texture.can_walk[3] = false;
 					} else {
@@ -1020,7 +1031,7 @@ function map_editor_event_listeners() {
 						col_sel = 7 - i;
 					}
 
-					if( selected_texture.texture.data[col_sel][row_sel] != "" ) 
+					if( ( selected_texture.texture.data[col_sel][row_sel] != "" ) && ( selected_texture.texture.data[col_sel][row_sel] != undefined ) ) 
 						$( '<td col_id="'+i+'"></td>' ).appendTo( $(this) ).css( "background", "#" + selected_texture.texture.data[col_sel][row_sel] );
 					else 
 						$( '<td col_id="'+i+'"></td>' ).appendTo( $(this) ).css( "background", "#ccc" );
@@ -1080,6 +1091,7 @@ function map_editor_event_listeners() {
 
 			selected_map.data[tile_info.row][tile_info.col].exit_tile = selected_texture.exit_tile;
 			selected_map.data[tile_info.row][tile_info.col].exit_map_id = selected_texture.exit_map_id;
+			selected_map.data[tile_info.row][tile_info.col].top_layer = selected_texture.top_layer;
 
 			selected_map.data[tile_info.row][tile_info.col].can_walk = new Array();
 			$.extend( true, selected_map.data[tile_info.row][tile_info.col].can_walk, selected_texture.can_walk ); /* Clone array */
@@ -1132,6 +1144,11 @@ function set_map_tile_settings_styles( direct_update = false ) {
 	$( "#container #toolbar #map_paint_preview table" ).css( "border-left", "2px solid #000" );
 	$( "#container #toolbar #map_paint_preview table" ).css( "border-bottom", "2px solid #000" );
 	$( "#container #toolbar #map_paint_preview table" ).css( "border-right", "2px solid #000" );
+
+	if( selected_texture.top_layer )
+		$( "#container #toolbar #map_paint_settings #top_layer_en" ).prop( "checked", true );
+	else 
+		$( "#container #toolbar #map_paint_settings #top_layer_en" ).prop( "checked", false );
 
 	if( selected_texture.exit_tile ) {
 		/* Exit tile enabled, show the rest of the settings  */
@@ -1256,6 +1273,7 @@ function display_tile_info( tile_row, tile_col ) {
 	/* Copy tile info */
 	selected_texture.exit_tile = selected_map.data[tile_row][tile_col].exit_tile;
 	selected_texture.exit_map_id = selected_map.data[tile_row][tile_col].exit_map_id;
+	selected_texture.top_layer = selected_map.data[tile_row][tile_col].top_layer;
 	selected_texture.exit_map_dir = new Array();
 	$.extend( true, selected_texture.exit_map_dir, selected_map.data[tile_row][tile_col].exit_map_dir ); /* Clone array */
 	selected_texture.exit_map_pos = new Array();
