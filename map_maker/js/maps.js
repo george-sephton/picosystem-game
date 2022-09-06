@@ -113,6 +113,13 @@ function load_map_editor() {
 		tile_info.row = $( this ).parent().attr( "row_id" );
 		tile_info.col = $( this ).attr( "col_id" );
 
+		/* Clear all borders first */
+		$( this ).find( ".texture_table" ).css( "border-top", "0" );
+		$( this ).find( ".texture_table" ).css( "border-right", "0" );
+		$( this ).find( ".texture_table" ).css( "border-bottom", "0" );
+		$( this ).find( ".texture_table" ).css( "border-left", "0" );
+		$( this ).find( ".texture_table" ).css( "border", "0" );
+
 		/* Get the texture flip info */
 		if( ( tile_info.col >= selected_map.width ) || ( tile_info.row >= selected_map.height ) ) {
 			tile_info.texture_reverse_x = false;
@@ -130,6 +137,8 @@ function load_map_editor() {
 		else tile_info.texture_id = selected_map.data[tile_info.row][tile_info.col].texture_id;
 		
 		var texture_obj = undefined;
+		var bg_texture = false;
+
 		/* Get the texture */
 		if( ( tile_info.texture_gid != undefined ) && ( tile_info.texture_id != undefined ) ) {
 			var group_obj = project.textures.find( obj => obj.gid == tile_info.texture_gid );
@@ -141,13 +150,33 @@ function load_map_editor() {
 		}
 		
 		if( texture_obj == undefined ) {
-			$( this ).css( "background", "#ccc" );
-		} else {
+			
+			if( ( selected_map.bg_texture.gid == undefined ) && ( selected_map.bg_texture.id == undefined ) ) {
+				
+				/* Tile has no texture and map has no background texture, show nothing */
+				$( this ).css( "background", false );
+				$( this ).addClass( "trans_background" );
+			} else {
+
+				/* Tile has no texture but map has a background texture, show that instead */
+				$( this ).addClass( "remove_background" );
+				bg_texture = true;
+
+				group_obj = project.textures.find( obj => obj.gid == selected_map.bg_texture.gid );
+				texture_obj = group_obj.textures.find( obj => obj.id == selected_map.bg_texture.id );
+			}
+		}
+		
+		if( texture_obj != undefined ) {
 
 			/* Whilst resizing, don't render the texture */
 			if(controls_disabled == true) {	
+
+				/* Show blue instead */
 				$( this ).css( "background", "#327da8" );
+				$( this ).removeClass( "trans_background" );
 			} else {
+
 				/* Add the texture table */
 				$( this ).html( '<table class="texture_table"></table>' );
 
@@ -172,44 +201,49 @@ function load_map_editor() {
 							col_sel = 7 - i;
 						}
 
-						if( texture_obj.data[col_sel][row_sel] != "" ) 
+						if( texture_obj.data[col_sel][row_sel] == undefined ) {
+
+							/* Transparent pixel */
+							$( '<td col_id="'+i+'"></td>' ).appendTo( $(this) ).css( "background", "#ccc" );
+						} else {
+
+							/* Normal pixel */
 							$( '<td col_id="'+i+'"></td>' ).appendTo( $(this) ).css( "background", "#" + texture_obj.data[col_sel][row_sel] );
-						else
-							$( '<td col_id="'+i+'"></td>' ).appendTo( $(this) ).css( "background", "#ccc" );	
+						}
 					}
 				} );
 
-				/* Clear all borders first */
-				$( this ).find( ".texture_table" ).css( "border-top", "0" );
-				$( this ).find( ".texture_table" ).css( "border-right", "0" );
-				$( this ).find( ".texture_table" ).css( "border-bottom", "0" );
-				$( this ).find( ".texture_table" ).css( "border-left", "0" );
-				$( this ).find( ".texture_table" ).css( "border", "0" );
+				if( bg_texture ) {
 
-				/* Update CSS based on can_walk */
-				if( !selected_map.data[tile_info.row][tile_info.col].can_walk[0] ) $( this ).find( ".texture_table" ).css( "border-top", "3px solid #f00" );
-				if( !selected_map.data[tile_info.row][tile_info.col].can_walk[1] ) $( this ).find( ".texture_table" ).css( "border-right", "3px solid #f00" );
-				if( !selected_map.data[tile_info.row][tile_info.col].can_walk[2] ) $( this ).find( ".texture_table" ).css( "border-bottom", "3px solid #f00" );
-				if( !selected_map.data[tile_info.row][tile_info.col].can_walk[3] ) $( this ).find( ".texture_table" ).css( "border-left", "3px solid #f00" );
+					/* Add a border so we know it's a blank tile */
+					$( this ).find( ".texture_table" ).css( "border", "1px solid #00f" );
+				} else {
 
-				if( selected_map.data[tile_info.row][tile_info.col].exit_tile ) {
-					/* Update CSS for exit tiles */
-					switch( selected_map.data[tile_info.row][tile_info.col].exit_map_dir.join() ) {
-						case "0,0":  /* Exit any direction */
-							$( this ).find( ".texture_table" ).css( "border", "3px solid #ff0" );
-							break;
-						case "0,1": /* Exit when walking north */
-							$( this ).find( ".texture_table" ).css( "border-top", "3px solid #ff0" );
-							break;
-						case "1,0": /* Exit when walking east */
-							$( this ).find( ".texture_table" ).css( "border-right", "3px solid #ff0" );
-							break;
-						case "0,-1": /* Exit when walking south */
-							$( this ).find( ".texture_table" ).css( "border-bottom", "3px solid #ff0" );
-							break;
-						case "-1,0": /* Exit when walking west */
-							$( this ).find( ".texture_table" ).css( "border-left", "3px solid #ff0" );
-							break;
+					/* Update CSS based on can_walk */
+					if( !selected_map.data[tile_info.row][tile_info.col].can_walk[0] ) $( this ).find( ".texture_table" ).css( "border-top", "3px solid #f00" );
+					if( !selected_map.data[tile_info.row][tile_info.col].can_walk[1] ) $( this ).find( ".texture_table" ).css( "border-right", "3px solid #f00" );
+					if( !selected_map.data[tile_info.row][tile_info.col].can_walk[2] ) $( this ).find( ".texture_table" ).css( "border-bottom", "3px solid #f00" );
+					if( !selected_map.data[tile_info.row][tile_info.col].can_walk[3] ) $( this ).find( ".texture_table" ).css( "border-left", "3px solid #f00" );
+
+					if( selected_map.data[tile_info.row][tile_info.col].exit_tile ) {
+						/* Update CSS for exit tiles */
+						switch( selected_map.data[tile_info.row][tile_info.col].exit_map_dir.join() ) {
+							case "0,0":  /* Exit any direction */
+								$( this ).find( ".texture_table" ).css( "border", "3px solid #ff0" );
+								break;
+							case "0,1": /* Exit when walking north */
+								$( this ).find( ".texture_table" ).css( "border-top", "3px solid #ff0" );
+								break;
+							case "1,0": /* Exit when walking east */
+								$( this ).find( ".texture_table" ).css( "border-right", "3px solid #ff0" );
+								break;
+							case "0,-1": /* Exit when walking south */
+								$( this ).find( ".texture_table" ).css( "border-bottom", "3px solid #ff0" );
+								break;
+							case "-1,0": /* Exit when walking west */
+								$( this ).find( ".texture_table" ).css( "border-left", "3px solid #ff0" );
+								break;
+						}
 					}
 				}
 			}
@@ -232,7 +266,6 @@ function load_map_editor() {
 function map_editor_toolbar_reset() {
 	
 	/* Deselect the paint/erase tool */
-	$( "#map_toolbar_info" ).removeClass( "selected_tool" );
 	$( "#map_toolbar_paint" ).removeClass( "selected_tool" );
 	$( "#map_toolbar_erase" ).removeClass( "selected_tool" );
 
@@ -462,6 +495,16 @@ function map_toolbar_event_listeners() {
 
 						$( "#container #toolbar #settings #map_confirm" ).css( "display", "none" );
 					});
+					break;
+				case "set-bg-texture":
+
+					/* Set the selected texture as the background texture */
+					selected_map.bg_texture.gid = selected_texture.group.gid;
+					selected_map.bg_texture.id = selected_texture.texture.id;
+					
+					/* Re-load texture list */
+					load_texture_list();
+
 					break;
 				case "paint":
 				case "erase":
@@ -900,16 +943,53 @@ function map_editor_event_listeners() {
 		tile_info.col = $( this ).attr( "col_id" );
 
 		if( drawing_functions == 2 ) { /* Clear */
+			
 			/* Clear the cell */
 			$( this ).html( "" );
-			$( this ).css( "background", "#ccc" );
+
+			if( ( selected_map.bg_texture.gid == undefined ) && ( selected_map.bg_texture.id == undefined ) ) {
+				
+				/* Tile has no texture and map has no background texture, show nothing */
+				$( this ).css( "background", false );
+				$( this ).addClass( "trans_background" );
+			} else {
+
+				/* Tile has no texture but map has a background texture, show that instead */
+				$( this ).addClass( "remove_background" );
+
+				group_obj = project.textures.find( obj => obj.gid == selected_map.bg_texture.gid );
+				texture_obj = group_obj.textures.find( obj => obj.id == selected_map.bg_texture.id );
+
+				/* Draw in the cell */
+				$( this ).html( '<table class="texture_table"></table>' );
+
+				/* Add 8 rows */
+				for(i=0; i<8; i++)
+					$( this ).find( ".texture_table" ).append( '<tr row_id="' + i + '"></tr>' );
+
+				/* Add 8 cells for each row */
+				$( this ).find( ".texture_table tr" ).each( function() {
+					for(i=0; i<8; i++) {
+							
+						/* Draw texture */
+						var row_sel = $( this ).attr( "row_id" );
+						var col_sel = i;
+
+						$( '<td col_id="'+i+'"></td>' ).appendTo( $(this) ).css( "background", "#" + texture_obj.data[col_sel][row_sel] );
+						$( this ).removeClass( "trans_background" );
+					}
+				} );
+
+				/* Add a border so we know it's a blank tile */
+				$( this ).find( ".texture_table" ).css( "border", "1px solid #00f" );
+			}
 
 			/* Update the local array */
 			selected_map.data[tile_info.row][tile_info.col].texture_gid = undefined;
 			selected_map.data[tile_info.row][tile_info.col].texture_id = undefined;
 			selected_map.data[tile_info.row][tile_info.col].texture_reverse_x = false;
 			selected_map.data[tile_info.row][tile_info.col].texture_reverse_y = false;
-			selected_map.data[tile_info.row][tile_info.col].can_walk = [false, false, false, false];
+			selected_map.data[tile_info.row][tile_info.col].can_walk = [true, true, true, true];
 			selected_map.data[tile_info.row][tile_info.col].exit_map_id = false;
 			selected_map.data[tile_info.row][tile_info.col].exit_map_dir = [0, 0];
 			selected_map.data[tile_info.row][tile_info.col].exit_map_pos = [0, 0];
@@ -940,7 +1020,11 @@ function map_editor_event_listeners() {
 						col_sel = 7 - i;
 					}
 
-					$( '<td col_id="'+i+'"></td>' ).appendTo( $(this) ).css( "background", "#" + selected_texture.texture.data[col_sel][row_sel] );	
+					if( selected_texture.texture.data[col_sel][row_sel] != "" ) 
+						$( '<td col_id="'+i+'"></td>' ).appendTo( $(this) ).css( "background", "#" + selected_texture.texture.data[col_sel][row_sel] );
+					else 
+						$( '<td col_id="'+i+'"></td>' ).appendTo( $(this) ).css( "background", "#ccc" );
+					
 				}
 			} );
 

@@ -357,53 +357,53 @@ var bollard_1 = new Object();
 bollard_1.name = "Bollard 1";
 bollard_1.order = 0;
 bollard_1.id = 0;
-bollard_1.data =	   [["447733", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"],
-						["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "77DD66", "77DD66"],
-						["77DD66", "77DD66", "77DD66", "77DD66", "000011", "000011", "000011", "000011"],
-						["77DD66", "77DD66", "77DD66", "000011", "88FFBB", "447733", "88FFBB", "88FFBB"],
-						["77DD66", "447733", "000011", "88FFBB", "CCFFBB", "88FFBB", "447733", "88FFBB"],
-						["77DD66", "77DD66", "000011", "88FFBB", "CCFFBB", "CCFFBB", "447733", "88FFBB"],
-						["77DD66", "000011", "88FFBB", "CCFFBB", "CCFFBB", "CCFFBB", "88FFBB", "447733"],
-						["77DD66", "000011", "88FFBB", "CCFFBB", "CCFFBB", "CCFFBB", "CCFFBB", "447733"]];
+bollard_1.data =	   [[""      , ""      , ""      , ""      , ""      , ""      , ""      , ""      ],
+						[""      , ""      , ""      , ""      , ""      , ""      , ""      , ""      ],
+						[""      , ""      , ""      , ""      , "000000", "000000", "000000", "000000"],
+						[""      , ""      , ""      , "000000", "88FFBB", "447733", "88FFBB", "88FFBB"],
+						[""      , ""      , "000000", "88FFBB", "CCFFBB", "88FFBB", "447733", "88FFBB"],
+						[""      , ""      , "000000", "88FFBB", "CCFFBB", "CCFFBB", "447733", "88FFBB"],
+						[""      , "000000", "88FFBB", "CCFFBB", "CCFFBB", "CCFFBB", "88FFBB", "447733"],
+						[""      , "000000", "88FFBB", "CCFFBB", "CCFFBB", "CCFFBB", "CCFFBB", "447733"]];
 
 var bollard_2 = new Object();
 bollard_2.name = "Bollard 2";
 bollard_2.order = 1;
 bollard_2.id = 1;
-bollard_2.data =	   [["77DD66", "000011", "88FFBB", "CCFFBB", "CCFFBB", "CCFFBB", "CCFFBB", "447733"],
-						["77DD66", "000011", "88FFBB", "CCFFBB", "CCFFBB", "CCFFBB", "88FFBB", "447733"],
-						["77DD66", "77DD66", "000011", "88FFBB", "CCFFBB", "CCFFBB", "447733", "88FFBB"],
-						["77DD66", "77DD66", "000011", "88FFBB", "CCFFBB", "88FFBB", "447733", "88FFBB"],
-						["77DD66", "77DD66", "77DD66", "000011", "88FFBB", "447733", "88FFBB", "88FFBB"],
-						["77DD66", "77DD66", "77DD66", "77DD66", "000011", "000011", "000011", "000011"],
-						["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "447733", "77DD66"],
-						["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"]];
+bollard_2.data =	   [[""      , "000000", "88FFBB", "CCFFBB", "CCFFBB", "CCFFBB", "CCFFBB", "447733"],
+						[""      , "000000", "88FFBB", "CCFFBB", "CCFFBB", "CCFFBB", "88FFBB", "447733"],
+						[""      , ""      , "000000", "88FFBB", "CCFFBB", "CCFFBB", "447733", "88FFBB"],
+						[""      , ""      , "000000", "88FFBB", "CCFFBB", "88FFBB", "447733", "88FFBB"],
+						[""      , ""      , ""      , "000000", "88FFBB", "447733", "88FFBB", "88FFBB"],
+						[""      , ""      , ""      , ""      , "000000", "000000", "000000", "000000"],
+						[""      , ""      , ""      , ""      , ""      , ""      , ""      , ""      ],
+						[""      , ""      , ""      , ""      , ""      , ""      , ""      , ""      ]];
 
 var bollard_3 = new Object();
 bollard_3.name = "Bollard 3";
 bollard_3.order = 2;
 bollard_3.id = 2;
-bollard_3.data =	   [["447733", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"],
-						["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "77DD66", "77DD66"],
-						["000011", "000011", "000011", "000011", "447733", "77DD66", "CCFFBB", "77DD66"],
-						["447733", "88FFBB", "88FFBB", "88FFBB", "000011", "447733", "77DD66", "77DD66"],
-						["88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", "447733", "77DD66"],
-						["88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", "447733", "77DD66"],
-						["88FFBB", "88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", "88FFBB"],
-						["DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "000011", "88FFBB"]];
+bollard_3.data =	   [[""      , ""      , ""      , ""      , ""      , ""      , ""      , ""      ],
+						[""      , ""      , ""      , ""      , ""      , ""      , ""      , ""      ],
+						["000011", "000011", "000011", "000011", ""      , ""      , ""      , ""      ],
+						["447733", "88FFBB", "88FFBB", "88FFBB", "000011", ""      , ""      , ""      ],
+						["88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", ""      , ""      ],
+						["88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", ""      , ""      ],
+						["88FFBB", "88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", ""      ],
+						["DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "000011", ""      ]];
 
 var bollard_4 = new Object();
 bollard_4.name = "Bollard 4";
 bollard_4.order = 3;
 bollard_4.id = 3;
-bollard_4.data =	   [["DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "000011", "88FFBB"],
-						["88FFBB", "88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", "88FFBB"],
-						["88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", "88FFBB", "77DD66"],
-						["88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", "88FFBB", "77DD66"],
-						["447733", "88FFBB", "88FFBB", "88FFBB", "000011", "88FFBB", "77DD66", "77DD66"],
-						["000011", "000011", "000011", "000011", "88FFBB", "77DD66", "77DD66", "77DD66"],
-						["77DD66", "77DD66", "77DD66", "CCFFBB", "77DD66", "77DD66", "447733", "77DD66"],
-						["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"]];
+bollard_4.data =	   [["DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "000011", ""      ],
+						["88FFBB", "88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", ""      ],
+						["88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", ""      , ""      ],
+						["88FFBB", "447733", "88FFBB", "88FFBB", "88FFBB", "000011", ""      , ""      ],
+						["447733", "88FFBB", "88FFBB", "88FFBB", "000011", ""      , ""      , ""      ],
+						["000011", "000011", "000011", "000011", ""      , ""      , ""      , ""      ],
+						[""      , ""      , ""      , ""      , ""      , ""      , ""      , ""      ],
+						[""      , ""      , ""      , ""      , ""      , ""      , ""      , ""      ]];
 
 var g_bollard = new Object();
 g_bollard.name = "Bollard";
@@ -624,8 +624,8 @@ var demo_textures = new Array( g_grass_bg, g_mat, g_bollard, g_tree, g_fence );
 /* Demo map */
 var blank_tile = new Object();
 blank_tile.can_walk = [true, true, true, true];
-blank_tile.texture_gid = 0;
-blank_tile.texture_id = 0;
+blank_tile.texture_gid = undefined;
+blank_tile.texture_id = undefined;
 blank_tile.texture_reverse_x = false;
 blank_tile.texture_reverse_y = false;
 blank_tile.exit_tile = false;
@@ -639,6 +639,9 @@ map1.order = 0;
 map1.name = "Demo Map";
 map1.width = 5;
 map1.height = 5;
+map1.bg_texture = new Object();
+map1.bg_texture.gid = 0;
+map1.bg_texture.id = 0;
 map1.data = Array.from( { length: map1.height }, () => Array.from( { length: map1.width }, () => Object.assign( {}, blank_tile ) ) );
 
 var map2 = new Object();
@@ -647,6 +650,9 @@ map2.order = 1;
 map2.name = "Large Demo Map";
 map2.width = 16;
 map2.height = 12;
+map2.bg_texture = new Object();
+map2.bg_texture.gid = undefined;
+map2.bg_texture.id = undefined;
 map2.data = Array.from( { length: map2.height }, () => Array.from( { length: map2.width }, () => Object.assign( {}, blank_tile ) ) );
 
 /* Store maps in an array */
@@ -708,21 +714,24 @@ function export_data() {
 				$.each( sprite_row, function( ci, sprite_cell ) {
 
 					/* Check for transparent pixels */
-					if( sprite_cell == "" ) {
+					if( ( sprite_cell == "" ) || ( sprite_cell == undefined ) ) {
 
-						/* Convert blank cells to black */
+						/* Transparent pixel */
 						sprite_cell_int = 0;
-					} else if ( sprite_cell == "000000" ) {
-						
-						/* Convert black cells to not quite black */
-						sprite_cell_int = 0x11;
 					} else {
 
-						/* Otherwise convert to int */
+						/* Convert value to int */
 						var sprite_cell_int = parseInt( sprite_cell, 16 );
+						/* Convert 24-bit colour to 12-bit colour for the Picosystem */
+						sprite_cell_int = ( ((sprite_cell_int & 0xF0) >> 4) | ((sprite_cell_int & 0xF000) >> 8) | ((sprite_cell_int & 0xF00000) >> 12) );
+
+						if ( sprite_cell_int == 0 ) {
+
+							/* We need to convert black to not quite black, otherwise it'll be treated like a transparent pixel */
+							sprite_cell_int = 0x01;
+						}
 					}
-					/* Convert 24-bit colour to 12-bit colour for the Picosystem */
-					sprite_cell_int = ( ((sprite_cell_int & 0xF0) >> 4) | ((sprite_cell_int & 0xF000) >> 8) | ((sprite_cell_int & 0xF00000) >> 12) );
+
 					/* Add to the output */
 					convert_sprite[ri][ci] = "0x"+sprite_cell_int.toString(16).padStart(3, '0');
 				} );
@@ -774,22 +783,24 @@ function export_data() {
 				$.each( texture_row, function( ci, texture_cell ) {
 
 					/* Check for transparent pixels */
-					if( texture_cell == "" ) {
+					if( ( texture_cell == "" ) || ( texture_cell == undefined ) ) {
 
-						/* Convert blank cells to black */
+						/* Transparent pixel */
 						texture_cell_int = 0;
-					} else if ( texture_cell == "000000" ) {
-						console.log( texture_cell );
-						
-						/* Convert black cells to not quite black */
-						texture_cell_int = 0x11;
 					} else {
 
-						/* Otherwise convert to int */
+						/* Convert value to int */
 						var texture_cell_int = parseInt( texture_cell, 16 );
+						/* Convert 24-bit colour to 12-bit colour for the Picosystem */
+						texture_cell_int = ( ((texture_cell_int & 0xF0) >> 4) | ((texture_cell_int & 0xF000) >> 8) | ((texture_cell_int & 0xF00000) >> 12) );
+
+						if ( texture_cell_int == 0 ) {
+
+							/* We need to convert black to not quite black, otherwise it'll be treated like a transparent pixel */
+							texture_cell_int = 0x01;
+						}
 					}
-					/* Convert 24-bit colour to 12-bit colour for the Picosystem */
-					texture_cell_int = ( ((texture_cell_int & 0xF0) >> 4) | ((texture_cell_int & 0xF000) >> 8) | ((texture_cell_int & 0xF00000) >> 12) );
+
 					/* Add to the output */
 					convert_texture[ri][ci] = "0x"+texture_cell_int.toString(16).padStart(3, '0');
 				} );
@@ -840,27 +851,47 @@ function export_data() {
 			/* Add each cell */
 			$.each( row, function( ci, cell ) {
 
-				/* Get the selected texture and map as we need to print the order not the ID */
-				var cell_output_texture_group = project.textures.find( obj => obj.gid == cell.texture_gid );
-				var cell_output_texture = cell_output_texture_group.textures.find( obj => obj.id == cell.texture_id );
-				var cell_output_map = project.maps.find( obj => obj.id == cell.exit_map_id );
 
-				/* Add in the data for each cell */
-				output += "{";
-				output += Number(cell.can_walk[0]) + ", " + Number(cell.can_walk[1]) + ", " + Number(cell.can_walk[2]) + ", " + Number(cell.can_walk[3]) + ", ";
-				output += Number(cell_output_texture_group.gorder) + ", " + Number(cell_output_texture.order) + ", ";
-				output += Number(cell.texture_reverse_x) + ", " + Number(cell.texture_reverse_y) + ", ";
-				output += Number(cell.exit_tile) + ", " + Number(cell_output_map.order) + ", {";
-				output += cell.exit_map_dir[0] + ", " + cell.exit_map_dir[1] + "}, {";
-				output += cell.exit_map_pos[0] + ", " + cell.exit_map_pos[1] + "} ";
-				output += "}, "
+				output += "{ ";
+				/* Get the selected texture and map as we need to print the order not the ID */
+				if( cell.texture_gid != undefined ) {
+
+					/* Get cell */
+					var cell_output_texture_group = project.textures.find( obj => obj.gid == cell.texture_gid );
+					var cell_output_texture = cell_output_texture_group.textures.find( obj => obj.id == cell.texture_id );
+					var cell_output_map = project.maps.find( obj => obj.id == cell.exit_map_id );
+
+					/* Add in the data for each cell */
+					output += Number(cell.can_walk[0]) + ", " + Number(cell.can_walk[1]) + ", " + Number(cell.can_walk[2]) + ", " + Number(cell.can_walk[3]) + ", ";
+					output += Number(cell_output_texture_group.gorder) + ", " + Number(cell_output_texture.order) + ", ";
+					output += Number(cell.texture_reverse_x) + ", " + Number(cell.texture_reverse_y) + ", ";
+					output += Number(cell.exit_tile) + ", " + Number(cell_output_map.order) + ", {";
+					output += cell.exit_map_dir[0] + ", " + cell.exit_map_dir[1] + "}, {";
+					output += cell.exit_map_pos[0] + ", " + cell.exit_map_pos[1] + "} ";
+				} else {
+
+					/* Empty cell */
+					output += "1, 1, 1, 1, -1, 0, 0, 0, 0, 0, {0, 0}, {0, 0} ";
+				}
+				output += "}, ";		
 			} );
 
 			output += "},\n";
 		} );
 
 		output += "  };\n";
-  		output += "  struct map " + map_name_conv + " = { " + map.id + ", *_" + map_name_conv + ", " + map.height + ", " + map.width + " };\n\n"
+
+		if( map.bg_texture.gid != undefined ) {
+
+			/* Get the background texture */
+			var map_output_bg_texture_gid = project.textures.find( obj => obj.gid == map.bg_texture.gid );
+			var map_output_bg_texture_id = map_output_bg_texture_gid.textures.find( obj => obj.id == map.bg_texture.id );
+		} else {
+			var map_output_bg_texture_gid = -1;
+			var map_output_bg_texture_id = -1
+		}
+
+  		output += "  struct map " + map_name_conv + " = { " + Number(map.id) + ", *_" + map_name_conv + ", " + Number(map.height) + ", " + Number(map.width) + ", " + Number(map_output_bg_texture_gid.gorder) + ", " + Number(map_output_bg_texture_id.order) + " };\n\n"
 
 	} );
 
@@ -882,4 +913,5 @@ function export_data() {
 	file.click();
 
 	console.log( h_output ); // Not used
+	console.log( project );
 }

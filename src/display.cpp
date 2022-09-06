@@ -66,7 +66,10 @@ namespace picosystem {
 
           // Check the sprite is being drawn within the display bounds
           if( ((_draw_x >= 0) && (_draw_x <= 120)) && ((_draw_y >= 0) && (_draw_y <= 120)) ) {
-            *_dt->p(_draw_x, _draw_y) = paint_color;
+            
+            // Don't draw transparent pixels
+            if( paint_color != -1 )
+              *_dt->p(_draw_x, _draw_y) = paint_color;
           }
         }
 

@@ -5,6 +5,7 @@ function load_texture_list() {
 	$( "#texture_list .sortable li" ).css( "color", "#000" );
 
 	/* Clear map editing icons */
+	$( "#map_toolbar_bg_image" ).css( "display", "none" );
 	$( "#map_toolbar_paint" ).css( "display", "none" );
 	$( "#map_toolbar_fill" ).css( "display", "none" );
 	$( "#map_toolbar_flip_h" ).css( "display", "none" );
@@ -42,7 +43,11 @@ function load_texture_list() {
 		$( "#texture_list .sortable" ).append( '<li class="ui-state-default ui-state-disabled ui-group" g_texture_id="' + selected_texture.group.gid + '">' + selected_texture.group.name + '</li>' );
 
 		$.each( selected_texture.group.textures, function( key, value ) {
-			$( "#texture_list .sortable" ).append( '<li class="ui-state-default ui-texture" texture_id="' + value.id + '">' + value.name + '</li>' );
+			
+			if( ( selected_map.bg_texture.gid == selected_texture.group.gid ) && ( selected_map.bg_texture.id == value.id ) )
+				$( "#texture_list .sortable" ).append( '<li class="ui-state-default ui-bg-texture" texture_id="' + value.id + '">' + value.name + '</li>' );
+			else 
+				$( "#texture_list .sortable" ).append( '<li class="ui-state-default ui-texture" texture_id="' + value.id + '">' + value.name + '</li>' );
 		} );
 
 		if( selected_texture.texture == false ) {
@@ -57,6 +62,7 @@ function load_texture_list() {
 			selected_texture.texture_reverse_y = false;
 
 			/* Show map editing icons */
+			$( "#map_toolbar_bg_image" ).css( "display", "block" );
 			$( "#map_toolbar_paint" ).css( "display", "block" );
 			$( "#map_toolbar_fill" ).css( "display", "block" );
 			$( "#map_toolbar_flip_h" ).css( "display", "block" );
@@ -344,13 +350,20 @@ function texture_update( texture_fill, hex, texture_row, texture_col ) {
 	/* Update texture paint preview and any cells on the map */
 	load_texture_preview();
 
+	/* Check to see if we are updating a background texture */
+	var bg_texture = false;
+	if( ( selected_map.bg_texture.gid == selected_texture.group.gid ) && ( selected_map.bg_texture.id == selected_texture.texture.id ) )
+		bg_texture = true;
+
 	/* Loop through each row of the map */
 	$.each( selected_map.data, function( tile_row, row ) {
 
 		/* Loop through each col of the map */
 		$.each( row, function( tile_col, cell ) {
 
-			if( ( cell.texture_gid == selected_texture.group.gid ) && ( cell.texture_id == selected_texture.texture.id ) ) {
+			/* Check if this tile of the map matched the one we're looking for, or if it's blank, is it the same as the background texture */
+			if( ( ( cell.texture_gid == selected_texture.group.gid ) && ( cell.texture_id == selected_texture.texture.id ) ) || ( ( bg_texture ) && ( ( cell.texture_gid == undefined ) && ( cell.texture_id == undefined ) ) ) ) {
+
 				/* Cell is the texture we're looking for, found at (tile_row, tile_col) */
 				var tile = $( "#map_editor #map_editor_table .map_editor_table_row[row_id=" + tile_row + "] .map_editor_table_cell[col_id=" + tile_col + "]" );
 
@@ -362,8 +375,8 @@ function texture_update( texture_fill, hex, texture_row, texture_col ) {
 
 					/* Get the cell of the pixel that was changed and update it */
 					var pixel = $( tile.find( ".texture_table tr[row_id=" + ( ( cell.texture_reverse_y ) ? ( 7 - texture_row ) : texture_row ) + "] td[col_id=" + ( ( cell.texture_reverse_x ) ? ( 7 - texture_col ) : texture_col ) + "]" ) );
-					
-					if( hex != "" )
+
+					if( hex != "" ) 
 						pixel.css("background", "#" + hex );
 					else 
 						pixel.css("background", "#ccc" );
@@ -392,7 +405,13 @@ function load_texture_editor() {
 		/* Setup the texture editor */
 		$( "#texture_editor table tr" ).children().each( function() {
 			
-			$( this ).css( "background", "#" + selected_texture.texture.data[ $( this ).attr( "col_id" ) ][ $( this ).parent().attr( "row_id" ) ]);
+			if( ( selected_texture.texture.data[ $( this ).attr( "col_id" ) ][ $( this ).parent().attr( "row_id" ) ] != "") && ( selected_texture.texture.data[ $( this ).attr( "col_id" ) ][ $( this ).parent().attr( "row_id" ) ] != undefined) ) {
+				$( this ).css( "background", "#" + selected_texture.texture.data[ $( this ).attr( "col_id" ) ][ $( this ).parent() .attr( "row_id" ) ] );
+				$( this ).removeClass( "trans_background" );
+			} else {
+				$( this ).css( "background", false );
+				$( this ).addClass( "trans_background" );
+			}
 		} );
 
 		/* Show texture paint preview */
@@ -406,6 +425,7 @@ function load_texture_editor() {
 		$( "#texture_parent_selector" ).append( '<option value="-1"'+selected_none+'> - None - </option>' );
 
 		$.each( project.textures, function( key, value ) {
+
 			/* Check to see if this is a child element or not */
 			if( value.parent == -1) {
 				/* Select the current parent (if any) */
@@ -490,7 +510,7 @@ function texture_toolbar_event_listeners() {
 							var pixel_col = $( this ).attr( "col_id" );
 
 							/* Clear the pixel in the local array */
-							selected_texture.texture.data[ pixel_col ][ pixel_row ] = "";
+							selected_texture.texture.data[ pixel_col ][ pixel_row ] = undefined;
 
 							/* Update the preview */
 							texture_update( false, "", pixel_row, pixel_col )

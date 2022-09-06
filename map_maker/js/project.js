@@ -192,6 +192,9 @@ function project_toolbar_event_listeners() {
 
 								new_map.width = 8;
 								new_map.height = 8;
+								new_map.bg_texture = new Object();
+								new_map.bg_texture.gid = undefined;
+								new_map.bg_texture.id = undefined;
 								new_map.data = Array.from( { length: new_map.height }, () => Array.from( { length: new_map.width }, () => Object.assign( {}, blank_tile ) ) );
 
 								/* Get new ID value */

@@ -146,6 +146,14 @@
 	background: #ccc;
 	cursor: pointer;
 }
+#container #sidebar #texture_list .sortable .ui-bg-texture  {
+	background: #adcddf;
+	margin-left: 20px;
+}
+#container #sidebar #texture_list .sortable .ui-bg-texture:hover  {
+	background: #fff;
+	cursor: pointer;
+}
 #container #sidebar #texture_list .sortable li {
 	font-size: 1.2em;
 	margin: 0 0 5px 0;

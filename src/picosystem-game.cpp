@@ -110,7 +110,14 @@ void draw(uint32_t tick) {
 
         // Again, make sure we're drawing the map titles in the correct places
         if( (_draw_x >= _x_offset_n) && ((map_pos.x + _draw_x - 6) <= _current_map->map_width) ) {
-          draw_sprite((uint16_t*)_texture_map[(*map_tiles_ptr).sprite], (*map_tiles_ptr).sprite_offset, (*map_tiles_ptr).sprite_reverse_x, (*map_tiles_ptr).sprite_reverse_y, (_draw_x * 8), (_draw_y * 8), 8);
+          
+          //First draw the background sprite, if any
+          if( _current_map->bg_sprite != -1 )
+            draw_sprite((uint16_t*)_texture_map[_current_map->bg_sprite], _current_map->bg_sprite_offset, 0, 0, (_draw_x * 8), (_draw_y * 8), 8);
+
+          //Make sure there's a sprite to draw
+          if( (*map_tiles_ptr).sprite != -1 )
+            draw_sprite((uint16_t*)_texture_map[(*map_tiles_ptr).sprite], (*map_tiles_ptr).sprite_offset, (*map_tiles_ptr).sprite_reverse_x, (*map_tiles_ptr).sprite_reverse_y, (_draw_x * 8), (_draw_y * 8), 8);
 
           // If we've drawn a tile, increment the pointer (unless we're at the last column of the display, don't want to accidentally cause a hard fault)
           if(_draw_x != 14) map_tiles_ptr++;

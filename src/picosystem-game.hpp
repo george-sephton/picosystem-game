@@ -40,8 +40,8 @@ namespace picosystem {
   // Map structures
   struct map_tile {
     bool can_walk_n, can_walk_e, can_walk_s, can_walk_w; // ie can walk FROM the n/e/s/w
-    uint16_t sprite;
-    uint16_t sprite_offset = 0;
+    int16_t sprite;
+    int16_t sprite_offset = 0;
     bool sprite_reverse_x = false;
     bool sprite_reverse_y = false;
     bool exit_tile = false;
@@ -62,6 +62,8 @@ namespace picosystem {
     const struct map_tile (*map_tiles_ptr);
     uint16_t map_height;
     uint16_t map_width;
+    int16_t bg_sprite;
+    int16_t bg_sprite_offset;
   };
 
 
