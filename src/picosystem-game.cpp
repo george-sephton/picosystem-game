@@ -20,7 +20,7 @@ using namespace picosystem;
 // ---------------------------------------------------------------------------------
 #define map_rendering_offsets         false    // Displays player position on map and no of calculated empty rows & columns
 #define player_movement               false    // Displays player position
-#define player_position               false    // Draws coloured boxes to indicate if player can move or if there are obstacles, edge of map or exit tiles
+#define player_position               true    // Draws coloured boxes to indicate if player can move or if there are obstacles, edge of map or exit tiles
 #define exit_map_info                 false    // Displays information about the map to load if exiting current map
 #define animation_info                false    // Displays information about the running animation
 
@@ -35,6 +35,11 @@ int8_t _x_offset_p, _x_offset_n, _y_offset_p, _y_offset_n;
 dir_vec map_pos;
 dir_en allowed_movement;
 dir_en exit_tile;
+
+// Movement scrolling animation
+bool scroll_movement;
+uint16_t scroll_counter;
+dir_vec upcoming_map_pos;
 
 // Development
 map *_current_map;
@@ -56,6 +61,11 @@ void init() {
   // We're not moving
   player.walk_dir.x = 0;
   player.walk_dir.y = 0;
+
+  scroll_movement = false;
+  scroll_counter = 0;
+  upcoming_map_pos.x = 0;
+  upcoming_map_pos.y = 0;
   // Facing south
   player.face_dir.x = 0;
   player.face_dir.y = -1;
@@ -71,6 +81,7 @@ void init() {
 void draw(uint32_t tick) {
 
   int16_t _draw_x, _draw_y;
+  int8_t _scroll_x, _scroll_y;
 
   // Clear display buffer
   clear_screen(0x0000);
@@ -111,13 +122,17 @@ void draw(uint32_t tick) {
         // Again, make sure we're drawing the map titles in the correct places
         if( (_draw_x >= _x_offset_n) && ((map_pos.x + _draw_x - 6) <= _current_map->map_width) ) {
           
+          // Calculate scroll offsets
+          _scroll_x = player.walk_dir.x * scroll_counter;
+          _scroll_y = player.walk_dir.y * scroll_counter;
+
           //First draw the background sprite, if any
           if( _current_map->bg_sprite != -1 )
-            draw_sprite((uint16_t*)_texture_map[_current_map->bg_sprite], _current_map->bg_sprite_offset, 0, 0, (_draw_x * 8), (_draw_y * 8), 8);
+            draw_sprite((uint16_t*)_texture_map[_current_map->bg_sprite], _current_map->bg_sprite_offset, 0, 0, ((_draw_x * 8) - _scroll_x), ((_draw_y * 8) + _scroll_y), 8);
 
           //Make sure there's a sprite to draw
           if( ( (*map_tiles_ptr).sprite != -1 ) && ( (*map_tiles_ptr).top_layer == false) )
-            draw_sprite((uint16_t*)_texture_map[(*map_tiles_ptr).sprite], (*map_tiles_ptr).sprite_offset, (*map_tiles_ptr).sprite_reverse_x, (*map_tiles_ptr).sprite_reverse_y, (_draw_x * 8), (_draw_y * 8), 8);
+            draw_sprite((uint16_t*)_texture_map[(*map_tiles_ptr).sprite], (*map_tiles_ptr).sprite_offset, (*map_tiles_ptr).sprite_reverse_x, (*map_tiles_ptr).sprite_reverse_y, ((_draw_x * 8) - _scroll_x), ((_draw_y * 8) + _scroll_y), 8);
 
           // If we've drawn a tile, increment the pointer (unless we're at the last column of the display, don't want to accidentally cause a hard fault)
           if(_draw_x != 14) map_tiles_ptr++;
@@ -130,114 +145,6 @@ void draw(uint32_t tick) {
       }
     }
   }
-  
-  // Get a pointer to the current tile
-  const struct map_tile (*current_map_tile_ptr) = _current_map->map_tiles_ptr;
-  current_map_tile_ptr += (map_pos.y * _current_map->map_width); // Move to the correct y value
-  current_map_tile_ptr += (map_pos.x); // Move to the correct x value
-
-  // See if we're stood on an exit tile or not
-  exit_tile = {false, false, false, false};
-
-  if((*current_map_tile_ptr).exit_tile) {
-
-    // We're stood on an exit tile, let's check which direction the exit is
-    if((*current_map_tile_ptr).exit_map_dir.y == 1) {
-      exit_tile.travel_n = true;
-    } else if((*current_map_tile_ptr).exit_map_dir.x == 1) {
-      exit_tile.travel_e = true;
-    } else if((*current_map_tile_ptr).exit_map_dir.y == -1) {
-      exit_tile.travel_s = true;
-    } else if((*current_map_tile_ptr).exit_map_dir.x == -1) {
-      exit_tile.travel_w = true;
-    }
-
-    // Now store the details of the map to load if we are about to exit this one
-    exit_map.exit_map_id = (*current_map_tile_ptr).exit_map_id;
-    exit_map.exit_map_pos = (*current_map_tile_ptr).exit_map_pos;
-  }
-
-  // Calculate which directions we're allowed to walk in
-  allowed_movement = {false, false, false, false};
-
-  if(map_pos.y != 0) {
-    current_map_tile_ptr -= _current_map->map_width; // Move pointer up a row
-    allowed_movement.travel_n = (*current_map_tile_ptr).can_walk_s;
-    current_map_tile_ptr += _current_map->map_width; // Move pointer back to same row as player
-  }
-  if(map_pos.x != (_current_map->map_width - 1)) {
-    current_map_tile_ptr++; // Move pointer to next column along
-    allowed_movement.travel_e = (*current_map_tile_ptr).can_walk_w;
-    current_map_tile_ptr--; // Move pointer back to same column as player
-  }
-  if(map_pos.y != (_current_map->map_height - 1)) {
-    current_map_tile_ptr += _current_map->map_width; // Move pointer down a row
-    allowed_movement.travel_s = (*current_map_tile_ptr).can_walk_n;
-    current_map_tile_ptr -= _current_map->map_width; // Move pointer back to same row as player
-  }
-  if(map_pos.x != 0) {
-    current_map_tile_ptr--; // Move pointer back a column
-    allowed_movement.travel_w = (*current_map_tile_ptr).can_walk_e;
-    current_map_tile_ptr++; // Move pointer back to same column as player
-  }
-
-  // DEBUGGING
-  #if player_movement 
-  // Draw coloured squares to indicate player's allowed movement 
-  if(exit_tile.travel_n) {
-    
-    // Blue tile since this is an exit tile 
-    draw_rec(56, 48, 8, 8, rgb(0x00F));
-  } else {
-
-    if(map_pos.y != 0) {
-
-      // Green tile as we are allow to walk in this direction
-      if(allowed_movement.travel_n) draw_rec(56, 48, 8, 8, rgb(0x0F0)); //N
-
-      // Red tile as we're not allowed to walk in this direction
-      else draw_rec(56, 48, 8, 8, rgb(0xF00));
-    } else {
-
-      // Yellow tile as this is the edge of the map
-      draw_rec(56, 48, 8, 8, rgb(0xFF0));
-    }
-  }
-  
-  if(exit_tile.travel_e) {
-    draw_rec(64, 56, 8, 8, rgb(0x00F));
-  } else {
-    if(map_pos.x != (_current_map->map_width - 1)) {
-      if(allowed_movement.travel_e) draw_rec(64, 56, 8, 8, rgb(0x0F0)); //E
-      else draw_rec(64, 56, 8, 8, rgb(0xF00));
-    } else {
-      draw_rec(64, 56, 8, 8, rgb(0xFF0));
-    }
-  }
-
-  if(exit_tile.travel_s) {
-    draw_rec(56, 64, 8, 8, rgb(0x00F));
-  } else {
-    if(map_pos.y != (_current_map->map_height - 1)) {
-      if(allowed_movement.travel_s) draw_rec(56, 64, 8, 8, rgb(0x0F0)); //S
-      else draw_rec(56, 64, 8, 8, rgb(0xF00));
-    } else {
-      draw_rec(56, 64, 8, 8, rgb(0xFF0));
-    }
-  }
-
-  if(exit_tile.travel_w) {
-    draw_rec(48, 56, 8, 8, rgb(0x00F)); 
-  } else {
-    if(map_pos.x != 0) {
-      if(allowed_movement.travel_w) draw_rec(48, 56, 8, 8, rgb(0x0F0)); //W
-      else draw_rec(48, 56, 8, 8, rgb(0xF00)); 
-
-    } else {
-      draw_rec(48, 56, 8, 8, rgb(0xFF0)); 
-    }
-  }
-  #endif
 
   // Draw an exit arrow if we're stood on an exit tile at the edge of the map
   if((exit_tile.travel_n) && (map_pos.y == 0))
@@ -309,7 +216,7 @@ void draw(uint32_t tick) {
           if( ( (*map_tiles_ptr2).sprite != -1 ) && ( (*map_tiles_ptr2).top_layer == true) )
             
             //draw_rec((_draw_x * 8), (_draw_y * 8), 8, 8, rgb(0x00F));
-            draw_sprite((uint16_t*)_texture_map[(*map_tiles_ptr2).sprite], (*map_tiles_ptr2).sprite_offset, (*map_tiles_ptr2).sprite_reverse_x, (*map_tiles_ptr2).sprite_reverse_y, (_draw_x * 8), (_draw_y * 8), 8);
+            //draw_sprite((uint16_t*)_texture_map[(*map_tiles_ptr2).sprite], (*map_tiles_ptr2).sprite_offset, (*map_tiles_ptr2).sprite_reverse_x, (*map_tiles_ptr2).sprite_reverse_y, (_draw_x * 8), (_draw_y * 8), 8);
 
           // If we've drawn a tile, increment the pointer (unless we're at the last column of the display, don't want to accidentally cause a hard fault)
           if(_draw_x != 14) map_tiles_ptr2++;
@@ -322,7 +229,6 @@ void draw(uint32_t tick) {
       }
 
     }
-
   }
 
   // An animation is running
@@ -368,6 +274,8 @@ void draw(uint32_t tick) {
   #if player_position
   sprintf(write_text,"P(%d,%d)D(%d,%d)F(%d,%d)", map_pos.x, map_pos.y, player.walk_dir.x, player.walk_dir.y, player.face_dir.x, player.face_dir.y);
   write_string(write_text, 1, 8, rgb(0xF00));
+  sprintf(write_text,"S(%d)U(%d,%d)", scroll_counter, upcoming_map_pos.x, upcoming_map_pos.y);
+  write_string(write_text, 1, 16, rgb(0xF00));
   #endif
 
   #if exit_map_info
@@ -381,14 +289,146 @@ void draw(uint32_t tick) {
   sprintf(write_text,"R(%d,%d)F(%d)S(%d)T(%d,%d)", animation.running, animation.reverse, animation.finished, animation.step, animation.tick % animation.occurance, ( (animation.tick % animation.occurance) ? 0 : 1) );
   write_string(write_text, 1, 24, rgb(0xF00));
   #endif
+  
+  #if player_movement 
+  // Draw coloured squares to indicate player's allowed movement 
+  if(exit_tile.travel_n) {
+    
+    // Blue tile since this is an exit tile 
+    draw_rec(56, 48, 8, 8, rgb(0x00F));
+  } else {
+
+    if(map_pos.y != 0) {
+
+      // Green tile as we are allow to walk in this direction
+      if(allowed_movement.travel_n) draw_rec(56, 48, 8, 8, rgb(0x0F0)); //N
+
+      // Red tile as we're not allowed to walk in this direction
+      else draw_rec(56, 48, 8, 8, rgb(0xF00));
+    } else {
+
+      // Yellow tile as this is the edge of the map
+      draw_rec(56, 48, 8, 8, rgb(0xFF0));
+    }
+  }
+  
+  if(exit_tile.travel_e) {
+    draw_rec(64, 56, 8, 8, rgb(0x00F));
+  } else {
+    if(map_pos.x != (_current_map->map_width - 1)) {
+      if(allowed_movement.travel_e) draw_rec(64, 56, 8, 8, rgb(0x0F0)); //E
+      else draw_rec(64, 56, 8, 8, rgb(0xF00));
+    } else {
+      draw_rec(64, 56, 8, 8, rgb(0xFF0));
+    }
+  }
+
+  if(exit_tile.travel_s) {
+    draw_rec(56, 64, 8, 8, rgb(0x00F));
+  } else {
+    if(map_pos.y != (_current_map->map_height - 1)) {
+      if(allowed_movement.travel_s) draw_rec(56, 64, 8, 8, rgb(0x0F0)); //S
+      else draw_rec(56, 64, 8, 8, rgb(0xF00));
+    } else {
+      draw_rec(56, 64, 8, 8, rgb(0xFF0));
+    }
+  }
+
+  if(exit_tile.travel_w) {
+    draw_rec(48, 56, 8, 8, rgb(0x00F)); 
+  } else {
+    if(map_pos.x != 0) {
+      if(allowed_movement.travel_w) draw_rec(48, 56, 8, 8, rgb(0x0F0)); //W
+      else draw_rec(48, 56, 8, 8, rgb(0xF00)); 
+
+    } else {
+      draw_rec(48, 56, 8, 8, rgb(0xFF0)); 
+    }
+  }
+  #endif
 }
 
 void update(uint32_t tick) {
   
   bool start_exit_animation = false;
 
+  // Advance the animation, if running and not finished
+  if((animation.running) && (!animation.finished)) 
+    animation.tick++;
+  
+  /* Start by calculating our movement restructions */
+
+  // Get a pointer to the current tile
+  const struct map_tile (*current_map_tile_ptr) = _current_map->map_tiles_ptr;
+  current_map_tile_ptr += (map_pos.y * _current_map->map_width); // Move to the correct y value
+  current_map_tile_ptr += (map_pos.x); // Move to the correct x value
+
+  // See if we're stood on an exit tile or not
+  exit_tile = {false, false, false, false};
+
+  if((*current_map_tile_ptr).exit_tile) {
+
+    // We're stood on an exit tile, let's check which direction the exit is
+    if((*current_map_tile_ptr).exit_map_dir.y == 1) {
+      exit_tile.travel_n = true;
+    } else if((*current_map_tile_ptr).exit_map_dir.x == 1) {
+      exit_tile.travel_e = true;
+    } else if((*current_map_tile_ptr).exit_map_dir.y == -1) {
+      exit_tile.travel_s = true;
+    } else if((*current_map_tile_ptr).exit_map_dir.x == -1) {
+      exit_tile.travel_w = true;
+    }
+
+    // Now store the details of the map to load if we are about to exit this one
+    exit_map.exit_map_id = (*current_map_tile_ptr).exit_map_id;
+    exit_map.exit_map_pos = (*current_map_tile_ptr).exit_map_pos;
+  }
+
+  // Calculate which directions we're allowed to walk in
+  allowed_movement = {false, false, false, false};
+
+  if(map_pos.y != 0) {
+    current_map_tile_ptr -= _current_map->map_width; // Move pointer up a row
+    allowed_movement.travel_n = (*current_map_tile_ptr).can_walk_s;
+    current_map_tile_ptr += _current_map->map_width; // Move pointer back to same row as player
+  }
+  if(map_pos.x != (_current_map->map_width - 1)) {
+    current_map_tile_ptr++; // Move pointer to next column along
+    allowed_movement.travel_e = (*current_map_tile_ptr).can_walk_w;
+    current_map_tile_ptr--; // Move pointer back to same column as player
+  }
+  if(map_pos.y != (_current_map->map_height - 1)) {
+    current_map_tile_ptr += _current_map->map_width; // Move pointer down a row
+    allowed_movement.travel_s = (*current_map_tile_ptr).can_walk_n;
+    current_map_tile_ptr -= _current_map->map_width; // Move pointer back to same row as player
+  }
+  if(map_pos.x != 0) {
+    current_map_tile_ptr--; // Move pointer back a column
+    allowed_movement.travel_w = (*current_map_tile_ptr).can_walk_e;
+    current_map_tile_ptr++; // Move pointer back to same column as player
+  }
+
+  // Advance scroll animation 
+  if(scroll_movement){
+    
+    scroll_counter++; 
+    
+    if(scroll_counter >= 8) {
+      
+      // End animation and set new user position
+      scroll_counter = 0;
+      map_pos.x += upcoming_map_pos.x;
+      map_pos.y += upcoming_map_pos.y;
+      
+      scroll_movement = false;
+      upcoming_map_pos.x = 0;
+      upcoming_map_pos.y = 0;
+    }
+      
+  }
+
   // Check input presses without delay, unless there's an animation running
-  if(!animation.running) {
+  if((!animation.running) ){
     if(button(UP)) {
       // Switch player's direction to N
       player.walk_dir.x = 0;
@@ -424,15 +464,12 @@ void update(uint32_t tick) {
     }
   }
 
-  // Advance the animation, if running and not finished
-  if((animation.running) && (!animation.finished)) 
-    animation.tick++;
-  
+
   // Everything else called according to the game tick
   if(tick % 11 == 0) {
 
     // If the player is walking, let's make their little legs move
-    if( ((player.walk_dir.x != 0) || (player.walk_dir.y != 0)) && (!animation.running) ) {
+    if( ( ((player.walk_dir.x != 0) || (player.walk_dir.y != 0)) && (!animation.running) ) || (scroll_movement) ) {
       player.reverse_walking_render = !player.reverse_walking_render;
     }
 
@@ -447,7 +484,11 @@ void update(uint32_t tick) {
           // Map exit, start animation and load new map
           start_exit_animation = true;
         }else {
-          if(allowed_movement.travel_n) map_pos.y--;
+          if(allowed_movement.travel_n) {
+            upcoming_map_pos.y = -1;
+            scroll_movement = true;
+            //map_pos.y--;
+          }
         }
 
       } else if((player.walk_dir.x == 1) && (player.walk_dir.y == 0)) {
@@ -457,7 +498,11 @@ void update(uint32_t tick) {
           // Map exit, start animation and load new map
           start_exit_animation = true;
         }else {
-          if(allowed_movement.travel_e) map_pos.x++;
+          if(allowed_movement.travel_e) {
+            upcoming_map_pos.x = 1;
+            scroll_movement = true;
+            //map_pos.x++;
+          }
         }
 
       } else if((player.walk_dir.x == 0) && (player.walk_dir.y == -1)) {
@@ -467,7 +512,11 @@ void update(uint32_t tick) {
           // Map exit, start animation and load new map
           start_exit_animation = true;
         }else {
-          if(allowed_movement.travel_s) map_pos.y++;
+          if(allowed_movement.travel_s) {
+            upcoming_map_pos.y = 1;
+            scroll_movement = true;
+            //map_pos.y++;
+          }
         }
 
       }else if((player.walk_dir.x == -1) && (player.walk_dir.y == 0)) {
@@ -477,7 +526,11 @@ void update(uint32_t tick) {
           // Map exit, start animation and load new map
           start_exit_animation = true;
         }else {
-          if(allowed_movement.travel_w) map_pos.x--;
+          if(allowed_movement.travel_w) {
+            upcoming_map_pos.x = -1;
+            scroll_movement = true;
+            //map_pos.x--;
+          }
         }
 
       }
