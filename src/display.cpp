@@ -46,7 +46,8 @@ namespace picosystem {
 
 
     for(_x=0; _x < size; _x++) {
-      // Loop through the width of the sprite first (each sprite is 16 pixels wide)
+      
+      // Loop through the width of the sprite first
       if(!draw_reverse_y) _temp_y = 0;
       else _temp_y = size - 1;
 
@@ -65,7 +66,7 @@ namespace picosystem {
           _draw_y = (y + _temp_y);
 
           // Check the sprite is being drawn within the display bounds
-          if( ((_draw_x >= 0) && (_draw_x <= 120)) && ((_draw_y >= 0) && (_draw_y <= 120)) ) {
+          if( ((_draw_x >= 0) && (_draw_x < 120)) && ((_draw_y >= 0) && (_draw_y < 120)) ) {
             
             // Don't draw transparent pixels
             if( paint_color != -1 )
