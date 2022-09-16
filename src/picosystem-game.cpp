@@ -228,7 +228,7 @@ void update( uint32_t tick ) {
   /* Advance scrolling animation */
   if( scroll_movement ) {
   
-    /* If holding B, move twice as fast */
+    /* If holding B, make the player run (move twice as fast) */
     if( button( B ) ) scroll_counter += 2;
     else scroll_counter++;
 
@@ -344,12 +344,12 @@ void update( uint32_t tick ) {
     }
   }
 
-  /* If the player is walking, let's make their little legs move - note there's a bug here */
+  /* If the player is walking, let's make their little legs move or make them run if holding B */
   if( ( !animation.running ) || ( ( player.walk_dir.x != 0 ) || ( player.walk_dir.y != 0 ) ) ) {
     
     player_animation_tick++;
 
-    if( ( ( player_animation_tick == 6 ) && ( !button( B ) ) ) || ( ( player_animation_tick == 4 ) && ( button( B ) ) ) ) {
+    if( ( ( player_animation_tick >= 6 ) && ( !button( B ) ) ) || ( ( player_animation_tick >= 3 ) && ( button( B ) ) ) ) {
 
       player_animation_tick = 0;
       player.reverse_walking_render = !player.reverse_walking_render;
