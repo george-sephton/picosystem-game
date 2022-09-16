@@ -1,13 +1,13 @@
-// Include PicoSystem hardware
+/* Include PicoSystem hardware */
 #include "picosystem-game.hpp"
 
-// Note: Pixels are stored in the display buffer as GBAR
+/* Note: Pixels are stored in the display buffer as GBAR */
 
 namespace picosystem {
 
   void clear_screen(color_t fill) {
 
-    // Clear the display buffer
+    /* Clear the display buffer */
     int32_t _x, _y;
 
     for(_x=0; _x < 120; _x++) {    
@@ -21,7 +21,7 @@ namespace picosystem {
     
     uint16_t _x, _y;
 
-    // Loop through the display buffer to alter each pixel
+    /* Loop through the display buffer to alter each pixel */
     for(_x = 0; _x < 120; _x++) {
       for(_y = 0; _y < 120; _y++) {
         if(*_dt->p(_x, _y) != 0x000)
@@ -37,7 +37,7 @@ namespace picosystem {
     uint8_t bit_value;
     uint16_t paint_color;
 
-    // Move the pointer to the character starting byte
+    /* Move the pointer to the character starting byte */
     _sprite_ptr = (uint16_t*) sprite_ptr;
     _sprite_ptr += (sprite_offset * (size * size));
     
@@ -47,7 +47,7 @@ namespace picosystem {
 
     for(_x=0; _x < size; _x++) {
       
-      // Loop through the width of the sprite first
+      /* Loop through the width of the sprite first */
       if(!draw_reverse_y) _temp_y = 0;
       else _temp_y = size - 1;
 
@@ -65,10 +65,10 @@ namespace picosystem {
           _draw_x = (x + _temp_x);
           _draw_y = (y + _temp_y);
 
-          // Check the sprite is being drawn within the display bounds
+          /* Check the sprite is being drawn within the display bounds */
           if( ((_draw_x >= 0) && (_draw_x < 120)) && ((_draw_y >= 0) && (_draw_y < 120)) ) {
             
-            // Don't draw transparent pixels
+            /* Don't draw transparent pixels */
             if( paint_color != -1 )
               *_dt->p(_draw_x, _draw_y) = paint_color;
           }
@@ -85,7 +85,7 @@ namespace picosystem {
 
   void draw_rec(int32_t x, int32_t y, int32_t w, int32_t h, color_t color) {
 
-    // Temporary function, used for debugging
+    /* Temporary function, used for debugging */
     uint16_t *_sprite_ptr, current_byte;
     int32_t _x, _y, _temp_x, _draw_x, _draw_y, _bit;
     uint8_t bit_value;
@@ -97,7 +97,7 @@ namespace picosystem {
         _draw_x = (x + _x);
         _draw_y = (y + _y);
         
-        // Check the rectangle is being drawn within the display bounds
+        /* Check the rectangle is being drawn within the display bounds */
         if( ((_draw_x >= 0) && (_draw_x <= 120)) && ((_draw_y >= 0) && (_draw_y <= 120)) ) {
           *_dt->p(_draw_x, _draw_y) = color;
         }

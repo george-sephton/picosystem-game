@@ -12,8 +12,9 @@
 #include <stdio.h>
 
 void init();
-void update(uint32_t tick);
-void draw(uint32_t tick);
+void update( uint32_t tick );
+void draw( uint32_t tick );
+void draw_map_tiles( bool top_layer );
 
 namespace picosystem {
 

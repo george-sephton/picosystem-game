@@ -2,14 +2,13 @@
 
 #include <picosystem.hpp>
 
-
 namespace picosystem {
   
   // ---------------------------------------------------------------------------------
   // GLOBAL STRUCTURE DEFINITIONSS
   // ---------------------------------------------------------------------------------
 
-  // Position structures
+  /* Position structures */
   struct dir_vec {
     int16_t x, y;
   };
@@ -18,14 +17,14 @@ namespace picosystem {
     bool travel_n, travel_e, travel_s, travel_w;
   };
 
-  // Player structures
+  /* Player structures */
   struct {
     dir_vec walk_dir, face_dir;
     bool reverse_walking_render;
   } player;
 
-  // Animation structures
-  typedef void (*animation_function)(void);
+  /* Animation structures */
+  typedef void ( *animation_function )( void );
 
   struct animation_settings{
     bool running;
@@ -37,7 +36,7 @@ namespace picosystem {
     animation_function animation_ptr;
   };
 
-  // Map structures
+  /* Map structures */
   struct map_tile {
     bool top_layer;
     bool can_walk_n, can_walk_e, can_walk_s, can_walk_w; // ie can walk FROM the n/e/s/w
@@ -72,23 +71,23 @@ namespace picosystem {
   // EXTERNAL ASSETS
   // ---------------------------------------------------------------------------------
   
-  // fonts
+  /* Fonts */
   const extern uint8_t _default_font[480];
   
-  // animation
+  /* Animation */
   extern animation_settings animation;
   
   // ---------------------------------------------------------------------------------
   // FUNCTION PROTOTYPES
   // ---------------------------------------------------------------------------------
 
-  // Display functions
+  /* Display functions */
   void extern clear_screen(color_t fill);
   void extern invert_screen(void);
   void extern draw_sprite(uint16_t* sprite_ptr, uint8_t sprite_offset, bool draw_reverse_x, bool draw_reverse_y, int32_t x, int32_t y, uint8_t size);
   void extern draw_rec(int32_t x, int32_t y, int32_t w, int32_t h, color_t color);
 
-  // Display animation functions
+  /* Display animation functions */
   void extern start_animation(animation_function func_ptr, uint8_t occurance, bool reverse);
   void extern stop_animation(void);
   void extern reset_animation(void);
@@ -96,10 +95,7 @@ namespace picosystem {
   void extern fade_screen(void);
   void extern bars_transition(void);
 
-  // Text functions
+  /* Text functions */
   void extern write_character(char character, int32_t x, int32_t y, color_t color);
   void extern write_string(char *char_array, int32_t x, int32_t y, color_t color);
-
-  // 
-
 }
