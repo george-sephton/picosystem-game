@@ -59,8 +59,9 @@ void init() {
   _current_map = &map_list[2];
 
   // Set our initial location
-  map_pos = {3, 3};
+  //map_pos = {3, 3};
   //map_pos = {20, 19};
+  map_pos = {14, 14};
   // We're not moving
   player.walk_dir.x = 0;
   player.walk_dir.y = 0;
@@ -208,7 +209,8 @@ void update( uint32_t tick ) {
   if( ( tick % 11 ) == 0 ) {
     
     // Development: Advance scroll animation
-    scroll_counter++;
+    //scroll_counter++;
+    scroll_counter = 7;
     if(scroll_counter >= 8) {
       scroll_counter = 0;
     }
@@ -397,11 +399,11 @@ void draw(uint32_t tick) {
 
           /* Draw the background texture if the map has one */
           if( _current_map->bg_texture != -1 )
-            draw_sprite((uint16_t*)_texture_map[_current_map->bg_texture], _current_map->bg_texture_offset, 0, 0, ((_draw_x * 8) - _scroll_x), ((_draw_y * 8) + _scroll_y), 8);
+            draw_sprite((uint16_t*)_texture_map[_current_map->bg_texture], _current_map->bg_texture_offset, 0, 0, ( ( ( _draw_x - _scroll_offset_w ) * 8 ) - _scroll_x ), ((( _draw_y - _scroll_offset_n ) * 8) + _scroll_y), 8);
 
           /* Draw the map texure, if any */
           if( ( (*map_tiles_ptr).texture != -1 ) && ( (*map_tiles_ptr).top_layer == false) )
-            draw_sprite((uint16_t*)_texture_map[(*map_tiles_ptr).texture], (*map_tiles_ptr).texture_offset, (*map_tiles_ptr).texture_reverse_x, (*map_tiles_ptr).texture_reverse_y, ((_draw_x * 8) - _scroll_x), ((_draw_y * 8) + _scroll_y), 8);
+            draw_sprite((uint16_t*)_texture_map[(*map_tiles_ptr).texture], (*map_tiles_ptr).texture_offset, (*map_tiles_ptr).texture_reverse_x, (*map_tiles_ptr).texture_reverse_y, ( ( ( _draw_x - _scroll_offset_w ) * 8 ) - _scroll_x ), ((( _draw_y - _scroll_offset_n ) * 8) + _scroll_y), 8);
 
           // If we've drawn a tile, increment the pointer (unless we're at the last column of the display, don't want to accidentally cause a hard fault)
           if((_draw_x ) != (14 + _scroll_offset_w + _scroll_offset_e)) map_tiles_ptr++;
