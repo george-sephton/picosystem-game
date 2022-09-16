@@ -206,11 +206,10 @@ void update( uint32_t tick ) {
   }*/
 
   /* All other movement functions to be restricted to game tick, this controls player's movement speed */
-  if( ( tick % 11 ) == 0 ) {
+  if( ( tick % 23 ) == 0 ) {
     
     // Development: Advance scroll animation
-    //scroll_counter++;
-    scroll_counter = 7;
+    scroll_counter++;
     if(scroll_counter >= 8) {
       scroll_counter = 0;
     }
@@ -340,35 +339,37 @@ void draw(uint32_t tick) {
 
   if( map_pos.x < 8 ) {
     _offset_w = ( 7 - map_pos.x );
-    
-    if( ( player.walk_dir.x == 1 ) && ( player.walk_dir.y == 0 ) && ( scroll_counter != 0 ) ) {
-      _scroll_offset_e = 1;
-    }
-  }
-
-  if( ( map_pos.x + 8 ) > _current_map->map_width ) {
-    _offset_e = (map_pos.x + 8 - _current_map->map_width);
-
+  } else {
     if( ( player.walk_dir.x == -1 ) && ( player.walk_dir.y == 0 ) && ( scroll_counter != 0 ) ) {
       _scroll_offset_w = 1;
     }
   }
-  if( map_pos.y < 8 ) {
-    _offset_n = (7 - map_pos.y);
-
-    if( ( player.walk_dir.x == 0 ) && ( player.walk_dir.y == -1 ) && ( scroll_counter != 0 ) ) {
-      _scroll_offset_s = 1;
+  if( ( map_pos.x + 8 ) > _current_map->map_width ) {
+    _offset_e = (map_pos.x + 8 - _current_map->map_width);
+  } else { 
+    if( ( player.walk_dir.x == 1 ) && ( player.walk_dir.y == 0 ) && ( scroll_counter != 0 ) ) {
+      _scroll_offset_e = 1;
     }
   }
-
-  if( ( map_pos.y + 8 ) > _current_map->map_height ) {
-    _offset_s = (map_pos.y + 8 - _current_map->map_height);
-    
+  if( map_pos.y < 8 ) {
+    _offset_n = (7 - map_pos.y);
+  } else {
     if( ( player.walk_dir.x == 0 ) && ( player.walk_dir.y == 1 ) && ( scroll_counter != 0 ) ) {
       _scroll_offset_n = 1;
     }
   }
+  if( ( map_pos.y + 9 ) > _current_map->map_height ) {
+    _offset_s = (map_pos.y + 8 - _current_map->map_height);  
+  } else {
+    if( ( player.walk_dir.x == 0 ) && ( player.walk_dir.y == -1 ) && ( scroll_counter != 0 ) ) {
+      _scroll_offset_s = 1;
+    }
   }
+   
+
+  }
+
+
 
   /* If we are performing a scrolling animation, change the offsets to add an extra tile to allow the scroll to show offscreen tiles that are entering the display */
   _scroll_x = player.walk_dir.x * scroll_counter;
@@ -389,7 +390,7 @@ void draw(uint32_t tick) {
   for( _draw_y = 0; _draw_y < ( 15 + _scroll_offset_n + _scroll_offset_s ); _draw_y++ ) {
 
     /* Ignore tiles outside of the map limits */
-    if( (_draw_y >= _offset_n) && (_draw_y < (15 - _offset_s + _scroll_offset_n + _scroll_offset_s)) ) {
+    if( (_draw_y >= _offset_n) && (_draw_y < (15 - _offset_s + _scroll_offset_n + _scroll_offset_s) ) ) {
 
       /* Loop through each of the 15 columns, add an extra column if scrolling */
       for( _draw_x = 0; _draw_x < ( 15 + _scroll_offset_w + _scroll_offset_e ); _draw_x++ ) {
@@ -415,8 +416,8 @@ void draw(uint32_t tick) {
       if( (_offset_e == 0 ) || ( _offset_w == 0 ) ) {
         
         /* If we're drawing the last row then don't move the pointer either */
-        if(_draw_y != (14 + _scroll_offset_s) ) 
-          map_tiles_ptr += ( _current_map->map_width - 14 + _offset_w + ( ( _offset_e > 1 ) ? ( _offset_e - 1 ) : 0 ) - _scroll_offset_w - _scroll_offset_e);
+        if(_draw_y != (14 + _scroll_offset_s + _scroll_offset_n) ) 
+          map_tiles_ptr += ( _current_map->map_width - 14 + _offset_w + ( ( _offset_e > 1 ) ? ( _offset_e - 1 ) : 0 ) - (  _offset_w ? 0 : _scroll_offset_w  ) - (  _offset_e ? 0 : _scroll_offset_e  ) );
       }
     }
   }
