@@ -13,6 +13,8 @@ function load_project_view() {
 	$( "#container #content #toolbar #settings #name_input_container #name_input" ).attr( "disabled", "disabled" );
 	$( "#container #content #toolbar #settings #name_input_container #name_input" ).val( "" );
 
+	$( "#container #toolbar #map_settings" ).css( "display", "none" );
+
 	$( "#container #content #toolbar #settings #controls" ).css( "display", "flex" );
 	$( "#container #content #toolbar #settings #map_confirm" ).css( "display", "none" );
 
@@ -193,6 +195,7 @@ function project_toolbar_event_listeners() {
 
 								new_map.width = 8;
 								new_map.height = 8;
+								new_map.can_run = false;
 								new_map.bg_texture = new Object();
 								new_map.bg_texture.gid = undefined;
 								new_map.bg_texture.id = undefined;

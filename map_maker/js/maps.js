@@ -13,6 +13,14 @@ function load_map_editing_view() {
 	$( "#container #content #toolbar #settings #name_input_container #name_input" ).attr( "disabled", "disabled" );
 	$( "#container #content #toolbar #settings #name_input_container #name_input" ).val( "" );
 
+	$( "#container #toolbar #map_settings" ).css( "display", "flex" );
+
+	/* Set the Allow Running checbox */
+	if( selected_map.can_run )
+		$( "#container #toolbar #map_settings #map_settings_options #map_running_en" ).prop( "checked", true );
+	else
+		$( "#container #toolbar #map_settings #map_settings_options #map_running_en" ).prop( "checked", false );
+
 	$( "#container #content #toolbar #settings #controls" ).css( "display", "flex" );
 	$( "#container #content #toolbar #settings #map_confirm" ).css( "display", "none" );
 
@@ -281,6 +289,9 @@ function map_editor_toolbar_reset() {
 	$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_y" ).val( "" );
 	$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_y" ).css( "background", "#fff" );
 
+	if( selected_texture.group == false )
+		$( "#container #toolbar #map_settings" ).css( "display", "flex" );
+
 	/* Re-add sorting to the texture list */
 	texture_list_sortable();
 
@@ -504,7 +515,9 @@ function map_toolbar_event_listeners() {
 					
 					/* Re-load texture list */
 					load_texture_list();
-
+					
+					/* Reload the map editor */
+					load_map_editor();
 					break;
 				case "paint":
 				case "erase":
@@ -746,10 +759,20 @@ function map_toolbar_event_listeners() {
 
 	});
 
-	/* Remove all event listeners */
+	/* Remove map settings event listeners */
+	$( "#container #toolbar #map_paint_settings" ).unbind( "change" );
+
+	/* Map settings event listeners */
+	$( "#container #toolbar #map_settings #map_settings_options #map_running_en" ).on( "change", function( e ) {
+
+		/* Set the allow running setting */
+		selected_map.can_run = $( this ).prop( "checked" );
+	} );
+
+	/* Remove map paint settings event listeners */
 	$( "#container #toolbar #map_paint_settings" ).unbind( "keyup change" );
 
-	/* Map toolbar event listeners */
+	/* Map paint settings event listeners */
 	$( "#container #toolbar #map_paint_settings" ).on( "keyup change", function( e ) {
 		
 		/* Functions disabled whilst map is being re-sized */
@@ -926,6 +949,8 @@ function map_editor_start_drawing() {
 	/* Disable colour picker */
 	$( ".sprite_picker" ).addClass( "auto_cursor" );
 	$( ".texture_picker" ).addClass( "auto_cursor" );
+
+	$( "#container #toolbar #map_settings" ).css( "display", "none" );
 
 	/* Disable sorting on texture list */
 	clear_texture_list_sortable();
@@ -1309,6 +1334,7 @@ function disable_controls( hide_name_input = true ) {
 	$( ".sprite_picker" ).addClass( "auto_cursor" );
 	$( ".texture_picker" ).addClass( "auto_cursor" );
 
+	$( "#container #toolbar #map_settings" ).css( "display", "none" );
 
 	/* Sprites: Hide delete and new group confirmation prompt and show the toolbar */
 	$( "#container #content #project_view #sprite_editor_container #sprite_list_toolbar_delete" ).css( "display", "none" );
@@ -1357,4 +1383,7 @@ function enable_controls() {
 	$( "#container #toolbar #settings #name_input_container" ).css( "display", "flex" );
 	if( selected_texture.texture != false )
 		$( "#container #toolbar #map_paint_preview" ).css( "display", "block" );
+
+	if( selected_texture.texture == false )
+		$( "#container #toolbar #map_settings" ).css( "display", "flex" );
 }

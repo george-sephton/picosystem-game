@@ -34,6 +34,9 @@ function load_texture_list() {
 		$( "#texture_list_toolbar #toolbar_left #toolbar_back" ).css( "display", "none" );
 		$( "#texture_list_toolbar #toolbar_right" ).css( "display", "none" );
 
+		/* Show the map settings */
+		$( "#container #toolbar #map_settings" ).css( "display", "flex" );
+
 	} else {
 		
 		/* Textures */
@@ -74,6 +77,9 @@ function load_texture_list() {
 		$( "#texture_list_toolbar #toolbar_left #toolbar_new_texture" ).css( "display", "block" );
 		$( "#texture_list_toolbar #toolbar_left #toolbar_back" ).css( "display", "block" );
 		$( "#texture_list_toolbar #toolbar_right" ).css( "display", "flex" );
+
+		/* Hide the map settings */
+		$( "#container #toolbar #map_settings" ).css( "display", "none" );
 	}
 
 	/* Add event listeners to the list */
@@ -153,6 +159,8 @@ function load_texture_preview() {
 	/* Setup the texture paint preview */
 	$( "#container #toolbar #map_paint_preview" ).css( "display", "block" );
 	$( "#container #toolbar #map_paint_preview" ).html( "<table></table>" );
+
+	$( "#container #toolbar #map_settings" ).css( "display", "none" );
 	
 	/* Add 8 rows */
 	for(i=0; i<8; i++)

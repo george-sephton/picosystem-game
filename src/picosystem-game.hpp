@@ -62,6 +62,7 @@ namespace picosystem {
     const struct map_tile (*map_tiles_ptr);
     uint16_t map_height;
     uint16_t map_width;
+    bool running_en;
     int16_t bg_texture;
     int16_t bg_texture_offset;
   };

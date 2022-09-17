@@ -228,8 +228,8 @@ void update( uint32_t tick ) {
   /* Advance scrolling animation */
   if( scroll_movement ) {
   
-    /* If holding B, make the player run (move twice as fast) */
-    if( button( B ) ) scroll_counter += 2;
+    /* If holding B, make the player run (move twice as fast), if the map allows running */
+    if( ( button( B ) ) && ( _current_map->running_en ) ) scroll_counter += 2;
     else scroll_counter++;
 
     if(scroll_counter >= 8) {
@@ -349,7 +349,8 @@ void update( uint32_t tick ) {
     
     player_animation_tick++;
 
-    if( ( ( player_animation_tick >= 6 ) && ( !button( B ) ) ) || ( ( player_animation_tick >= 3 ) && ( button( B ) ) ) ) {
+    /* If holding B, make the player run, if the map allows running */
+    if( ( ( player_animation_tick >= 6 ) && ( ( ( !button( B ) ) && ( _current_map->running_en ) ) || ( !_current_map->running_en ) ) ) || ( ( player_animation_tick >= 3 ) && ( button( B ) ) && ( _current_map->running_en ) ) ) {
 
       player_animation_tick = 0;
       player.reverse_walking_render = !player.reverse_walking_render;

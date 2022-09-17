@@ -243,22 +243,32 @@
 	color: #333;
 	cursor: pointer;
 }
-#container #toolbar #map_size_settings {
+#container #toolbar #map_settings {
 	display: none;
 	flex-direction: column;
-	gap: 4px;
-	font-size: 20px;
+	background: #8bb1c7;
+	gap: 14px;
+	padding: 10px;
+	border-radius: 6px;
+	box-sizing: border-box;
 }
-#container #toolbar #map_size_settings div {
-	padding: 2px;
+#container #toolbar #map_settings #map_settings_heading {
+	display: flex;
+	flex-direction: row;
+	font-size: 22px;
 }
-#container #toolbar #map_size_settings input {
-	display: inline-block;
-	min-width: 80px;
+#container #toolbar #map_settings #map_settings_options {
+	display: flex;
+	flex-direction: row;
 }
-#container #toolbar #map_size_settings label {
-	display: inline-block;
-	min-width: 100px;
+#container #toolbar #map_settings #map_settings_options .checkbox-input {
+	width: 30px;
+	height: 30px;
+	margin: 0px;
+}
+#container #toolbar #map_settings #map_settings_options label {
+	width: 120px;
+	margin: 6px 0 0 0;
 }
 #container #toolbar #map_paint_preview {
 	width: 100px;
@@ -334,6 +344,23 @@
 }
 #container #toolbar #map_paint_settings #map_paint_settings_r input {
 	display: inline-block;
+}
+#container #toolbar #map_size_settings {
+	display: none;
+	flex-direction: column;
+	gap: 4px;
+	font-size: 20px;
+}
+#container #toolbar #map_size_settings div {
+	padding: 2px;
+}
+#container #toolbar #map_size_settings input {
+	display: inline-block;
+	min-width: 80px;
+}
+#container #toolbar #map_size_settings label {
+	display: inline-block;
+	min-width: 100px;
 }
 #container #toolbar input {
 	padding: 8px;

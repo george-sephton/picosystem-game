@@ -640,6 +640,7 @@ map1.order = 0;
 map1.name = "Demo Map";
 map1.width = 5;
 map1.height = 5;
+map1.can_run = false;
 map1.bg_texture = new Object();
 map1.bg_texture.gid = 0;
 map1.bg_texture.id = 0;
@@ -651,6 +652,7 @@ map2.order = 1;
 map2.name = "Large Demo Map";
 map2.width = 16;
 map2.height = 12;
+map2.can_run = true;
 map2.bg_texture = new Object();
 map2.bg_texture.gid = undefined;
 map2.bg_texture.id = undefined;
@@ -893,7 +895,7 @@ function export_data() {
 			var map_output_bg_texture_id = -1
 		}
 
-  		output += "  struct map " + map_name_conv + " = { " + Number(map.id) + ", *_" + map_name_conv + ", " + Number(map.height) + ", " + Number(map.width) + ", " + Number(map_output_bg_texture_gid.gorder) + ", " + Number(map_output_bg_texture_id.order) + " };\n\n"
+  		output += "  struct map " + map_name_conv + " = { " + Number(map.id) + ", *_" + map_name_conv + ", " + Number(map.height) + ", " + Number(map.width) + ", " + Number(map.can_run) + ", " + Number(map_output_bg_texture_gid.gorder) + ", " + Number(map_output_bg_texture_id.order) + " };\n\n"
 
 	} );
 

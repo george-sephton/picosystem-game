@@ -57,7 +57,7 @@ $( function() {
 	selected_map = project.maps.find( obj => obj.id == 0 );
 	load_map_editing_view();
 
-	selected_texture.group = project.textures.find( obj => obj.gid == 0 );
-	selected_texture.texture = selected_texture.group.textures.find( obj => obj.id == 0 );
+	//selected_texture.group = project.textures.find( obj => obj.gid == 0 );
+	//selected_texture.texture = selected_texture.group.textures.find( obj => obj.id == 0 );
 	load_texture_list();
 } );
