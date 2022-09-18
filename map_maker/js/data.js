@@ -630,9 +630,11 @@ blank_tile.texture_reverse_x = false;
 blank_tile.texture_reverse_y = false;
 blank_tile.exit_tile = false;
 blank_tile.exit_map_id = false;
-blank_tile.top_layer = false;
 blank_tile.exit_map_dir = [0, 0];
 blank_tile.exit_map_pos = [0, 0];
+blank_tile.interact_en = false;
+blank_tile.interact_id = false;
+blank_tile.top_layer = false;
 
 var map1 = new Object();
 map1.id = 0;
@@ -869,13 +871,14 @@ function export_data() {
 					output += Number(cell.can_walk[0]) + ", " + Number(cell.can_walk[1]) + ", " + Number(cell.can_walk[2]) + ", " + Number(cell.can_walk[3]) + ", ";
 					output += Number(cell_output_texture_group.gorder) + ", " + Number(cell_output_texture.order) + ", ";
 					output += Number(cell.texture_reverse_x) + ", " + Number(cell.texture_reverse_y) + ", ";
+					output += Number(cell.interact_en) + ", " + Number(cell.interact_id) + ", ";
 					output += Number(cell.exit_tile) + ", " + Number(cell_output_map.order) + ", {";
 					output += cell.exit_map_dir[0] + ", " + cell.exit_map_dir[1] + "}, {";
 					output += cell.exit_map_pos[0] + ", " + cell.exit_map_pos[1] + "} ";
 				} else {
 
 					/* Empty cell */
-					output += "0, 1, 1, 1, 1, -1, 0, 0, 0, 0, 0, {0, 0}, {0, 0} ";
+					output += "0, 1, 1, 1, 1, -1, 0, 0, 0, 0, 0, 0, 0, {0, 0}, {0, 0} ";
 				}
 				output += "}, ";		
 			} );

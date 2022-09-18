@@ -23,6 +23,7 @@ using namespace picosystem;
 #define map_rendering_scroll          false    // Displays player position on map and no of calculated extra pixels to render 
 #define player_movement               false    // Displays player position
 #define player_position               false    // Draws coloured boxes to indicate if player can move or if there are obstacles, edge of map or exit tiles
+#define interaction_info              true    // Shows information about interaction tiles
 #define exit_map_info                 false    // Displays information about the map to load if exiting current map
 #define animation_info                false    // Displays information about the running animation
 
@@ -36,7 +37,8 @@ char write_text[30];
 uint8_t _offset_n, _offset_e, _offset_s, _offset_w;
 uint8_t _scroll_offset_n, _scroll_offset_e, _scroll_offset_s, _scroll_offset_w;
 dir_vec map_pos;
-dir_en allowed_movement, exit_tile;
+dir_en allowed_movement, exit_tile, interaction_tile;
+int16_t interaction_tile_id[4];
 uint8_t player_animation_tick;
 
 /* Movement scrolling animation */
@@ -131,36 +133,67 @@ void update( uint32_t tick ) {
     exit_map.exit_map_pos = (*current_map_tile_ptr).exit_map_pos;
   }
 
-  /* Store which directions we're allowed to walk in the nearest tiles, also see if those tiles are exit tiles (used for scrolling) */
+  /* Store which directions we're allowed to walk in the nearest tiles and if there are any interaction tiles */
   allowed_movement = { false, false, false, false };
+  interaction_tile = { false, false, false, false };
 
   if( map_pos.y != 0 ) {
 
     current_map_tile_ptr -= _current_map->map_width; // Move pointer up a row
+    
     allowed_movement.travel_n = (*current_map_tile_ptr).can_walk_s;
+    interaction_tile.travel_n = (*current_map_tile_ptr).interact_tile;
+
+    if( interaction_tile.travel_n ) interaction_tile_id[0] = (*current_map_tile_ptr).interact_id;
+    else interaction_tile_id[0] = 0;
+
     current_map_tile_ptr += _current_map->map_width; // Move pointer back to same row as player
   }
 
   if( map_pos.x != ( _current_map->map_width - 1 ) ) {
 
     current_map_tile_ptr++; // Move pointer to next column along
+
     allowed_movement.travel_e = (*current_map_tile_ptr).can_walk_w;
+    interaction_tile.travel_e = (*current_map_tile_ptr).interact_tile;
+
+    if( interaction_tile.travel_e ) interaction_tile_id[1] = (*current_map_tile_ptr).interact_id;
+    else interaction_tile_id[1] = 0;
+
     current_map_tile_ptr--; // Move pointer back to same column as player
   }
 
   if( map_pos.y != ( _current_map->map_height - 1 ) ) {
 
     current_map_tile_ptr += _current_map->map_width; // Move pointer down a row
+
     allowed_movement.travel_s = (*current_map_tile_ptr).can_walk_n;
+    interaction_tile.travel_s = (*current_map_tile_ptr).interact_tile;
+
+    if( interaction_tile.travel_s ) interaction_tile_id[2] = (*current_map_tile_ptr).interact_id;
+    else interaction_tile_id[2] = 0;
+
     current_map_tile_ptr -= _current_map->map_width; // Move pointer back to same row as player
   }
 
   if( map_pos.x != 0 ) {
 
     current_map_tile_ptr--; // Move pointer back a column
+
     allowed_movement.travel_w = (*current_map_tile_ptr).can_walk_e;
+    interaction_tile.travel_w = (*current_map_tile_ptr).interact_tile;
+
+    if( interaction_tile.travel_w ) interaction_tile_id[3] = (*current_map_tile_ptr).interact_id;
+    else interaction_tile_id[3] = 0;
+
     current_map_tile_ptr++; // Move pointer back to same column as player
   }
+
+  /* Add movement restrictions based on interaction tiles */
+  if( interaction_tile.travel_n ) allowed_movement.travel_n = false;
+  if( interaction_tile.travel_e ) allowed_movement.travel_e = false;
+  if( interaction_tile.travel_s ) allowed_movement.travel_s = false;
+  if( interaction_tile.travel_w ) allowed_movement.travel_w = false;
 
   /* Stop scrolling motion if we're can't continue, either because of allowed movement or an exit tile */
   if( ( ( ( player.walk_dir.x == 0 ) && ( player.walk_dir.y == 1 ) && ( !allowed_movement.travel_n ) ) || 
@@ -602,6 +635,38 @@ void draw( uint32_t tick ) {
 
       draw_rec( 48, 56, 8, 8, rgb(0xFF0) ); 
     }
+  }
+  #endif
+
+  #if interaction_info
+
+  /* Draw coloured squares to indicate player's allowed movement */
+  if( ( interaction_tile.travel_n ) && ( player.face_dir.x == 0 ) && ( player.face_dir.y == 1 ) ) {
+    
+    draw_rec( 56, 48, 8, 8, rgb(0x0FF) );
+    sprintf( write_text,"ID(%d)", interaction_tile_id[0] );
+    write_string( write_text, 1, 8, rgb(0xF00) );
+  }
+  
+  if( ( interaction_tile.travel_e ) && ( player.face_dir.x == 1 ) && ( player.face_dir.y == 0 ) ) {
+
+    draw_rec( 64, 56, 8, 8, rgb(0x0FF) );
+    sprintf( write_text,"ID(%d)", interaction_tile_id[1] );
+    write_string( write_text, 1, 8, rgb(0xF00) );
+  }
+
+  if( ( interaction_tile.travel_s ) && ( player.face_dir.x == 0 ) && ( player.face_dir.y == -1 ) ) {
+
+    draw_rec( 56, 64, 8, 8, rgb(0x0FF) );
+    sprintf( write_text,"ID(%d)", interaction_tile_id[2] );
+    write_string( write_text, 1, 8, rgb(0xF00) );
+  }
+
+  if( ( interaction_tile.travel_w ) && ( player.face_dir.x == -1 ) && ( player.face_dir.y == 0 ) ) {
+
+    draw_rec( 48, 56, 8, 8, rgb(0x0FF) ); 
+    sprintf( write_text,"ID(%d)", interaction_tile_id[3] );
+    write_string( write_text, 1, 8, rgb(0xF00) );
   }
   #endif
 }

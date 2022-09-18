@@ -44,6 +44,8 @@ namespace picosystem {
     int16_t texture_offset = 0;
     bool texture_reverse_x = false;
     bool texture_reverse_y = false;
+    bool interact_tile = false;
+    uint16_t interact_id = 0;
     bool exit_tile = false;
     uint16_t exit_map_id = 0;
     dir_vec exit_map_dir = {0, 0};

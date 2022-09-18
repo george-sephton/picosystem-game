@@ -189,6 +189,8 @@ function project_toolbar_event_listeners() {
 								blank_tile.texture_reverse_y = false;
 								blank_tile.exit_tile = false;
 								blank_tile.exit_map_id = false;
+								blank_tile.interact_en = false;
+								blank_tile.interact_id = false;
 								blank_tile.top_layer = false;
 								blank_tile.exit_map_dir = [0, 0];
 								blank_tile.exit_map_pos = [0, 0];

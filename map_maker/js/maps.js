@@ -227,13 +227,8 @@ function load_map_editor() {
 					$( this ).find( ".texture_table" ).css( "border", "1px solid #00f" );
 				} else {
 
-					/* Update CSS based on can_walk */
-					if( !selected_map.data[tile_info.row][tile_info.col].can_walk[0] ) $( this ).find( ".texture_table" ).css( "border-top", "3px solid #f00" );
-					if( !selected_map.data[tile_info.row][tile_info.col].can_walk[1] ) $( this ).find( ".texture_table" ).css( "border-right", "3px solid #f00" );
-					if( !selected_map.data[tile_info.row][tile_info.col].can_walk[2] ) $( this ).find( ".texture_table" ).css( "border-bottom", "3px solid #f00" );
-					if( !selected_map.data[tile_info.row][tile_info.col].can_walk[3] ) $( this ).find( ".texture_table" ).css( "border-left", "3px solid #f00" );
-
 					if( selected_map.data[tile_info.row][tile_info.col].exit_tile ) {
+
 						/* Update CSS for exit tiles */
 						switch( selected_map.data[tile_info.row][tile_info.col].exit_map_dir.join() ) {
 							case "0,0":  /* Exit any direction */
@@ -252,6 +247,30 @@ function load_map_editor() {
 								$( this ).find( ".texture_table" ).css( "border-left", "3px solid #ff0" );
 								break;
 						}
+					} else if( selected_map.data[tile_info.row][tile_info.col].interact_en ) {
+
+						/* Update CSS based on interact_en */
+						$( this ).find( ".texture_table" ).css( "border", "3px solid #0ff" );
+
+					} else if( selected_map.data[tile_info.row][tile_info.col].top_layer ) {
+
+						/* Update CSS based on top_layer */
+						$( this ).find( ".texture_table" ).css( "border-top", "3px solid #0f0" );
+						$( this ).find( ".texture_table" ).css( "border-right", "3px solid #0f0" );
+						$( this ).find( ".texture_table" ).css( "border-bottom", "3px solid #0f0" );
+						$( this ).find( ".texture_table" ).css( "border-left", "3px solid #0f0" );
+
+						if( !selected_map.data[tile_info.row][tile_info.col].can_walk[0] ) $( this ).find( ".texture_table" ).css( "border-top", "3px solid #fc8805" );
+						if( !selected_map.data[tile_info.row][tile_info.col].can_walk[1] ) $( this ).find( ".texture_table" ).css( "border-right", "3px solid #fc8805" );
+						if( !selected_map.data[tile_info.row][tile_info.col].can_walk[2] ) $( this ).find( ".texture_table" ).css( "border-bottom", "3px solid #fc8805" );
+						if( !selected_map.data[tile_info.row][tile_info.col].can_walk[3] ) $( this ).find( ".texture_table" ).css( "border-left", "3px solid #fc8805" );
+					} else {
+
+						/* Update CSS based on can_walk */
+						if( !selected_map.data[tile_info.row][tile_info.col].can_walk[0] ) $( this ).find( ".texture_table" ).css( "border-top", "3px solid #f00" );
+						if( !selected_map.data[tile_info.row][tile_info.col].can_walk[1] ) $( this ).find( ".texture_table" ).css( "border-right", "3px solid #f00" );
+						if( !selected_map.data[tile_info.row][tile_info.col].can_walk[2] ) $( this ).find( ".texture_table" ).css( "border-bottom", "3px solid #f00" );
+						if( !selected_map.data[tile_info.row][tile_info.col].can_walk[3] ) $( this ).find( ".texture_table" ).css( "border-left", "3px solid #f00" );
 					}
 				}
 			}
@@ -538,6 +557,8 @@ function map_toolbar_event_listeners() {
 						selected_texture.can_walk = [true, true, true, true];
 						selected_texture.exit_tile = false;
 						selected_texture.exit_map_id = false;
+						selected_texture.interact_en = false;
+						selected_texture.interact_id = false;
 						selected_texture.top_layer = false;
 						selected_texture.exit_map_dir = [0, 0];
 						selected_texture.exit_map_pos = [0, 0];
@@ -608,6 +629,8 @@ function map_toolbar_event_listeners() {
 							fill_tile.exit_tile = false;
 							fill_tile.exit_map_id = false;
 							fill_tile.top_layer = false;
+							fill_tile.interact_en = false;
+							fill_tile.interact_id = false;
 							fill_tile.exit_map_dir = [0, 0];
 							fill_tile.exit_map_pos = [0, 0];
 
@@ -788,6 +811,12 @@ function map_toolbar_event_listeners() {
 						selected_texture.exit_tile = true;
 						selected_texture.exit_map_dir = [0, 0];
 						selected_texture.exit_map_pos = [0, 0];
+						selected_texture.can_walk = [true, true, true, true];
+						selected_texture.top_layer = false;
+
+						/* Hide Interact tile option */
+						selected_texture.interact_en = false;
+						selected_texture.interact_id = false;
 
 						/* Clear the position fields */
 						$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_x" ).val( "" );
@@ -809,10 +838,63 @@ function map_toolbar_event_listeners() {
 					} else {
 						/* Exit tile disabled */
 						selected_texture.exit_tile = false;
+						selected_texture.exit_map_id = false;
+						selected_texture.exit_map_dir = [0, 0];
+						selected_texture.exit_map_pos = [0, 0];	
 						selected_texture.can_walk = [true, true, true, true];
 
 						$( "#exit_tile_map_id" ).empty();
 					}
+					break;
+				case "interact_tile_en":
+					/* Enable/Disable interact tile */
+					if( element.prop( "checked" ) ) {
+						/* Interact tile enabled */
+						selected_texture.interact_en = true;
+						selected_texture.interact_id = 0;
+						selected_texture.can_walk = [true, true, true, true];
+						selected_texture.top_layer = false;
+
+						/* Hide Exit tile option */
+						selected_texture.exit_tile = false;
+						selected_texture.exit_map_id = false;
+						selected_texture.exit_map_dir = [0, 0];
+						selected_texture.exit_map_pos = [0, 0];	
+
+						/* Clear the id field */
+						$( "#container #toolbar #map_paint_settings #interact_tile_id" ).val( "" );				
+
+						
+					} else {
+						/* Exit tile disabled */
+						selected_texture.interact_en = false;
+						selected_texture.interact_id = false;
+						selected_texture.can_walk = [true, true, true, true];
+
+						/* Show Exit Tile option */
+						$( "#container #toolbar #map_paint_settings #exit_tile_en" ).css( "display", "block" );
+						$( "#container #toolbar #map_paint_settings label[for='exit_tile_en']" ).css( "display", "block" );
+
+						$( "#exit_tile_map_id" ).empty();
+					}
+					break;
+				case "interact_tile_id":
+
+					if( parseInt( element.val() ) ){
+
+						selected_texture.interact_id = parseInt( element.val() );
+						
+					} else {
+
+						/* They didn't enter a number, let's correct that */
+						selected_texture.interact_id = 0;
+
+						/* Don't alter anything if the field is empty */
+						if( element.val() != "" ) {
+							element.val( "0" );
+						}
+					}
+					
 					break;
 				case "top_layer_en":
 					/* Update tile top layer */
@@ -821,6 +903,16 @@ function map_toolbar_event_listeners() {
 					} else {
 						selected_texture.top_layer = true;
 					}
+
+					/* Disable exit and interact */					
+					selected_texture.exit_tile = false;
+					selected_texture.exit_map_id = false;
+					selected_texture.exit_map_dir = [0, 0];
+					selected_texture.exit_map_pos = [0, 0];
+
+					selected_texture.interact_en = false;
+					selected_texture.interact_id = false;
+
 					break;
 				case "exit_tile_n":
 					/* Update tile direction N */
@@ -1029,6 +1121,8 @@ function map_editor_event_listeners() {
 			selected_map.data[tile_info.row][tile_info.col].exit_map_id = false;
 			selected_map.data[tile_info.row][tile_info.col].exit_map_dir = [0, 0];
 			selected_map.data[tile_info.row][tile_info.col].exit_map_pos = [0, 0];
+			selected_map.data[tile_info.row][tile_info.col].interact_en = false;
+			selected_map.data[tile_info.row][tile_info.col].interact_id = false;
 
 		} else if( drawing_functions == 1 ) { /* Paint */
 
@@ -1094,6 +1188,14 @@ function map_editor_event_listeners() {
 						break;
 				}
 
+			} else if( selected_texture.interact_en ) {
+
+				$( this ).find( ".texture_table" ).css( "border", "3px solid #0ff" );
+
+			} else if( selected_texture.top_layer ) {
+
+				$( this ).find( ".texture_table" ).css( "border", "3px solid #0f0" );
+
 			} else {
 				/* Update CSS based on can_walk */
 				if(!selected_texture.can_walk[0]) $( this ).find( ".texture_table" ).css( "border-top", "3px solid #f00" );
@@ -1117,6 +1219,8 @@ function map_editor_event_listeners() {
 			selected_map.data[tile_info.row][tile_info.col].exit_tile = selected_texture.exit_tile;
 			selected_map.data[tile_info.row][tile_info.col].exit_map_id = selected_texture.exit_map_id;
 			selected_map.data[tile_info.row][tile_info.col].top_layer = selected_texture.top_layer;
+			selected_map.data[tile_info.row][tile_info.col].interact_en = selected_texture.interact_en;
+			selected_map.data[tile_info.row][tile_info.col].interact_id = selected_texture.interact_id;
 
 			selected_map.data[tile_info.row][tile_info.col].can_walk = new Array();
 			$.extend( true, selected_map.data[tile_info.row][tile_info.col].can_walk, selected_texture.can_walk ); /* Clone array */
@@ -1162,7 +1266,7 @@ function map_editor_event_listeners() {
 }
 
 function set_map_tile_settings_styles( direct_update = false ) {
-	
+
 	/* Set preview to have no special borders */
 	$( "#container #toolbar #map_paint_preview table" ).css( "border", "2px solid #000" );
 	$( "#container #toolbar #map_paint_preview table" ).css( "border-top", "2px solid #000" );
@@ -1176,16 +1280,24 @@ function set_map_tile_settings_styles( direct_update = false ) {
 		$( "#container #toolbar #map_paint_settings #top_layer_en" ).prop( "checked", false );
 
 	if( selected_texture.exit_tile ) {
+		
 		/* Exit tile enabled, show the rest of the settings  */
 		$( "#exit_tile_en" ).prop( "checked", true );
-
-		$( "#container #toolbar #map_paint_settings input:not(.exit_ignore_hide)" ).css( "display", "block" );
-		$( "#container #toolbar #map_paint_settings label:not(.exit_ignore_hide)" ).css( "display", "block" );
+		$( "#container #toolbar #map_paint_settings input:not(.interact_ignore_hide)" ).css( "display", "block" );
+		$( "#container #toolbar #map_paint_settings label:not(.interact_ignore_hide)" ).css( "display", "block" );
 		$( "#container #toolbar #map_paint_settings select" ).css( "display", "block" );
 
-		/* Disable the "can walk" checkboxes */
+		/* Hide Interact tile settings */
+		$( "#container #toolbar #map_paint_settings #interact_tile_en" ).css( "display", "none" );
+		$( "#container #toolbar #map_paint_settings label[for='interact_tile_en']" ).css( "display", "none" );
+		$( "#container #toolbar #map_paint_settings #interact_tile_id" ).css( "display", "none" );
+		$( "#container #toolbar #map_paint_settings label[for='interact_tile_id']" ).css( "display", "none" );
+
+		/* Disable the "can walk" and "top layer" checkboxes */
 		$( ".dir_en_checkbox" ).prop( "checked", true );
 		$( ".dir_en_checkbox" ).prop( "disabled", true );
+		$( "#top_layer_en" ).prop( "checked", false );
+		$( "#top_layer_en" ).prop( "disabled", true );
 
 		/* Set values */
 		$( "#container #toolbar #map_paint_settings #exit_tile_map_id" ).val( selected_texture.exit_map_id );
@@ -1214,7 +1326,7 @@ function set_map_tile_settings_styles( direct_update = false ) {
 				$( "#container #toolbar #map_paint_settings #exit_tile_map_dir" ).val( "n" );
 				break;
 			case "1,0": /* Exit when walking east */
-				$( "#container #toolbar #map_paint_preview table" ).css( "border-rightt", "2px solid #ff0" );
+				$( "#container #toolbar #map_paint_preview table" ).css( "border-right", "2px solid #ff0" );
 				$( "#container #toolbar #map_paint_settings #exit_tile_map_dir" ).val( "e" );
 				break;
 			case "0,-1": /* Exit when walking south */
@@ -1231,49 +1343,109 @@ function set_map_tile_settings_styles( direct_update = false ) {
 				break;
 		}
 		
-	} else {
-		/* Exit tile disabled, hide the rest of the settings  */
-		$( "#exit_tile_en" ).prop( "checked", false );
+	} else if( selected_texture.interact_en ) {
 
-		$( "#container #toolbar #map_paint_settings input:not(.exit_ignore_hide)" ).css( "display", "none" );
-		$( "#container #toolbar #map_paint_settings label:not(.exit_ignore_hide)" ).css( "display", "none" );
+		/* Interact tile enabled */
+		$( "#interact_tile_en" ).prop( "checked", true );
+		/* Interact tile enabled, show the rest of the settings  */
+		$( "#container #toolbar #map_paint_settings #interact_tile_id" ).css( "display", "block" );
+		$( "#container #toolbar #map_paint_settings label[for='interact_tile_id']" ).css( "display", "block" );
+		$( "#container #toolbar #map_paint_settings #interact_tile_id" ).val( selected_texture.interact_id );
+
+		/* Hide Exit tile settings */
+		$( "#container #toolbar #map_paint_settings #exit_tile_en" ).css( "display", "none" );
+		$( "#container #toolbar #map_paint_settings label[for='exit_tile_en']" ).css( "display", "none" );
+
+		/* Disable the "can walk" and "top layer" checkboxes */
+		$( ".dir_en_checkbox" ).prop( "checked", true );
+		$( ".dir_en_checkbox" ).prop( "disabled", true );
+		$( "#top_layer_en" ).prop( "checked", false );
+		$( "#top_layer_en" ).prop( "disabled", true );
+
+		/* Set styling for an interact tile */
+		$( "#container #toolbar #map_paint_preview table" ).css( "border", "2px solid #0ff" );
+	
+	} else {
+
+		/* Interact tile disabled, hide the rest of the settings  */
+		$( "#interact_tile_en" ).prop( "checked", false );
+
+		$( "#container #toolbar #map_paint_settings input:not(.exit_ignore_hide):not(.interact_ignore_hide)" ).css( "display", "none" );
+		$( "#container #toolbar #map_paint_settings label:not(.exit_ignore_hide):not(.interact_ignore_hide)" ).css( "display", "none" );
 		$( "#container #toolbar #map_paint_settings select" ).css( "display", "none" );
 
-		/* Enable the "can walk" checkboxes */
+		$( "#container #toolbar #map_paint_settings #interact_tile_id" ).css( "display", "none" );
+		$( "#container #toolbar #map_paint_settings label[for='interact_tile_id']" ).css( "display", "none" );
+
+		/* Show Exit tile settings */
+		$( "#container #toolbar #map_paint_settings #exit_tile_en" ).css( "display", "block" );
+		$( "#container #toolbar #map_paint_settings label[for='exit_tile_en']" ).css( "display", "block" );
+
+		/* Show Interact tile settings */
+		$( "#container #toolbar #map_paint_settings #interact_tile_en" ).css( "display", "block" );
+		$( "#container #toolbar #map_paint_settings label[for='interact_tile_en']" ).css( "display", "block" );
+
+		/* Enable all the checkboxes */
 		$( ".dir_en_checkbox" ).prop( "checked", false );
 		$( ".dir_en_checkbox" ).prop( "disabled", false );
+		$( "#top_layer_en" ).prop( "disabled", false );
+		$( "#exit_tile_en" ).prop( "disabled", false );
+		$( "#interact_tile_en" ).prop( "disabled", false );
+
+		/* Set borders for top layer */
+		if( selected_texture.top_layer ) {
+
+			$( "#container #toolbar #map_paint_preview table" ).css( "border-top", "2px solid #0f0" );
+			$( "#container #toolbar #map_paint_preview table" ).css( "border-left", "2px solid #0f0" );
+			$( "#container #toolbar #map_paint_preview table" ).css( "border-bottom", "2px solid #0f0" );
+			$( "#container #toolbar #map_paint_preview table" ).css( "border-right", "2px solid #0f0" );
+		}
 
 		/* Set directions player can walk into tile */
 
 		/* Updated tile direction N */
 		if( !selected_texture.can_walk[0] ) {
-			$( "#container #toolbar #map_paint_preview table" ).css( "border-top", "2px solid #f00" );
+			
+			if( selected_texture.top_layer ) $( "#container #toolbar #map_paint_preview table" ).css( "border-top", "2px solid #fc8805" );
+			else $( "#container #toolbar #map_paint_preview table" ).css( "border-top", "2px solid #f00" );
+
 			$( "#exit_tile_n" ).prop( "checked", false );
 		} else {
 			$( "#exit_tile_n" ).prop( "checked", true );
 		}
 		/* Updated tile direction E */
 		if( !selected_texture.can_walk[1] ) {
-			$( "#container #toolbar #map_paint_preview table" ).css( "border-right", "2px solid #f00" );
+			
+			if( selected_texture.top_layer ) $( "#container #toolbar #map_paint_preview table" ).css( "border-right", "2px solid #fc8805" );
+			else $( "#container #toolbar #map_paint_preview table" ).css( "border-right", "2px solid #f00" );
+
 			$( "#exit_tile_e" ).prop( "checked", false );
 		} else {
 			$( "#exit_tile_e" ).prop( "checked", true );
 		}
 		/* Updated tile direction S */
 		if( !selected_texture.can_walk[2] ) {
-			$( "#container #toolbar #map_paint_preview table" ).css( "border-bottom", "2px solid #f00" );
+			
+			if( selected_texture.top_layer ) $( "#container #toolbar #map_paint_preview table" ).css( "border-bottom", "2px solid #fc8805" );
+			else $( "#container #toolbar #map_paint_preview table" ).css( "border-bottom", "2px solid #f00" );
+
 			$( "#exit_tile_s" ).prop( "checked", false );
 		} else {
 			$( "#exit_tile_s" ).prop( "checked", true );
 		}
 		/* Updated tile direction W */
 		if( !selected_texture.can_walk[3] ) {
-			$( "#container #toolbar #map_paint_preview table" ).css( "border-left", "2px solid #f00" );
+			
+			if( selected_texture.top_layer ) $( "#container #toolbar #map_paint_preview table" ).css( "border-left", "2px solid #fc8805" );
+			else $( "#container #toolbar #map_paint_preview table" ).css( "border-left", "2px solid #f00" );
+
 			$( "#exit_tile_w" ).prop( "checked", false );
 		} else {
 			$( "#exit_tile_w" ).prop( "checked", true );
 		}
 	}
+
+	
 }
 
 function display_tile_info( tile_row, tile_col ) {
@@ -1298,7 +1470,12 @@ function display_tile_info( tile_row, tile_col ) {
 	/* Copy tile info */
 	selected_texture.exit_tile = selected_map.data[tile_row][tile_col].exit_tile;
 	selected_texture.exit_map_id = selected_map.data[tile_row][tile_col].exit_map_id;
+
+	selected_texture.interact_en = selected_map.data[tile_row][tile_col].interact_en;
+	selected_texture.interact_id = selected_map.data[tile_row][tile_col].interact_id;
+
 	selected_texture.top_layer = selected_map.data[tile_row][tile_col].top_layer;
+
 	selected_texture.exit_map_dir = new Array();
 	$.extend( true, selected_texture.exit_map_dir, selected_map.data[tile_row][tile_col].exit_map_dir ); /* Clone array */
 	selected_texture.exit_map_pos = new Array();
