@@ -23,12 +23,16 @@ using namespace picosystem;
 #define map_rendering_scroll          false    // Displays player position on map and no of calculated extra pixels to render 
 #define player_movement               false    // Displays player position
 #define player_position               false    // Draws coloured boxes to indicate if player can move or if there are obstacles, edge of map or exit tiles
-#define interaction_info              true    // Shows information about interaction tiles
+#define interaction_info              false    // Displays information about interaction tiles
 #define exit_map_info                 false    // Displays information about the map to load if exiting current map
 #define animation_info                false    // Displays information about the running animation
+#define textbox_info                  true    // Displays information about the current textbox
 
+#define player_movement_delay_val     5        // Delay value before a player will start walking, to allow them to change the direction they're facing without walking
+
+char demo_text[][30] = { "This is a test of", "the textbox", "mechanism.", "Does it work", "alright? Or could", "we improve it?" };
 char write_text[30];
-  
+
 // ---------------------------------------------------------------------------------
 // GLOBAL VARIABLES
 // ---------------------------------------------------------------------------------
@@ -39,13 +43,18 @@ uint8_t _scroll_offset_n, _scroll_offset_e, _scroll_offset_s, _scroll_offset_w;
 dir_vec map_pos;
 dir_en allowed_movement, exit_tile, interaction_tile;
 int16_t interaction_tile_id[4];
-uint8_t player_animation_tick;
+uint8_t player_animation_tick, player_movement_delay;
 
 /* Movement scrolling animation */
 bool scroll_movement;
 uint16_t scroll_counter;
 dir_vec upcoming_map_pos;
 int8_t _scroll_x, _scroll_y;
+
+/* Textbox variables */
+bool textbox_running;
+uint8_t scroll_arrow_count, scroll_arrow_offset, textbox_line, textbox_button_delay;
+uint8_t write_text_line_count, write_text_char_count;
 
 /* Development */
 map *_current_map;
@@ -60,32 +69,43 @@ void init() {
   /* Play a bougie sound */
   play(1000, 500, 100);
 
-  /* Load the map */
+  /* Load the map and set our initial location */
   _current_map = &map_list[0];
-
-  /* Set our initial location */
   map_pos = {3, 4};
-  
-  /* We're not moving */
-  player.walk_dir.x = 0;
-  player.walk_dir.y = 0;
 
+  //_current_map = &map_list[2];
+  //map_pos = {14, 11};
+  
+  /* Initialise movement variables  */
+  player_movement_delay = 0;
   scroll_movement = false;
   scroll_counter = 0;
   upcoming_map_pos.x = 0;
   upcoming_map_pos.y = 0;
-  
+
+  player.walk_dir.x = 0;
+  player.walk_dir.y = 0;
   /* Facing south */
   player.face_dir.x = 0;
   player.face_dir.y = -1;
-  
-  /* Initialise */
+
+  /* Initialise walking animation variables  */
   player.reverse_walking_render = false;
   player_animation_tick = 0;
-
-  /* No animations in progress */
-  animation.running = false;
   
+  /* Initialise textbox variables */
+  textbox_running = false;
+
+  scroll_arrow_count = 0;
+  scroll_arrow_offset = 0;
+  textbox_line = 0;
+  textbox_button_delay = 0;
+
+  write_text_line_count = 0;
+  write_text_char_count = 1;
+  
+  /* Initialise animation variables - none in progress */
+  animation.running = false;
   /* We're also not about to move maps */
   exit_map.waiting_load = false;
   exit_map.waiting_show = false;
@@ -103,9 +123,9 @@ void update( uint32_t tick ) {
   if( ( animation.running ) && ( !animation.finished ) ) 
     animation.tick++;
   
-  /*
-   * Player movement functionality
-   */
+  // ---------------------------------------------------------------------------------
+  // Player movement functionality
+  // ---------------------------------------------------------------------------------
 
   /* Start by calculating our movement restructions */
   const struct map_tile (*current_map_tile_ptr) = _current_map->map_tiles_ptr; // Get a pointer to the current tile
@@ -115,9 +135,9 @@ void update( uint32_t tick ) {
   /* See if we're stood on an exit tile or not */
   exit_tile = { false, false, false, false };
 
+  /* We're stood on an exit tile, let's check which direction the exit is */
   if( (*current_map_tile_ptr).exit_tile ) {
 
-    /* We're stood on an exit tile, let's check which direction the exit is */
     if( (*current_map_tile_ptr).exit_map_dir.y == 1 ) {
       exit_tile.travel_n = true;
     } else if( (*current_map_tile_ptr).exit_map_dir.x == 1 ) {
@@ -149,7 +169,6 @@ void update( uint32_t tick ) {
 
     current_map_tile_ptr += _current_map->map_width; // Move pointer back to same row as player
   }
-
   if( map_pos.x != ( _current_map->map_width - 1 ) ) {
 
     current_map_tile_ptr++; // Move pointer to next column along
@@ -162,7 +181,6 @@ void update( uint32_t tick ) {
 
     current_map_tile_ptr--; // Move pointer back to same column as player
   }
-
   if( map_pos.y != ( _current_map->map_height - 1 ) ) {
 
     current_map_tile_ptr += _current_map->map_width; // Move pointer down a row
@@ -175,7 +193,6 @@ void update( uint32_t tick ) {
 
     current_map_tile_ptr -= _current_map->map_width; // Move pointer back to same row as player
   }
-
   if( map_pos.x != 0 ) {
 
     current_map_tile_ptr--; // Move pointer back a column
@@ -216,45 +233,53 @@ void update( uint32_t tick ) {
   }
 
   /* Check input presses as they happen, unless there's an animation running, in which case we don't care */
-  if( ( !animation.running ) && ( !scroll_movement ) ) {
+  if( ( !animation.running ) && ( !scroll_movement ) && ( !textbox_running ) ) {
 
-    if( button( UP ) ) {
-      
-      /* Switch player's direction to N */
-      player.walk_dir.x = 0;
-      player.walk_dir.y = 1;
+    if( ( button( UP ) ) || ( button( RIGHT ) ) || ( button( DOWN ) ) || ( button( LEFT ) ) ) {
 
-      player.face_dir.x = 0;
-      player.face_dir.y = 1;
-    } else if( button( RIGHT ) ) {
-      
-      /* Switch player's direction to E */
-      player.walk_dir.x = 1;
-      player.walk_dir.y = 0;
+      if( player_movement_delay < player_movement_delay_val ) player_movement_delay++;
 
-      player.face_dir.x = 1;
-      player.face_dir.y = 0;
-    } else if( button( DOWN ) ) {
-      
-      /* Switch player's direction to S */
-      player.walk_dir.x = 0;
-      player.walk_dir.y = -1;
+      if( button( UP ) ) {
+        
+        /* Switch player's direction to N */
+        player.walk_dir.x = 0;
+        player.walk_dir.y = 1;
 
-      player.face_dir.x = 0;
-      player.face_dir.y = -1;
-    } else if( button( LEFT ) ) {
-      
-      /* Switch player's direction to W */
-      player.walk_dir.x = -1;
-      player.walk_dir.y = 0;
+        player.face_dir.x = 0;
+        player.face_dir.y = 1;
+      } else if( button( RIGHT ) ) {
+        
+        /* Switch player's direction to E */
+        player.walk_dir.x = 1;
+        player.walk_dir.y = 0;
 
-      player.face_dir.x = -1;
-      player.face_dir.y = 0;
+        player.face_dir.x = 1;
+        player.face_dir.y = 0;
+      } else if( button( DOWN ) ) {
+        
+        /* Switch player's direction to S */
+        player.walk_dir.x = 0;
+        player.walk_dir.y = -1;
+
+        player.face_dir.x = 0;
+        player.face_dir.y = -1;
+      } else if( button( LEFT ) ) {
+        
+        /* Switch player's direction to W */
+        player.walk_dir.x = -1;
+        player.walk_dir.y = 0;
+
+        player.face_dir.x = -1;
+        player.face_dir.y = 0;
+      }
     } else {
       
       /* Player's not moving */
       player.walk_dir.x = 0;
       player.walk_dir.y = 0;
+
+      /* Reset the delay counter */
+      player_movement_delay = 0;
     }
   }
 
@@ -290,7 +315,7 @@ void update( uint32_t tick ) {
   }
     
   /* Move the player according to button inputs and movement restrictions */
-  if( ( !animation.running ) && ( !scroll_movement ) ) { // Don't alter movement if an animation is running
+  if( ( !animation.running ) && ( !textbox_running ) && ( !scroll_movement ) && ( player_movement_delay >= player_movement_delay_val ) ) { // Don't alter movement if an animation is running
 
     /* Player is moving north */
     if( ( player.walk_dir.x == 0 ) && ( player.walk_dir.y == 1 ) ) {
@@ -389,6 +414,29 @@ void update( uint32_t tick ) {
       player.reverse_walking_render = !player.reverse_walking_render;
     }
   }
+
+  // ---------------------------------------------------------------------------------
+  // Interactions functionality
+  // ---------------------------------------------------------------------------------
+
+  if( ( ( ( interaction_tile.travel_n ) && ( player.face_dir.x == 0 ) && ( player.face_dir.y == 1 ) ) ||
+        ( ( interaction_tile.travel_e ) && ( player.face_dir.x == 1 ) && ( player.face_dir.y == 0 ) ) ||
+        ( ( interaction_tile.travel_s ) && ( player.face_dir.x == 0 ) && ( player.face_dir.y == -1 ) ) ||
+        ( ( interaction_tile.travel_w ) && ( player.face_dir.x == -1 ) && ( player.face_dir.y == 0 ) ) ) &&
+      ( button( A ) ) && ( textbox_button_delay == 0 ) && ( !textbox_running ) ) {
+    
+    /* User pressed the A Button at an interaction */
+    scroll_arrow_count = 0;
+    scroll_arrow_offset = 0;
+    textbox_line = 0;
+    textbox_button_delay = 0;
+
+    write_text_line_count = 0;
+    write_text_char_count = 1;
+    
+    textbox_button_delay = 10;
+    textbox_running = true;
+  }
 }
 
 void draw( uint32_t tick ) {
@@ -398,13 +446,12 @@ void draw( uint32_t tick ) {
    * Contains all the functions to draw the display
    */
 
-
   /* Clear display buffer */
   clear_screen( 0x0000 );
-
-  /*
-   * Map and player sprite rendering functionality
-   */
+  
+  // ---------------------------------------------------------------------------------
+  // Map and player sprite rendering functionality
+  // ---------------------------------------------------------------------------------
 
   /* Calculate how many tiles in each direction we need to draw */
   _offset_n = 0;
@@ -454,17 +501,19 @@ void draw( uint32_t tick ) {
   draw_map_tiles( false );
 
   /* Draw an exit arrow if we're stood on an exit tile at the edge of the map */
-  if( ( exit_tile.travel_n ) && ( map_pos.y == 0 ) )
+  if( ( exit_tile.travel_n ) && ( map_pos.y == 0 ) ) {
     draw_sprite( (uint16_t*)arrow, 0, false, true, 56, 48, 8 );
-  if( ( exit_tile.travel_e) && ( map_pos.x == ( _current_map->map_width - 1 ) ) )
+  } else if( ( exit_tile.travel_e) && ( map_pos.x == ( _current_map->map_width - 1 ) ) ) {
     draw_sprite( (uint16_t*)arrow, 1, true, false, 64, 56, 8 );
-  if( ( exit_tile.travel_s) && ( map_pos.y == ( _current_map->map_height - 1 ) ) )
+  } else if( ( exit_tile.travel_s) && ( map_pos.y == ( _current_map->map_height - 1 ) ) ) {
     draw_sprite( (uint16_t*)arrow, 0, false, false, 56, 64, 8 );
-  if( ( exit_tile.travel_w) && ( map_pos.x == 0 ) )
+  } else if( ( exit_tile.travel_w) && ( map_pos.x == 0 ) ) {
     draw_sprite( (uint16_t*)arrow, 1, false, false, 48, 56, 8 );
+  }
+  
 
   /* Draw the player in the centre square (8, 8) */
-  if( ( player.walk_dir.x == 0 ) && ( player.walk_dir.y == 0 ) ) {
+  if( ( ( player.walk_dir.x == 0 ) && ( player.walk_dir.y == 0 ) ) || ( player_movement_delay < player_movement_delay_val ) ) {
     
     /* The player is currently stood still, let's draw them facing the right direction */
     if((player.face_dir.x == 0) && (player.face_dir.y == 1)) { // Facing N
@@ -482,16 +531,16 @@ void draw( uint32_t tick ) {
     }
 
   /* Player is walking, draw the walking sprite */
-  } else if( ( player.walk_dir.x == 0 ) && ( player.walk_dir.y == 1 ) ) { // Walking N
+  } else if( ( ( player.walk_dir.x == 0 ) && ( player.walk_dir.y == 1 ) ) ) { // Walking N
 
     draw_sprite( (uint16_t*)male_player, 5, player.reverse_walking_render, false, 52, 52, 16 );
-  } else if( ( player.walk_dir.x == 1 ) && ( player.walk_dir.y == 0 ) ) { // Walking E
+  } else if( ( ( player.walk_dir.x == 1 ) && ( player.walk_dir.y == 0 ) ) ) { // Walking E
 
     draw_sprite( (uint16_t*)male_player, ( 2 + player.reverse_walking_render ), true, false, 52, 52, 16 );
-  } else if( ( player.walk_dir.x == 0 ) && ( player.walk_dir.y == -1 ) ) { // Walking S
+  } else if( ( ( player.walk_dir.x == 0 ) && ( player.walk_dir.y == -1 ) ) ) { // Walking S
 
     draw_sprite( (uint16_t*)male_player, 1, player.reverse_walking_render, false, 52, 52, 16);
-  } else if( ( player.walk_dir.x == -1 ) && ( player.walk_dir.y == 0 ) ) { // Walking W
+  } else if( ( ( player.walk_dir.x == -1 ) && ( player.walk_dir.y == 0 ) ) ) { // Walking W
 
     draw_sprite( (uint16_t*)male_player, ( 2 + player.reverse_walking_render ), false, false, 52, 52, 16 );
   }
@@ -535,39 +584,48 @@ void draw( uint32_t tick ) {
     }
   }
 
-  // DEBUGGING
+  /* Draw the textbox, if running */
+  draw_textbox();
+
+  // ---------------------------------------------------------------------------------
+  // Debugging
+  // ---------------------------------------------------------------------------------
+
   #if map_rendering_offsets
   sprintf( write_text, "P(%d,%d)O(%d,%d,%d,%d)", map_pos.x, map_pos.y, _offset_n, _offset_e, _offset_s, _offset_w );
-  write_string( write_text, 8, 8, rgb(0xF00) );
+  write_string( write_text, 8, 8, rgb(0xF00), 0 );
   #endif
 
   #if player_position
   sprintf( write_text,"P(%d,%d)D(%d,%d)F(%d,%d)", map_pos.x, map_pos.y, player.walk_dir.x, player.walk_dir.y, player.face_dir.x, player.face_dir.y );
-  write_string( write_text, 1, 8, rgb(0xF00) );
+  write_string( write_text, 1, 8, rgb(0xF00), 0 );
+
+  sprintf( write_text, "D(%d)", player_movement_delay );
+  write_string( write_text, 1, 16, rgb(0xF00), 0 );
   #endif
 
   #if map_rendering_scroll
   sprintf( write_text,"S(%d)D(%d,%d)", scroll_counter, _scroll_x, _scroll_y );
-  write_string( write_text, 1, 8, rgb(0xF00) );
+  write_string( write_text, 1, 8, rgb(0xF00), 0 );
 
-  sprintf( write_text, "P(%d,%d)O(%d,%d,%d,%d)", map_pos.x, map_pos.y, _offset_n, _offset_e, _offset_s, _offset_w);
-  write_string( write_text, 1, 16, rgb(0xF00) );
+  sprintf( write_text, "P(%d,%d)O(%d,%d,%d,%d)", map_pos.x, map_pos.y, _offset_n, _offset_e, _offset_s, _offset_w );
+  write_string( write_text, 1, 16, rgb(0xF00), 0 );
 
-  sprintf( write_text, "S(%d,%d,%d,%d)", _scroll_offset_n, _scroll_offset_e, _scroll_offset_s, _scroll_offset_w);
-  write_string( write_text, 1, 24, rgb(0xF00) );
+  sprintf( write_text, "S(%d,%d,%d,%d)", _scroll_offset_n, _scroll_offset_e, _scroll_offset_s, _scroll_offset_w );
+  write_string( write_text, 1, 24, rgb(0xF00), 0 );
   #endif
 
   #if exit_map_info
   sprintf( write_text, "E(%d,%d,%d)P(%d %d)", exit_map.waiting_load, exit_map.waiting_show, exit_map.exit_map_id, exit_map.exit_map_pos.x, exit_map.exit_map_pos.y );
-  write_string( write_text, 1, 8, rgb(0xF00) );
+  write_string( write_text, 1, 8, rgb(0xF00), 0 );
 
   sprintf( write_text, "D(%d,%d,%d,%d)", exit_tile.travel_n, exit_tile.travel_e, exit_tile.travel_s, exit_tile.travel_w );
-  write_string( write_text, 1, 16, rgb(0xF00) );
+  write_string( write_text, 1, 16, rgb(0xF00), 0 );
   #endif 
 
   #if animation_info
   sprintf( write_text,"R(%d,%d)F(%d)S(%d)T(%d,%d)", animation.running, animation.reverse, animation.finished, animation.step, animation.tick % animation.occurance, ( ( animation.tick % animation.occurance ) ? 0 : 1) );
-  write_string( write_text, 1, 24, rgb(0xF00) );
+  write_string( write_text, 1, 24, rgb(0xF00), 0 );
   #endif
   
   #if player_movement 
@@ -645,30 +703,130 @@ void draw( uint32_t tick ) {
     
     draw_rec( 56, 48, 8, 8, rgb(0x0FF) );
     sprintf( write_text,"ID(%d)", interaction_tile_id[0] );
-    write_string( write_text, 1, 8, rgb(0xF00) );
+    write_string( write_text, 1, 8, rgb(0xF00), 0 );
   }
   
   if( ( interaction_tile.travel_e ) && ( player.face_dir.x == 1 ) && ( player.face_dir.y == 0 ) ) {
 
     draw_rec( 64, 56, 8, 8, rgb(0x0FF) );
     sprintf( write_text,"ID(%d)", interaction_tile_id[1] );
-    write_string( write_text, 1, 8, rgb(0xF00) );
+    write_string( write_text, 1, 8, rgb(0xF00), 0 );
   }
 
   if( ( interaction_tile.travel_s ) && ( player.face_dir.x == 0 ) && ( player.face_dir.y == -1 ) ) {
 
     draw_rec( 56, 64, 8, 8, rgb(0x0FF) );
     sprintf( write_text,"ID(%d)", interaction_tile_id[2] );
-    write_string( write_text, 1, 8, rgb(0xF00) );
+    write_string( write_text, 1, 8, rgb(0xF00), 0 );
   }
 
   if( ( interaction_tile.travel_w ) && ( player.face_dir.x == -1 ) && ( player.face_dir.y == 0 ) ) {
 
     draw_rec( 48, 56, 8, 8, rgb(0x0FF) ); 
     sprintf( write_text,"ID(%d)", interaction_tile_id[3] );
-    write_string( write_text, 1, 8, rgb(0xF00) );
+    write_string( write_text, 1, 8, rgb(0xF00), 0 );
   }
   #endif
+
+  #if textbox_info
+  sprintf( write_text,"C(%d/%d)T(%d,%d)D(%d)", textbox_line, ( sizeof( demo_text ) / 30 ), write_text_char_count, write_text_line_count, textbox_button_delay );
+  write_string( write_text, 1, 8, rgb(0xF00), 0 );
+  #endif
+}
+
+void draw_textbox( void ) {
+
+  uint8_t box_offset, total_lines;
+  
+  if( textbox_running ) {
+    
+    total_lines = ( sizeof( demo_text ) / 30 );
+
+    /* Draw the textbox borders */
+    if( total_lines < 3 ) {
+      /* 2 line textbox */
+      draw_rec( 1, 92, 118, 27, rgb(0x999) );
+      draw_rec( 3, 94, 114, 23, rgb(0xFFF) );
+      
+      box_offset = 10;
+    } else {
+      /* 3 line textbox */
+      draw_rec( 1, 82, 118, 37, rgb(0x999) );
+      draw_rec( 3, 84, 114, 33, rgb(0xFFF) ); 
+      
+      box_offset = 0;
+    }
+
+    /* Debug */
+    //draw_rec( 6, 87, 108, 7, rgb(0xCCC) );
+    //draw_rec( 6, 97, 108, 7, rgb(0xCCC) );
+    //draw_rec( 6, 107, 108, 7, rgb(0xCCC) );
+
+    /* Draw up to 3 lines of text */
+    if( textbox_line < total_lines ) {
+      sprintf( write_text, demo_text[textbox_line] );
+      if( write_text_line_count >= 0 )
+        write_string( write_text, 6, ( 93 + box_offset ), rgb(0x000), ( ( write_text_line_count == 0 ) ? write_text_char_count : 0 ) );
+    }
+
+    if( ( textbox_line + 1 ) < total_lines ) {
+      sprintf( write_text, demo_text[textbox_line + 1] );
+      if( write_text_line_count >= 1 )
+        write_string( write_text, 6, ( 103 + box_offset ), rgb(0x000), ( ( write_text_line_count == 1 ) ? write_text_char_count : 0 ) );
+    }
+
+    if( ( textbox_line + 2 ) < total_lines ) {
+      sprintf( write_text, demo_text[textbox_line + 2] );
+      if( write_text_line_count >= 2 )
+        write_string( write_text, 6, 113, rgb(0x000), ( ( write_text_line_count == 2 ) ? write_text_char_count : 0 ) );
+    }
+
+    if( write_text_char_count < 30 )
+      write_text_char_count++;
+
+    if( ( ( write_text_char_count >= 30 ) || ( demo_text[write_text_line_count][write_text_char_count] == '\0' ) ) && ( write_text_line_count < ( ( total_lines < 3 ) ? ( total_lines - 1 ) : 2 ) ) ) {
+      write_text_char_count = 1;
+      write_text_line_count++;
+    }
+
+    /* Draw a scroll arrow if needed */
+    if( ( textbox_line + 3 ) < total_lines ) {
+      draw_sprite((uint16_t*)text_scroll, scroll_arrow_offset, true, false, 109, 108, 8);
+    }
+
+    /* Animate the scroll arrow */
+    scroll_arrow_count++;
+    if( scroll_arrow_count > 10 ) {
+      scroll_arrow_count = 0;
+
+      scroll_arrow_offset++;
+      if( scroll_arrow_offset > 2 ) scroll_arrow_offset = 0;
+
+    }
+
+    /* Deal with the button pressed */
+    if( ( button( A ) ) && ( textbox_button_delay == 0 ) ) {
+
+      if( ( textbox_line + 3 ) < ( sizeof( demo_text ) / 30 ) ) {
+        
+        /* Move to the next line and type out only the last line */
+        textbox_line++;
+        textbox_button_delay = 10;
+
+        write_text_char_count = 1;
+      } else {
+
+        /* Close the textbox */
+        textbox_running = false;
+        textbox_button_delay = 10;
+      }
+    }
+  }
+
+  /* Add delay after button presses */
+  if( textbox_button_delay > 0 ) {
+    textbox_button_delay--;
+  }
 }
 
 void draw_map_tiles( bool top_layer ) {

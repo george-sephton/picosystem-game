@@ -99,6 +99,6 @@ namespace picosystem {
   void extern bars_transition(void);
 
   /* Text functions */
-  void extern write_character(char character, int32_t x, int32_t y, color_t color);
-  void extern write_string(char *char_array, int32_t x, int32_t y, color_t color);
+  void extern write_character( char character, int32_t x, int32_t y, color_t color );
+  void extern write_string( char *char_array, int32_t x, int32_t y, color_t color, uint16_t char_offset );
 }
