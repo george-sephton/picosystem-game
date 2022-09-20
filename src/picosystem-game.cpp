@@ -26,12 +26,12 @@ using namespace picosystem;
 #define interaction_info              false    // Displays information about interaction tiles
 #define exit_map_info                 false    // Displays information about the map to load if exiting current map
 #define animation_info                false    // Displays information about the running animation
-#define textbox_info                  true    // Displays information about the current textbox
+#define textbox_info                  false    // Displays information about the current textbox
 
 #define player_movement_delay_val     5        // Delay value before a player will start walking, to allow them to change the direction they're facing without walking
 
-char demo_text[][30] = { "This is a test of", "the textbox", "mechanism.", "Does it work", "alright? Or could", "we improve it?" };
-char write_text[30];
+char demo_text1[][20] = { "This is a test of", "the textbox", "mechanism.", "Does it work", "alright? Or could", "we improve it?" };
+char demo_text2[][20] = { "This is another", "test of the", "textbox mechanism." };
 
 // ---------------------------------------------------------------------------------
 // GLOBAL VARIABLES
@@ -53,8 +53,9 @@ int8_t _scroll_x, _scroll_y;
 
 /* Textbox variables */
 bool textbox_running;
-uint8_t scroll_arrow_count, scroll_arrow_offset, textbox_line, textbox_button_delay;
+uint8_t scroll_arrow_count, scroll_arrow_offset, total_textbox_lines, textbox_line, textbox_button_delay;
 uint8_t write_text_line_count, write_text_char_count;
+char (*text_ptr)[20], write_text[20];
 
 /* Development */
 map *_current_map;
@@ -70,11 +71,11 @@ void init() {
   play(1000, 500, 100);
 
   /* Load the map and set our initial location */
-  _current_map = &map_list[0];
-  map_pos = {3, 4};
+  //_current_map = &map_list[0];
+  //map_pos = {3, 4};
 
-  //_current_map = &map_list[2];
-  //map_pos = {14, 11};
+  _current_map = &map_list[2];
+  map_pos = {3, 7};
   
   /* Initialise movement variables  */
   player_movement_delay = 0;
@@ -426,16 +427,7 @@ void update( uint32_t tick ) {
       ( button( A ) ) && ( textbox_button_delay == 0 ) && ( !textbox_running ) ) {
     
     /* User pressed the A Button at an interaction */
-    scroll_arrow_count = 0;
-    scroll_arrow_offset = 0;
-    textbox_line = 0;
-    textbox_button_delay = 0;
-
-    write_text_line_count = 0;
-    write_text_char_count = 1;
-    
-    textbox_button_delay = 10;
-    textbox_running = true;
+    open_textbox( demo_text1, ( sizeof( demo_text1 ) / 20 ) );
   }
 }
 
@@ -729,21 +721,19 @@ void draw( uint32_t tick ) {
   #endif
 
   #if textbox_info
-  sprintf( write_text,"C(%d/%d)T(%d,%d)D(%d)", textbox_line, ( sizeof( demo_text ) / 30 ), write_text_char_count, write_text_line_count, textbox_button_delay );
+  sprintf( write_text,"C(%d/%d)T(%d,%d)D(%d)", textbox_line, total_textbox_lines, write_text_char_count, write_text_line_count, textbox_button_delay );
   write_string( write_text, 1, 8, rgb(0xF00), 0 );
   #endif
 }
 
 void draw_textbox( void ) {
 
-  uint8_t box_offset, total_lines;
+  uint8_t box_offset;
   
   if( textbox_running ) {
-    
-    total_lines = ( sizeof( demo_text ) / 30 );
 
     /* Draw the textbox borders */
-    if( total_lines < 3 ) {
+    if( total_textbox_lines < 3 ) {
       /* 2 line textbox */
       draw_rec( 1, 92, 118, 27, rgb(0x999) );
       draw_rec( 3, 94, 114, 23, rgb(0xFFF) );
@@ -763,34 +753,34 @@ void draw_textbox( void ) {
     //draw_rec( 6, 107, 108, 7, rgb(0xCCC) );
 
     /* Draw up to 3 lines of text */
-    if( textbox_line < total_lines ) {
-      sprintf( write_text, demo_text[textbox_line] );
+    if( textbox_line < total_textbox_lines ) {
+      sprintf( write_text, text_ptr[textbox_line] );
       if( write_text_line_count >= 0 )
         write_string( write_text, 6, ( 93 + box_offset ), rgb(0x000), ( ( write_text_line_count == 0 ) ? write_text_char_count : 0 ) );
     }
 
-    if( ( textbox_line + 1 ) < total_lines ) {
-      sprintf( write_text, demo_text[textbox_line + 1] );
+    if( ( textbox_line + 1 ) < total_textbox_lines ) {
+      sprintf( write_text, text_ptr[textbox_line + 1] );
       if( write_text_line_count >= 1 )
         write_string( write_text, 6, ( 103 + box_offset ), rgb(0x000), ( ( write_text_line_count == 1 ) ? write_text_char_count : 0 ) );
     }
 
-    if( ( textbox_line + 2 ) < total_lines ) {
-      sprintf( write_text, demo_text[textbox_line + 2] );
+    if( ( textbox_line + 2 ) < total_textbox_lines ) {
+      sprintf( write_text, text_ptr[textbox_line + 2] );
       if( write_text_line_count >= 2 )
         write_string( write_text, 6, 113, rgb(0x000), ( ( write_text_line_count == 2 ) ? write_text_char_count : 0 ) );
     }
 
-    if( write_text_char_count < 30 )
+    if( write_text_char_count < 20 )
       write_text_char_count++;
 
-    if( ( ( write_text_char_count >= 30 ) || ( demo_text[write_text_line_count][write_text_char_count] == '\0' ) ) && ( write_text_line_count < ( ( total_lines < 3 ) ? ( total_lines - 1 ) : 2 ) ) ) {
+    if( ( ( write_text_char_count >= 20 ) || ( text_ptr[write_text_line_count][write_text_char_count] == '\0' ) ) && ( write_text_line_count < ( ( total_textbox_lines < 3 ) ? ( total_textbox_lines - 1 ) : 2 ) ) ) {
       write_text_char_count = 1;
       write_text_line_count++;
     }
 
     /* Draw a scroll arrow if needed */
-    if( ( textbox_line + 3 ) < total_lines ) {
+    if( ( textbox_line + 3 ) < total_textbox_lines ) {
       draw_sprite((uint16_t*)text_scroll, scroll_arrow_offset, true, false, 109, 108, 8);
     }
 
@@ -807,7 +797,7 @@ void draw_textbox( void ) {
     /* Deal with the button pressed */
     if( ( button( A ) ) && ( textbox_button_delay == 0 ) ) {
 
-      if( ( textbox_line + 3 ) < ( sizeof( demo_text ) / 30 ) ) {
+      if( ( textbox_line + 3 ) < total_textbox_lines ) {
         
         /* Move to the next line and type out only the last line */
         textbox_line++;
@@ -827,6 +817,27 @@ void draw_textbox( void ) {
   if( textbox_button_delay > 0 ) {
     textbox_button_delay--;
   }
+}
+
+void open_textbox( char (*_text_ptr)[20], uint8_t _total_lines ) {
+  
+    /* Set the pointer to the text to display and set the number of lines */
+    text_ptr = _text_ptr;
+    total_textbox_lines = _total_lines;
+    
+    /* Reset all variables */
+    scroll_arrow_count = 0;
+    scroll_arrow_offset = 0;
+    textbox_line = 0;
+    textbox_button_delay = 0;
+
+    write_text_line_count = 0;
+    write_text_char_count = 1;
+    
+    textbox_button_delay = 10;
+
+    /* Set textbox to active */
+    textbox_running = true;
 }
 
 void draw_map_tiles( bool top_layer ) {
@@ -865,7 +876,11 @@ void draw_map_tiles( bool top_layer ) {
             if( ( (*map_tiles_ptr).texture != -1 ) && ( (*map_tiles_ptr).top_layer == true) )
               draw_sprite( (uint16_t*)_texture_map[(*map_tiles_ptr).texture], (*map_tiles_ptr).texture_offset, (*map_tiles_ptr).texture_reverse_x, (*map_tiles_ptr).texture_reverse_y, ( ( ( _draw_x - _scroll_offset_w ) * 8 ) - _scroll_x ), ( ( ( _draw_y - _scroll_offset_n ) * 8 ) + _scroll_y ), 8 );
 
-          } else {
+          } else if ( (*map_tiles_ptr).npc_tile ) {
+            
+            draw_rec( ( ( ( _draw_x - _scroll_offset_w ) * 8 ) - _scroll_x ), ( ( ( _draw_y - _scroll_offset_n ) * 8 ) + _scroll_y ), 8, 8, rgb(0xF0F) );            
+            
+          }else {
 
             /* Draw the background texture if the map has one */
             if( _current_map->bg_texture != -1 )

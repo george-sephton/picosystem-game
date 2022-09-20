@@ -252,6 +252,11 @@ function load_map_editor() {
 						/* Update CSS based on interact_en */
 						$( this ).find( ".texture_table" ).css( "border", "3px solid #0ff" );
 
+					} else if( selected_map.data[tile_info.row][tile_info.col].npc_en ) {
+
+						/* Update CSS based on npc_en */
+						$( this ).find( ".texture_table" ).css( "border", "3px solid #f0f" );
+
 					} else if( selected_map.data[tile_info.row][tile_info.col].top_layer ) {
 
 						/* Update CSS based on top_layer */
@@ -559,6 +564,8 @@ function map_toolbar_event_listeners() {
 						selected_texture.exit_map_id = false;
 						selected_texture.interact_en = false;
 						selected_texture.interact_id = false;
+						selected_texture.npc_id = false;
+						selected_texture.npc_id = false;
 						selected_texture.top_layer = false;
 						selected_texture.exit_map_dir = [0, 0];
 						selected_texture.exit_map_pos = [0, 0];
@@ -631,6 +638,8 @@ function map_toolbar_event_listeners() {
 							fill_tile.top_layer = false;
 							fill_tile.interact_en = false;
 							fill_tile.interact_id = false;
+							fill_tile.npc_en = false;
+							fill_tile.npc_id = false;
 							fill_tile.exit_map_dir = [0, 0];
 							fill_tile.exit_map_pos = [0, 0];
 
@@ -818,6 +827,10 @@ function map_toolbar_event_listeners() {
 						selected_texture.interact_en = false;
 						selected_texture.interact_id = false;
 
+						/* Hide NPC tile option */
+						selected_texture.npc_en = false;
+						selected_texture.npc_id = false;
+
 						/* Clear the position fields */
 						$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_x" ).val( "" );
 						$( "#container #toolbar #map_paint_settings #exit_tile_map_pos_x" ).css( "background", "#fff" );
@@ -860,32 +873,53 @@ function map_toolbar_event_listeners() {
 						selected_texture.exit_map_id = false;
 						selected_texture.exit_map_dir = [0, 0];
 						selected_texture.exit_map_pos = [0, 0];	
+						
+						/* Hide NPC tile option */
+						selected_texture.npc_en = false;
+						selected_texture.npc_id = false;
 
 						/* Clear the id field */
-						$( "#container #toolbar #map_paint_settings #interact_tile_id" ).val( "" );				
-
-						
+						$( "#container #toolbar #map_paint_settings #interact_tile_id" ).val( "" );
 					} else {
-						/* Exit tile disabled */
+						/* Interact tile disabled */
 						selected_texture.interact_en = false;
 						selected_texture.interact_id = false;
 						selected_texture.can_walk = [true, true, true, true];
+					}
+					break;
+				case "npc_tile_en":
+					/* Enable/Disable NPC tile */
+					if( element.prop( "checked" ) ) {
+						/* NPC tile enabled */
+						selected_texture.npc_en = true;
+						selected_texture.npc_id = 0;
+						selected_texture.can_walk = [true, true, true, true];
+						selected_texture.top_layer = false;
 
-						/* Show Exit Tile option */
-						$( "#container #toolbar #map_paint_settings #exit_tile_en" ).css( "display", "block" );
-						$( "#container #toolbar #map_paint_settings label[for='exit_tile_en']" ).css( "display", "block" );
+						/* Hide Exit tile option */
+						selected_texture.exit_tile = false;
+						selected_texture.exit_map_id = false;
+						selected_texture.exit_map_dir = [0, 0];
+						selected_texture.exit_map_pos = [0, 0];
+						
+						/* Hide Interact tile option */
+						selected_texture.interact_en = false;
+						selected_texture.interact_id = false;
 
-						$( "#exit_tile_map_id" ).empty();
+						/* Clear the id field */
+						$( "#container #toolbar #map_paint_settings #npc_tile_id" ).val( "" );
+					} else {
+						/* NPC tile disabled */
+						selected_texture.npc_en = false;
+						selected_texture.npc_id = false;
+						selected_texture.can_walk = [true, true, true, true];
 					}
 					break;
 				case "interact_tile_id":
-
+					/* Update Interact Tile ID */
 					if( parseInt( element.val() ) ){
-
 						selected_texture.interact_id = parseInt( element.val() );
-						
 					} else {
-
 						/* They didn't enter a number, let's correct that */
 						selected_texture.interact_id = 0;
 
@@ -894,7 +928,20 @@ function map_toolbar_event_listeners() {
 							element.val( "0" );
 						}
 					}
-					
+					break;
+				case "npc_tile_id":
+					/* Update NPC Tile ID */
+					if( parseInt( element.val() ) ){
+						selected_texture.npc_id = parseInt( element.val() );
+					} else {
+						/* They didn't enter a number, let's correct that */
+						selected_texture.npc_id = 0;
+
+						/* Don't alter anything if the field is empty */
+						if( element.val() != "" ) {
+							element.val( "0" );
+						}
+					}
 					break;
 				case "top_layer_en":
 					/* Update tile top layer */
@@ -1192,16 +1239,30 @@ function map_editor_event_listeners() {
 
 				$( this ).find( ".texture_table" ).css( "border", "3px solid #0ff" );
 
+			} else if( selected_texture.npc_en ) {
+
+				$( this ).find( ".texture_table" ).css( "border", "3px solid #f0f" );
+
 			} else if( selected_texture.top_layer ) {
 
-				$( this ).find( ".texture_table" ).css( "border", "3px solid #0f0" );
+				/* Update CSS based on top_layer */
+				$( this ).find( ".texture_table" ).css( "border-top", "3px solid #0f0" );
+				$( this ).find( ".texture_table" ).css( "border-right", "3px solid #0f0" );
+				$( this ).find( ".texture_table" ).css( "border-bottom", "3px solid #0f0" );
+				$( this ).find( ".texture_table" ).css( "border-left", "3px solid #0f0" );
+
+				if( !selected_texture.can_walk[0] ) $( this ).find( ".texture_table" ).css( "border-top", "3px solid #fc8805" );
+				if( !selected_texture.can_walk[1] ) $( this ).find( ".texture_table" ).css( "border-right", "3px solid #fc8805" );
+				if( !selected_texture.can_walk[2] ) $( this ).find( ".texture_table" ).css( "border-bottom", "3px solid #fc8805" );
+				if( !selected_texture.can_walk[3] ) $( this ).find( ".texture_table" ).css( "border-left", "3px solid #fc8805" );
 
 			} else {
+
 				/* Update CSS based on can_walk */
-				if(!selected_texture.can_walk[0]) $( this ).find( ".texture_table" ).css( "border-top", "3px solid #f00" );
-				if(!selected_texture.can_walk[1]) $( this ).find( ".texture_table" ).css( "border-right", "3px solid #f00" );
-				if(!selected_texture.can_walk[2]) $( this ).find( ".texture_table" ).css( "border-bottom", "3px solid #f00" );
-				if(!selected_texture.can_walk[3]) $( this ).find( ".texture_table" ).css( "border-left", "3px solid #f00" );
+				if( !selected_texture.can_walk[0] ) $( this ).find( ".texture_table" ).css( "border-top", "3px solid #f00" );
+				if( !selected_texture.can_walk[1] ) $( this ).find( ".texture_table" ).css( "border-right", "3px solid #f00" );
+				if( !selected_texture.can_walk[2] ) $( this ).find( ".texture_table" ).css( "border-bottom", "3px solid #f00" );
+				if( !selected_texture.can_walk[3] ) $( this ).find( ".texture_table" ).css( "border-left", "3px solid #f00" );
 
 				/* Update selected tile data */
 				selected_texture.exit_map_id = false;
@@ -1221,6 +1282,8 @@ function map_editor_event_listeners() {
 			selected_map.data[tile_info.row][tile_info.col].top_layer = selected_texture.top_layer;
 			selected_map.data[tile_info.row][tile_info.col].interact_en = selected_texture.interact_en;
 			selected_map.data[tile_info.row][tile_info.col].interact_id = selected_texture.interact_id;
+			selected_map.data[tile_info.row][tile_info.col].npc_en = selected_texture.npc_en;
+			selected_map.data[tile_info.row][tile_info.col].npc_id = selected_texture.npc_id;
 
 			selected_map.data[tile_info.row][tile_info.col].can_walk = new Array();
 			$.extend( true, selected_map.data[tile_info.row][tile_info.col].can_walk, selected_texture.can_walk ); /* Clone array */
@@ -1283,6 +1346,9 @@ function set_map_tile_settings_styles( direct_update = false ) {
 		
 		/* Exit tile enabled, show the rest of the settings  */
 		$( "#exit_tile_en" ).prop( "checked", true );
+		$( "#npc_tile_en" ).prop( "checked", false );
+		$( "#interact_tile_en" ).prop( "checked", false );
+
 		$( "#container #toolbar #map_paint_settings input:not(.interact_ignore_hide)" ).css( "display", "block" );
 		$( "#container #toolbar #map_paint_settings label:not(.interact_ignore_hide)" ).css( "display", "block" );
 		$( "#container #toolbar #map_paint_settings select" ).css( "display", "block" );
@@ -1292,6 +1358,12 @@ function set_map_tile_settings_styles( direct_update = false ) {
 		$( "#container #toolbar #map_paint_settings label[for='interact_tile_en']" ).css( "display", "none" );
 		$( "#container #toolbar #map_paint_settings #interact_tile_id" ).css( "display", "none" );
 		$( "#container #toolbar #map_paint_settings label[for='interact_tile_id']" ).css( "display", "none" );
+
+		/* Hide NPC tile settings */
+		$( "#container #toolbar #map_paint_settings #npc_tile_en" ).css( "display", "none" );
+		$( "#container #toolbar #map_paint_settings label[for='npc_tile_en']" ).css( "display", "none" );
+		$( "#container #toolbar #map_paint_settings #npc_tile_id" ).css( "display", "none" );
+		$( "#container #toolbar #map_paint_settings label[for='npc_tile_id']" ).css( "display", "none" );
 
 		/* Disable the "can walk" and "top layer" checkboxes */
 		$( ".dir_en_checkbox" ).prop( "checked", true );
@@ -1347,6 +1419,9 @@ function set_map_tile_settings_styles( direct_update = false ) {
 
 		/* Interact tile enabled */
 		$( "#interact_tile_en" ).prop( "checked", true );
+		$( "#exit_tile_en" ).prop( "checked", false );
+		$( "#npc_tile_en" ).prop( "checked", false );
+
 		/* Interact tile enabled, show the rest of the settings  */
 		$( "#container #toolbar #map_paint_settings #interact_tile_id" ).css( "display", "block" );
 		$( "#container #toolbar #map_paint_settings label[for='interact_tile_id']" ).css( "display", "block" );
@@ -1355,6 +1430,12 @@ function set_map_tile_settings_styles( direct_update = false ) {
 		/* Hide Exit tile settings */
 		$( "#container #toolbar #map_paint_settings #exit_tile_en" ).css( "display", "none" );
 		$( "#container #toolbar #map_paint_settings label[for='exit_tile_en']" ).css( "display", "none" );
+
+		/* Hide NPC tile settings */
+		$( "#container #toolbar #map_paint_settings #npc_tile_en" ).css( "display", "none" );
+		$( "#container #toolbar #map_paint_settings label[for='npc_tile_en']" ).css( "display", "none" );
+		$( "#container #toolbar #map_paint_settings #npc_tile_id" ).css( "display", "none" );
+		$( "#container #toolbar #map_paint_settings label[for='npc_tile_id']" ).css( "display", "none" );
 
 		/* Disable the "can walk" and "top layer" checkboxes */
 		$( ".dir_en_checkbox" ).prop( "checked", true );
@@ -1365,9 +1446,42 @@ function set_map_tile_settings_styles( direct_update = false ) {
 		/* Set styling for an interact tile */
 		$( "#container #toolbar #map_paint_preview table" ).css( "border", "2px solid #0ff" );
 	
+	} else if( selected_texture.npc_en ) {
+
+		/* NPC tile enabled */
+		$( "#npc_tile_en" ).prop( "checked", true );
+		$( "#interact_tile_en" ).prop( "checked", false );
+		$( "#exit_tile_en" ).prop( "checked", false );
+
+		/* NPC tile enabled, show the rest of the settings  */
+		$( "#container #toolbar #map_paint_settings #npc_tile_id" ).css( "display", "block" );
+		$( "#container #toolbar #map_paint_settings label[for='npc_tile_id']" ).css( "display", "block" );
+		$( "#container #toolbar #map_paint_settings #npc_tile_id" ).val( selected_texture.npc_id );
+
+		/* Hide Exit tile settings */
+		$( "#container #toolbar #map_paint_settings #exit_tile_en" ).css( "display", "none" );
+		$( "#container #toolbar #map_paint_settings label[for='exit_tile_en']" ).css( "display", "none" );
+
+		/* Hide Interact tile settings */
+		$( "#container #toolbar #map_paint_settings #interact_tile_en" ).css( "display", "none" );
+		$( "#container #toolbar #map_paint_settings label[for='interact_tile_en']" ).css( "display", "none" );
+		$( "#container #toolbar #map_paint_settings #interact_tile_id" ).css( "display", "none" );
+		$( "#container #toolbar #map_paint_settings label[for='interact_tile_id']" ).css( "display", "none" );
+
+		/* Disable the "can walk" and "top layer" checkboxes */
+		$( ".dir_en_checkbox" ).prop( "checked", true );
+		$( ".dir_en_checkbox" ).prop( "disabled", true );
+		$( "#top_layer_en" ).prop( "checked", false );
+		$( "#top_layer_en" ).prop( "disabled", true );
+
+		/* Set styling for an interact tile */
+		$( "#container #toolbar #map_paint_preview table" ).css( "border", "2px solid #f0f" );
+	
 	} else {
 
-		/* Interact tile disabled, hide the rest of the settings  */
+		/* Interact tile disabled, hide the rest of the settings */
+		$( "#exit_tile_en" ).prop( "checked", false );
+		$( "#npc_tile_en" ).prop( "checked", false );
 		$( "#interact_tile_en" ).prop( "checked", false );
 
 		$( "#container #toolbar #map_paint_settings input:not(.exit_ignore_hide):not(.interact_ignore_hide)" ).css( "display", "none" );
@@ -1376,6 +1490,8 @@ function set_map_tile_settings_styles( direct_update = false ) {
 
 		$( "#container #toolbar #map_paint_settings #interact_tile_id" ).css( "display", "none" );
 		$( "#container #toolbar #map_paint_settings label[for='interact_tile_id']" ).css( "display", "none" );
+		$( "#container #toolbar #map_paint_settings #npc_tile_id" ).css( "display", "none" );
+		$( "#container #toolbar #map_paint_settings label[for='npc_tile_id']" ).css( "display", "none" );
 
 		/* Show Exit tile settings */
 		$( "#container #toolbar #map_paint_settings #exit_tile_en" ).css( "display", "block" );
@@ -1385,12 +1501,17 @@ function set_map_tile_settings_styles( direct_update = false ) {
 		$( "#container #toolbar #map_paint_settings #interact_tile_en" ).css( "display", "block" );
 		$( "#container #toolbar #map_paint_settings label[for='interact_tile_en']" ).css( "display", "block" );
 
+		/* Show NPC tile settings */
+		$( "#container #toolbar #map_paint_settings #npc_tile_en" ).css( "display", "block" );
+		$( "#container #toolbar #map_paint_settings label[for='npc_tile_en']" ).css( "display", "block" );
+
 		/* Enable all the checkboxes */
 		$( ".dir_en_checkbox" ).prop( "checked", false );
 		$( ".dir_en_checkbox" ).prop( "disabled", false );
 		$( "#top_layer_en" ).prop( "disabled", false );
 		$( "#exit_tile_en" ).prop( "disabled", false );
 		$( "#interact_tile_en" ).prop( "disabled", false );
+		$( "#npc_tile_en" ).prop( "disabled", false );
 
 		/* Set borders for top layer */
 		if( selected_texture.top_layer ) {
@@ -1473,6 +1594,9 @@ function display_tile_info( tile_row, tile_col ) {
 
 	selected_texture.interact_en = selected_map.data[tile_row][tile_col].interact_en;
 	selected_texture.interact_id = selected_map.data[tile_row][tile_col].interact_id;
+
+	selected_texture.npc_en = selected_map.data[tile_row][tile_col].npc_en;
+	selected_texture.npc_id = selected_map.data[tile_row][tile_col].npc_id;
 
 	selected_texture.top_layer = selected_map.data[tile_row][tile_col].top_layer;
 

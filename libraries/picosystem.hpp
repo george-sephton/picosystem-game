@@ -17,6 +17,8 @@ void update( uint32_t tick );
 void draw( uint32_t tick );
 
 void draw_textbox( void );
+void open_textbox( char (*_text_ptr)[20], uint8_t _total_lines );
+
 void draw_map_tiles( bool top_layer );
 
 namespace picosystem {

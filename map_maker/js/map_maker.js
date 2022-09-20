@@ -13,6 +13,11 @@ selected_texture.exit_tile = false;
 selected_texture.exit_map_id = false;
 selected_texture.exit_map_dir = [0, 0];
 selected_texture.exit_map_pos = [0, 0];
+selected_texture.interact_en = false;
+selected_texture.interact_id = false;
+selected_texture.npc_en = false;
+selected_texture.npc_id = false;
+selected_texture.top_layer = false;
 
 /* Store the currently selected sprite */
 var selected_sprite = new Object();
