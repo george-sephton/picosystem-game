@@ -29,11 +29,11 @@ function export_data_gba() {
 
 	/* Add a transparent pixel */
 	colour_palette[0] = 0xff00ff;
-	colour_palette_output[0] = rgb( 0xff00ff )
+	colour_palette_output[0] = "0x7c1f";
 
 	/* Add a black pixel */
 	colour_palette[1] = 0x000000;
-	colour_palette_output[1] = rgb( 0x000000 )
+	colour_palette_output[1] = "0x0000";
 
 	output += "#pragma once\n\n";
 

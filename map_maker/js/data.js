@@ -302,6 +302,25 @@ g_arrow.sprites = new Array( arrow_v, arrow_h );
 var demo_sprites = new Array( g_player_m, g_player_f, g_arrow );
 
 /* Initialise list of demo textures */
+var blank = new Object();
+blank.name = "Blank";
+blank.order = 0;
+blank.id = 0;
+blank.data = 	   [["000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000"],
+						["000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000"],
+						["000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000"],
+						["000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000"],
+						["000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000"],
+						["000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000"],
+						["000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000"],
+						["000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000"]];
+
+var g_blank = new Object();
+g_blank.name = "Blank";
+g_blank.gorder = 0;
+g_blank.gid = 0;
+g_blank.textures = new Array( blank );
+
 var grass_bg = new Object();
 grass_bg.name = "Grass Background";
 grass_bg.order = 0;
@@ -317,8 +336,8 @@ grass_bg.data = 	   [["447733", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"
 
 var g_grass_bg = new Object();
 g_grass_bg.name = "Grass Background";
-g_grass_bg.gorder = 0;
-g_grass_bg.gid = 0;
+g_grass_bg.gorder = 1;
+g_grass_bg.gid = 1;
 g_grass_bg.textures = new Array( grass_bg );
 
 var mat_v = new Object();
@@ -349,8 +368,8 @@ mat_h.data =	       [["77DD66", "77DD66", "77DD66", "77DD66", "77DD66", "77DD66"
 
 var g_mat = new Object();
 g_mat.name = "Mat";
-g_mat.gorder = 1;
-g_mat.gid = 1;
+g_mat.gorder = 2;
+g_mat.gid = 2;
 g_mat.textures = new Array( mat_v, mat_h );
 
 var bollard_1 = new Object();
@@ -407,8 +426,8 @@ bollard_4.data =	   [["DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD", "DDFFDD"
 
 var g_bollard = new Object();
 g_bollard.name = "Bollard";
-g_bollard.gorder = 2;
-g_bollard.gid = 2;
+g_bollard.gorder = 3;
+g_bollard.gid = 3;
 g_bollard.textures = new Array( bollard_1, bollard_2, bollard_3, bollard_4 );
 
 var tree_top_l = new Object();
@@ -595,8 +614,8 @@ tree_bot_2_r.data =	   [["227733", "227733", "33BB44", "33BB44", "447733", "33BB
 
 var g_tree = new Object();
 g_tree.name = "Tree";
-g_tree.gorder = 3;
-g_tree.gid = 3;
+g_tree.gorder = 4;
+g_tree.gid = 4;
 g_tree.textures = new Array( tree_top_l, tree_top_r, tree_mid_l, tree_mid_r, tree_bot_l, tree_bot_r, tree_stump_l, tree_stump_r, tree_mid_2_l, tree_mid_2_r, tree_top_2_l, tree_top_2_r, tree_bot_2_l, tree_bot_2_r );
 
 var fence = new Object();
@@ -614,12 +633,12 @@ fence.data =	       [["77DD66", "77DD66", "000000", "000000", "77DD66", "77DD66"
 
 var g_fence = new Object();
 g_fence.name = "Fence";
-g_fence.gorder = 4;
-g_fence.gid = 4;
+g_fence.gorder = 5;
+g_fence.gid = 5;
 g_fence.textures = new Array( fence );
 
 /* Store textures in an array */
-var demo_textures = new Array( g_grass_bg, g_mat, g_bollard, g_tree, g_fence );
+var demo_textures = new Array( g_blank, g_grass_bg, g_mat, g_bollard, g_tree, g_fence );
 
 /* Demo map */
 var blank_tile = new Object();
@@ -646,7 +665,7 @@ map1.width = 5;
 map1.height = 5;
 map1.can_run = false;
 map1.bg_texture = new Object();
-map1.bg_texture.gid = 0;
+map1.bg_texture.gid = 1;
 map1.bg_texture.id = 0;
 map1.data = Array.from( { length: map1.height }, () => Array.from( { length: map1.width }, () => Object.assign( {}, blank_tile ) ) );
 
