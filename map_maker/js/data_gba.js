@@ -35,11 +35,15 @@ function export_data_gba() {
 	colour_palette[1] = 0x000000;
 	colour_palette_output[1] = "0x0000";
 
-	output += "#pragma once\n\n";
+	/* Add a red pixel */
+	colour_palette[2] = 0xFF0000;
+	colour_palette_output[2] = "0x001F";
+
+	output += "#ifndef PROJECT_ASSETS_H_INCLUDED\n#define PROJECT_ASSETS_H_INCLUDED\n\n";
 
 	/* Next export all the textures */
 	output += "/*********************************************************************************\n";
-	output += "  Textures\n";
+	output += "\tTextures\n";
 	output += "*********************************************************************************/\n";
 
 	/* Calculate total number of textures */
@@ -152,9 +156,9 @@ function export_data_gba() {
 	/* Add texture to output */
 	output += "};\n\n";
 
-	/* Next export all the textures */
+	/* Next export the colour palette */
 	output += "/*********************************************************************************\n";
-	output += "  Colour Palette\n";
+	output += "\tColour Palette\n";
 	output += "*********************************************************************************/\n";
 
 	var _colour_palette_output = colour_palette_output.toString();
@@ -164,6 +168,85 @@ function export_data_gba() {
 	output += "const uint16_t _colour_palette[ " + ( colour_palette_output.length ) + " ] = {\n";
 	output += "\t" + _colour_palette_output + ",\n";
 	output += "};\n\n";
+
+	/* Next let's export the maps */
+	output += "/*********************************************************************************\n";
+	output += "\tMaps\n";
+	output += "*********************************************************************************/\n";
+
+	sort_maps_by_order();
+
+	/* Loop through each map */
+	$.each( project.maps , function( i, map ) {
+
+		var map_name_conv = map.name.toLowerCase().replace( / /g, "_" );
+		output += "const struct map_tile _" + map_name_conv + "[" + map.height + "][" + map.width + "] = {\n";
+
+		/* Loop through the map, one row at a time */
+		$.each( map.data, function( ri, row ) {
+
+			output += "\t{ ";
+			
+			/* Add each cell */
+			$.each( row, function( ci, cell ) {
+
+
+				output += "{ ";
+				/* Get the selected texture and map as we need to print the order not the ID */
+				if( cell.texture_gid != undefined ) {
+
+					/* Get cell */
+					var cell_output_texture_group = project.textures.find( obj => obj.gid == cell.texture_gid );
+					var cell_output_texture = cell_output_texture_group.textures.find( obj => obj.id == cell.texture_id );
+					var cell_output_map = project.maps.find( obj => obj.id == cell.exit_map_id );
+
+					/* Add in the data for each cell */
+					output += Number(cell.top_layer) + ", ";
+					output += Number(cell.can_walk[0]) + ", " + Number(cell.can_walk[1]) + ", " + Number(cell.can_walk[2]) + ", " + Number(cell.can_walk[3]) + ", ";
+					output += Number(cell_output_texture_group.gorder) + ", " + Number(cell_output_texture.order) + ", ";
+					output += Number(cell.texture_reverse_x) + ", " + Number(cell.texture_reverse_y) + ", ";
+					output += Number(cell.interact_en) + ", " + Number(cell.interact_id) + ", ";
+					output += Number(cell.npc_en) + ", " + Number(cell.npc_id) + ", ";
+					output += Number(cell.exit_tile) + ", " + Number(cell_output_map.order) + ", {";
+					output += cell.exit_map_dir[0] + ", " + cell.exit_map_dir[1] + "}, {";
+					output += cell.exit_map_pos[0] + ", " + cell.exit_map_pos[1] + "} ";
+				} else {
+
+					/* Empty cell */
+					output += "0, 1, 1, 1, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, {0, 0}, {0, 0} ";
+				}
+				output += "}, ";		
+			} );
+
+			output += "},\n";
+		} );
+
+		output += "};\n";
+
+		if( map.bg_texture.gid != undefined ) {
+
+			/* Get the background texture */
+			var map_output_bg_texture_gid = project.textures.find( obj => obj.gid == map.bg_texture.gid );
+			var map_output_bg_texture_id = map_output_bg_texture_gid.textures.find( obj => obj.id == map.bg_texture.id );
+		} else {
+			var map_output_bg_texture_gid = -1;
+			var map_output_bg_texture_id = -1
+		}
+
+  		output += "const struct map " + map_name_conv + " = { " + Number(map.id) + ", *_" + map_name_conv + ", " + Number(map.height) + ", " + Number(map.width) + ", " + Number(map.can_run) + ", " + Number(map_output_bg_texture_gid.gorder) + ", " + Number(map_output_bg_texture_id.order) + " };\n\n"
+
+	} );
+
+	output += "struct map map_list[" + project.maps.length + "] = {\n";
+
+	/* Loop through each map */
+	$.each( project.maps , function( i, map ) {
+
+		output += "\t" + map.name.toLowerCase().replace( / /g, "_" ) + ", // " + i + "\n";
+	} );
+
+	output += "};\n\n";
+	output += "#endif";
 
 	console.log( output );
 	
