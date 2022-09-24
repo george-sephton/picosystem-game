@@ -27,6 +27,7 @@ using namespace picosystem;
 #define exit_map_info                 false    // Displays information about the map to load if exiting current map
 #define animation_info                false    // Displays information about the running animation
 #define textbox_info                  false    // Displays information about the current textbox
+#define npc_info                      true    // Displays information about the NPC
 
 #define player_movement_delay_val     5        // Delay value before a player will start walking, to allow them to change the direction they're facing without walking
 
@@ -57,6 +58,15 @@ uint8_t scroll_arrow_count, scroll_arrow_offset, total_textbox_lines, textbox_li
 uint8_t write_text_line_count, write_text_char_count;
 char (*text_ptr)[20], write_text[20];
 
+/* NPC variables */
+dir_vec npc_bounds_origin;
+bool npc_bounds_origin_set;
+dir_vec npc_pos, npc_bounds, npc_face_dir;
+dir_en npc_face_allow;
+uint16_t npc_id;
+bool npc_reverse_walking_render;
+uint8_t npc_animation_tick;
+
 /* Development */
 map *_current_map;
 
@@ -68,14 +78,25 @@ map *_current_map;
 void init() {
   
   /* Play a bougie sound */
-  play(1000, 500, 100);
+  play( 1000, 500, 100 );
 
   /* Load the map and set our initial location */
   //_current_map = &map_list[0];
   //map_pos = {3, 4};
 
   _current_map = &map_list[2];
-  map_pos = {3, 7};
+  map_pos = { 3, 7 };
+
+  /* Initialise NPC */
+  npc_id = 1;                         // NPC ID is 1
+  npc_pos = { 0, 0 };                 // NPC starts in position 0, 0 of their boundary box
+  npc_bounds = { 6, 4 };              // NPC's boundary box is 4 x 2
+  npc_bounds_origin = { 0, 0 };       // NPC boundary box origin
+  npc_bounds_origin_set = false;      // NPC boundary box origin not set
+  npc_face_dir = { 0, -1 };           // NPC starts facing South
+  npc_face_allow = { 1, 1, 1, 1 };    // NPC can face any direction
+  npc_reverse_walking_render = false; // NPC walking render
+  npc_animation_tick = 0;             // Reset tick
   
   /* Initialise movement variables  */
   player_movement_delay = 0;
@@ -232,6 +253,16 @@ void update( uint32_t tick ) {
     player.walk_dir.x = 0;
     player.walk_dir.y = 0;
   }
+
+  /* Add movement restriction based on NPCs */
+  if( ( ( ( npc_bounds_origin.x + npc_pos.x ) == 6 ) && ( ( npc_bounds_origin.y + npc_pos.y ) == 5 ) ) || ( ( ( npc_bounds_origin.x + npc_pos.x ) == 7 ) && ( ( npc_bounds_origin.y + npc_pos.y ) == 5 ) ) )
+    allowed_movement.travel_n = false;
+  if( ( ( ( npc_bounds_origin.x + npc_pos.x ) == 8 ) && ( ( npc_bounds_origin.y + npc_pos.y ) == 7 ) ) || ( ( ( npc_bounds_origin.x + npc_pos.x ) == 8 ) && ( ( npc_bounds_origin.y + npc_pos.y ) == 6 ) ) )
+    allowed_movement.travel_e = false;
+  if( ( ( ( npc_bounds_origin.x + npc_pos.x ) == 6 ) && ( ( npc_bounds_origin.y + npc_pos.y ) == 8 ) ) || ( ( ( npc_bounds_origin.x + npc_pos.x ) == 7 ) && ( ( npc_bounds_origin.y + npc_pos.y ) == 8 ) ) )
+    allowed_movement.travel_s = false;
+  if( ( ( ( npc_bounds_origin.x + npc_pos.x ) == 5 ) && ( ( npc_bounds_origin.y + npc_pos.y ) == 7 ) ) || ( ( ( npc_bounds_origin.x + npc_pos.x ) == 5 ) && ( ( npc_bounds_origin.y + npc_pos.y ) == 6 ) ) )
+    allowed_movement.travel_w = false;
 
   /* Check input presses as they happen, unless there's an animation running, in which case we don't care */
   if( ( !animation.running ) && ( !scroll_movement ) && ( !textbox_running ) ) {
@@ -429,6 +460,77 @@ void update( uint32_t tick ) {
     /* User pressed the A Button at an interaction */
     open_textbox( demo_text1, ( sizeof( demo_text1 ) / 20 ) );
   }
+  
+  // ---------------------------------------------------------------------------------
+  // NPC functionality
+  // ---------------------------------------------------------------------------------
+  if( !animation.running ) {
+    
+    /* Increment NPC animation tick */
+    //npc_animation_tick++;
+
+    if( npc_animation_tick >= 24 ) {
+      
+      /* Update the NPC's position, first see if they're in a corner of the bounding box */
+
+      if( ( npc_pos.x == 0 ) && ( npc_pos.y == ( npc_bounds.y - 1 ) ) ) {
+
+        /* NPC's at bottom left corner, if we're not blocked by the player let's go north */
+        if( ( ( npc_bounds_origin.x + npc_pos.x ) != 7 ) || ( ( npc_bounds_origin.y + npc_pos.y ) != 8 ) ) {
+          npc_face_dir = { 0, 1 };
+          npc_pos.y--;
+        }
+      } else if( ( npc_pos.x == 0 ) && ( npc_pos.y == 0 ) ) {
+
+        /* NPC's at top left corner, if we're not blocked by the player let's go east */
+        if( ( ( npc_bounds_origin.x + npc_pos.x ) != 6 ) || ( ( npc_bounds_origin.y + npc_pos.y ) != 7 ) ) {
+          npc_face_dir = { 1, 0 };
+          npc_pos.x++;
+        }
+      } else if( ( npc_pos.x == ( npc_bounds.x - 1 ) ) && ( npc_pos.y == 0 ) ) {
+
+        /* NPC's at top right corner, if we're not blocked by the player let's go south */
+        if( ( ( npc_bounds_origin.x + npc_pos.x ) != 7 ) || ( ( npc_bounds_origin.y + npc_pos.y ) != 6 ) ) {
+          npc_face_dir = { 0, -1 };
+          npc_pos.y++;
+        }
+      } else if( ( npc_pos.x == ( npc_bounds.x - 1 ) ) && ( npc_pos.y == ( npc_bounds.y - 1 ) ) ) {
+
+        /* NPC's at bottom right corner, if we're not blocked by the player let's go west */
+        if( ( ( npc_bounds_origin.x + npc_pos.x ) != 8 ) || ( ( npc_bounds_origin.y + npc_pos.y ) != 7 ) ) {
+          npc_face_dir = { -1, 0 };
+          npc_pos.x--;
+        }
+      } else {
+        
+        /* NPC isn't in a corner, let's just move them around the perimeter of the bounding box */
+        if( npc_pos.y == 0 ) {
+
+          /* NPC is on the north face, keep walking east */
+          if( ( ( npc_bounds_origin.x + npc_pos.x ) != 6 ) || ( ( npc_bounds_origin.y + npc_pos.y ) != 7 ) )
+            npc_pos.x++;
+        } else if( npc_pos.x == ( npc_bounds.x - 1 ) ) {
+
+          /* NPC is on the east face, keep walking south */
+          if( ( ( npc_bounds_origin.x + npc_pos.x ) != 7 ) || ( ( npc_bounds_origin.y + npc_pos.y ) != 6 ) )
+            npc_pos.y++;
+        } else if( npc_pos.y == ( npc_bounds.y - 1 ) ) {
+
+          /* NPC is on the south face, keep walking west */
+          if( ( ( npc_bounds_origin.x + npc_pos.x ) != 8 ) || ( ( npc_bounds_origin.y + npc_pos.y ) != 7 ) )
+            npc_pos.x--;
+        } else if( npc_pos.x == 0 ) {
+
+          /* NPC is on the west face, keep walking north */
+          if( ( ( npc_bounds_origin.x + npc_pos.x ) != 7 ) || ( ( npc_bounds_origin.y + npc_pos.y ) != 8 ) )
+            npc_pos.y--;
+        }
+      }
+      
+      npc_animation_tick = 0;
+    }
+  }
+
 }
 
 void draw( uint32_t tick ) {
@@ -502,38 +604,27 @@ void draw( uint32_t tick ) {
   } else if( ( exit_tile.travel_w) && ( map_pos.x == 0 ) ) {
     draw_sprite( (uint16_t*)arrow, 1, false, false, 48, 56, 8 );
   }
-  
 
   /* Draw the player in the centre square (8, 8) */
   if( ( ( player.walk_dir.x == 0 ) && ( player.walk_dir.y == 0 ) ) || ( player_movement_delay < player_movement_delay_val ) ) {
-    
     /* The player is currently stood still, let's draw them facing the right direction */
     if((player.face_dir.x == 0) && (player.face_dir.y == 1)) { // Facing N
-
       draw_sprite((uint16_t*)male_player, 4, false, false, 52, 52, 16);
     } else if((player.face_dir.x == -1) && (player.face_dir.y == 0)) { // Facing W
-
       draw_sprite((uint16_t*)male_player, 2, false, false, 52, 52, 16);
     } else if((player.face_dir.x == 1) && (player.face_dir.y == 0)) { // Facing E
-
       draw_sprite((uint16_t*)male_player, 2, true, false, 52, 52, 16);
     } else { // Facing S - also default value
-
       draw_sprite((uint16_t*)male_player, 0, false, false, 52, 52, 16);
     }
-
   /* Player is walking, draw the walking sprite */
   } else if( ( ( player.walk_dir.x == 0 ) && ( player.walk_dir.y == 1 ) ) ) { // Walking N
-
     draw_sprite( (uint16_t*)male_player, 5, player.reverse_walking_render, false, 52, 52, 16 );
   } else if( ( ( player.walk_dir.x == 1 ) && ( player.walk_dir.y == 0 ) ) ) { // Walking E
-
     draw_sprite( (uint16_t*)male_player, ( 2 + player.reverse_walking_render ), true, false, 52, 52, 16 );
   } else if( ( ( player.walk_dir.x == 0 ) && ( player.walk_dir.y == -1 ) ) ) { // Walking S
-
     draw_sprite( (uint16_t*)male_player, 1, player.reverse_walking_render, false, 52, 52, 16);
   } else if( ( ( player.walk_dir.x == -1 ) && ( player.walk_dir.y == 0 ) ) ) { // Walking W
-
     draw_sprite( (uint16_t*)male_player, ( 2 + player.reverse_walking_render ), false, false, 52, 52, 16 );
   }
 
@@ -582,6 +673,26 @@ void draw( uint32_t tick ) {
   // ---------------------------------------------------------------------------------
   // Debugging
   // ---------------------------------------------------------------------------------
+
+  #if npc_info
+  sprintf( write_text,"P(%d,%d)F(%d,%d)T(%d)", npc_pos.x, npc_pos.y, npc_face_dir.x, npc_face_dir.y, npc_animation_tick );
+  write_string( write_text, 1, 8, rgb(0xF00), 0 );
+  sprintf( write_text,"O(%d,%d)P(%d,%d)", npc_bounds_origin.x, npc_bounds_origin.y, ( npc_bounds_origin.x + npc_pos.x ), ( npc_bounds_origin.y + npc_pos.y ) );
+  write_string( write_text, 1, 16, rgb(0xF00), 0 );
+
+  if( npc_bounds_origin_set ) {
+
+    _scroll_x = player.walk_dir.x * scroll_counter;
+    _scroll_y = player.walk_dir.y * scroll_counter;
+
+    uint8_t _draw_tile_x = npc_bounds_origin.x + npc_pos.x;
+    uint8_t _draw_tile_y = npc_bounds_origin.y + npc_pos.y;
+
+    draw_sprite((uint16_t*)female_player, 0, false, false, ( ( ( _draw_tile_x - _scroll_offset_w ) * 8 ) - _scroll_x ), ( ( ( _draw_tile_y - _scroll_offset_n ) * 8 ) + _scroll_y ), 16);
+    //draw_rec( ( ( ( _draw_tile_x - _scroll_offset_w ) * 8 ) - _scroll_x ), ( ( ( _draw_tile_y - _scroll_offset_n ) * 8 ) + _scroll_y ), 16, 16, rgb(0xCCC) );
+    //draw_rec( ( ( ( _draw_tile_x - _scroll_offset_w ) * 8 ) - _scroll_x ), ( ( ( _draw_tile_y - _scroll_offset_n ) * 8 ) + _scroll_y ), 8, 8, rgb(0xFFF) );
+  }
+  #endif
 
   #if map_rendering_offsets
   sprintf( write_text, "P(%d,%d)O(%d,%d,%d,%d)", map_pos.x, map_pos.y, _offset_n, _offset_e, _offset_s, _offset_w );
@@ -841,6 +952,7 @@ void open_textbox( char (*_text_ptr)[20], uint8_t _total_lines ) {
 }
 
 void draw_map_tiles( bool top_layer ) {
+  
   int16_t _draw_x, _draw_y;
   
   /* If we are performing a scrolling animation, change the offsets to add an extra tile to allow the scroll to show offscreen tiles that are entering the display */
@@ -849,6 +961,10 @@ void draw_map_tiles( bool top_layer ) {
 
   /* Get the current map tile pointer, starting at (0, 0) */
   const struct map_tile (*map_tiles_ptr) = _current_map->map_tiles_ptr;
+
+  /* Reset the NPC origin point */
+  if( !top_layer )
+    npc_bounds_origin_set = false;
 
   /* Move the map pointer to first column to draw, if there's a gap around the edges, we don't need to move anything */
   if( _offset_w == 0 )
@@ -876,11 +992,49 @@ void draw_map_tiles( bool top_layer ) {
             if( ( (*map_tiles_ptr).texture != -1 ) && ( (*map_tiles_ptr).top_layer == true) )
               draw_sprite( (uint16_t*)_texture_map[(*map_tiles_ptr).texture], (*map_tiles_ptr).texture_offset, (*map_tiles_ptr).texture_reverse_x, (*map_tiles_ptr).texture_reverse_y, ( ( ( _draw_x - _scroll_offset_w ) * 8 ) - _scroll_x ), ( ( ( _draw_y - _scroll_offset_n ) * 8 ) + _scroll_y ), 8 );
 
-          } else if ( (*map_tiles_ptr).npc_tile ) {
+          } else if ( ( (*map_tiles_ptr).npc_tile ) && ( (*map_tiles_ptr).npc_id == 1 ) ) {
             
-            draw_rec( ( ( ( _draw_x - _scroll_offset_w ) * 8 ) - _scroll_x ), ( ( ( _draw_y - _scroll_offset_n ) * 8 ) + _scroll_y ), 8, 8, rgb(0xF0F) );            
-            
-          }else {
+            if( !npc_bounds_origin_set ) {
+              
+              uint8_t _x_bounds_offset = 0, _y_bounds_offset = 0, i;
+
+              /* We've come to the first square of the NPC boundary box, if we're at the edge of the screen, let's see if this is actually the origin */
+              if( _draw_x == 0 ) {
+
+                /* We're at the left side of the display, move the pointer back and see if this is also part of the boundary box */
+                while( 1 ) {
+                  map_tiles_ptr--;
+                  if( ( (*map_tiles_ptr).npc_tile ) && ( (*map_tiles_ptr).npc_id == 1 ) )
+                    _x_bounds_offset++;
+                  else
+                    break;
+                }
+                /* Put the pointer back where it belongs */
+                for( i = 0; i <= _x_bounds_offset; i++ ) map_tiles_ptr++;
+              }
+              
+              if( _draw_y == 0 ) {
+
+                /* We're at the top of the display, move the pointer back and see if this is also part of the boundary box */
+                while( 1 ) {
+                  map_tiles_ptr -= ( _current_map->map_width );
+                  if( ( (*map_tiles_ptr).npc_tile ) && ( (*map_tiles_ptr).npc_id == 1 ) )
+                    _y_bounds_offset++;
+                  else
+                    break;
+                }
+                /* Put the pointer back where it belongs */
+                for( i = 0; i <= _y_bounds_offset; i++ ) map_tiles_ptr += ( _current_map->map_width );
+              }
+
+              /* Now set the position so we know which tile on the screen is the origin */
+              npc_bounds_origin.x = _draw_x - _x_bounds_offset;
+              npc_bounds_origin.y = _draw_y - _y_bounds_offset;
+              npc_bounds_origin_set = true;
+            }
+            draw_rec( ( ( ( _draw_x - _scroll_offset_w ) * 8 ) - _scroll_x ), ( ( ( _draw_y - _scroll_offset_n ) * 8 ) + _scroll_y ), 8, 8, rgb(0xF0F) );
+
+          } else {
 
             /* Draw the background texture if the map has one */
             if( _current_map->bg_texture != -1 )
@@ -906,4 +1060,3 @@ void draw_map_tiles( bool top_layer ) {
     }
   }
 }
-

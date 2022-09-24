@@ -21,6 +21,8 @@ void open_textbox( char (*_text_ptr)[20], uint8_t _total_lines );
 
 void draw_map_tiles( bool top_layer );
 
+void get_npc_bounds_origin( void );
+
 namespace picosystem {
 
   extern uint32_t _debug;

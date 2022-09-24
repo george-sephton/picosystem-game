@@ -387,7 +387,8 @@ function project_toolbar_event_listeners() {
 					$( "#container #sidebar #texture_list_toolbar_rename" ).css( "display", "none" );
 					$( "#container #sidebar #texture_list_toolbar_delete" ).css( "display", "none" );
 
-					export_data();
+					//export_data();
+					export_data_gba();
 					break;
 			}
 		}
