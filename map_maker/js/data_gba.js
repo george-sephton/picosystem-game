@@ -307,6 +307,16 @@ function export_data_gba() {
 
 	output += "};\n\n";
 
+	/* Add the sizes of all the texture groups */
+	output += "const uint16_t _texture_lengths[" + project.textures.length + "] = {\n\t";
+
+	/* Loop through each texture group */
+	$.each( project.textures , function( i, group ) {
+		output += "" + group.textures.length + ", ";
+	} );
+
+	output += "\n};\n\n";
+
 	/* Next export the texture colour palette */
 	output += "/*********************************************************************************\n";
 	output += "\tTexture Colour Palette\n";
