@@ -948,3 +948,10 @@ function sort_textures_by_order( gid ) {
 		return ((a.order < b.order) ? -1 : ((a.order > b.order) ? 1 : 0));
 	} );
 }
+
+function sort_texture_array_by_gorder( array ) {
+	
+	array.sort( function( a, b ) {
+		return ((a.gorder < b.gorder) ? -1 : ((a.gorder > b.gorder) ? 1 : 0));
+	} );
+}

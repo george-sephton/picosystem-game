@@ -62,8 +62,6 @@ function export_data_gba() {
 		total_sprites += ( group.sprites.length * ( ( group.size == 16 ) ? 4 : 1 ) );
 	} );
 
-	console.log( total_sprites );
-
 	output += "const uint16_t _sprite_map[ " + ( total_sprites * 32 ) + " ] = {\n";
 
 	sort_sprite_groups_by_gorder();
@@ -202,9 +200,49 @@ function export_data_gba() {
 	output += "\tTextures\n";
 	output += "*********************************************************************************/\n";
 
+	/* First add in our transparent tile and black tile */
+	var _default_tile_1 = new Object();
+	_default_tile_1.name = "Transparent";
+	_default_tile_1.order = 0;
+	_default_tile_1.id = 0;
+	_default_tile_1.data = [["FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF"],
+							["FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF"],
+							["FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF"],
+							["FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF"],
+							["FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF"],
+							["FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF"],
+							["FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF"],
+							["FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF", "FF00FF"]];
+
+	var _default_tile_2 = new Object();
+	_default_tile_2.name = "Black";
+	_default_tile_2.order = 1;
+	_default_tile_2.id = 1;
+	_default_tile_2.data = [["000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000"],
+							["000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000"],
+							["000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000"],
+							["000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000"],
+							["000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000"],
+							["000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000"],
+							["000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000"],
+							["000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000"]];
+
+	var default_tiles = new Object();
+	default_tiles.name = "Default Tiles";
+	default_tiles.gorder = -1;
+	default_tiles.gid = 0;
+	default_tiles.textures = new Array( _default_tile_1, _default_tile_2 );	
+
+	/* Create a new array for our export */
+	var export_textures = new Array();
+	$.extend( true, export_textures, project.textures ); /* Clone array */
+
+	export_textures.push( default_tiles );
+	sort_texture_array_by_gorder( export_textures );
+
 	/* Calculate total number of textures */
 	var total_textures = 0;
-	$.each( project.textures , function( gi, group ) {
+	$.each( export_textures , function( gi, group ) {
 		total_textures += group.textures.length;
 	} );
 
@@ -214,9 +252,9 @@ function export_data_gba() {
 
 	/* Loop through each texture group */
 	var _count = 0;
-	$.each( project.textures , function( gi, group ) {
+	$.each( export_textures , function( gi, group ) {
 
-		output += "\t/*" + group.name + "*/\n";
+		output += "\t/* " + group.name + " */\n";
 		
 		sort_textures_by_order( group.gid );
 
@@ -308,10 +346,10 @@ function export_data_gba() {
 	output += "};\n\n";
 
 	/* Add the sizes of all the texture groups */
-	output += "const uint16_t _texture_lengths[" + project.textures.length + "] = {\n\t";
+	output += "const uint16_t _texture_lengths[" + export_textures.length + "] = {\n\t";
 
 	/* Loop through each texture group */
-	$.each( project.textures , function( i, group ) {
+	$.each( export_textures, function( i, group ) {
 		output += "" + group.textures.length + ", ";
 	} );
 
@@ -357,14 +395,14 @@ function export_data_gba() {
 				if( cell.texture_gid != undefined ) {
 
 					/* Get cell */
-					var cell_output_texture_group = project.textures.find( obj => obj.gid == cell.texture_gid );
+					var cell_output_texture_group = export_textures.find( obj => obj.gid == cell.texture_gid );
 					var cell_output_texture = cell_output_texture_group.textures.find( obj => obj.id == cell.texture_id );
 					var cell_output_map = project.maps.find( obj => obj.id == cell.exit_map_id );
 
 					/* Add in the data for each cell */
 					output += Number(cell.top_layer) + ", ";
 					output += Number(cell.can_walk[0]) + ", " + Number(cell.can_walk[1]) + ", " + Number(cell.can_walk[2]) + ", " + Number(cell.can_walk[3]) + ", ";
-					output += Number(cell_output_texture_group.gorder) + ", " + Number(cell_output_texture.order) + ", ";
+					output += Number(cell_output_texture_group.gorder + 1) + ", " + Number(cell_output_texture.order) + ", ";
 					output += Number(cell.texture_reverse_x) + ", " + Number(cell.texture_reverse_y) + ", ";
 					output += Number(cell.interact_en) + ", " + Number(cell.interact_id) + ", ";
 					output += Number(cell.npc_en) + ", " + Number(cell.npc_id) + ", ";
@@ -387,14 +425,14 @@ function export_data_gba() {
 		if( map.bg_texture.gid != undefined ) {
 
 			/* Get the background texture */
-			var map_output_bg_texture_gid = project.textures.find( obj => obj.gid == map.bg_texture.gid );
+			var map_output_bg_texture_gid = export_textures.find( obj => obj.gid == map.bg_texture.gid );
 			var map_output_bg_texture_id = map_output_bg_texture_gid.textures.find( obj => obj.id == map.bg_texture.id );
 		} else {
 			var map_output_bg_texture_gid = -1;
 			var map_output_bg_texture_id = -1
 		}
 
-  		output += "const struct map " + map_name_conv + " = { " + Number(map.id) + ", *_" + map_name_conv + ", " + Number(map.height) + ", " + Number(map.width) + ", " + Number(map.can_run) + ", " + Number(map_output_bg_texture_gid.gorder) + ", " + Number(map_output_bg_texture_id.order) + " };\n\n"
+  		output += "const struct map " + map_name_conv + " = { " + Number(map.id) + ", *_" + map_name_conv + ", " + Number(map.height) + ", " + Number(map.width) + ", " + Number(map.can_run) + ", " + Number(map_output_bg_texture_gid.gorder + 1) + ", " + Number(map_output_bg_texture_id.order) + " };\n\n"
 
 	} );
 
