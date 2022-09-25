@@ -729,7 +729,7 @@ function export_data() {
 
 		$.each( group.sprites, function( si, sprite ) {
 
-			/* Convert pixel values for Picosystem */
+			/* Convert pixel values for Picosystem, clone to avoid altering the original */
 			var convert_sprite = new Array();
 			$.extend( true, convert_sprite, sprite.data ); /* Clone array */
 
@@ -798,7 +798,7 @@ function export_data() {
 
 		$.each( group.textures, function( ti, texture ) {
 
-			/* Convert pixel values for Picosystem */
+			/* Convert pixel values for Picosystem, clone to avoid altering the original */
 			var convert_texture = new Array();
 			$.extend( true, convert_texture, texture.data ); /* Clone array */
 
