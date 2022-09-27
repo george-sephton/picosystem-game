@@ -69,8 +69,6 @@
 				<div id="toolbar">
 					<div id="settings">
 						<div id="controls">
-							<i class="bi-plus-square-fill project_functions" func="new-map"></i>
-							<div class="toolbar_separator project_functions"></div>
 							<i class="bi-type project_functions" func="rename-project"></i>
 							<i class="bi-cloud-upload-fill project_functions" func="open"></i>
 							<i class="bi-cloud-download-fill project_functions " func="download"></i>
@@ -186,6 +184,9 @@
 				<div id="project_view">
 					<div id="map_list_container">
 						<div id="map_list_heading">Maps</div>
+						<div id="map_list_toolbar">
+							<i class="bi-plus-square-fill project_functions" func="new-map"></i>
+						</div>
 						<div id="map_list">
 							<ul class="sortable">
 							</ul>
@@ -193,6 +194,11 @@
 					</div>
 					<div id="sprite_list_container">
 						<div id="sprite_list_heading">Sprites</div>
+						<div id="sprite_list_toolbar">
+							<i class="bi-folder-plus" id="toolbar_new_group" func="new-group"></i>
+							<i class="bi-plus-square-fill" id="toolbar_new_sprite" func="new"></i>
+							<i class="bi-arrow-left" id="toolbar_back" func="back"></i>
+						</div>
 						<div id="sprite_list">
 							<ul class="sortable">
 							</ul>
@@ -204,29 +210,26 @@
 						<div id="sprite_editor_empty">
 							Select a sprite
 						</div>
-						<div id="sprite_list_toolbar">
+						<div id="sprite_editor_toolbar">
 							<div id="toolbar_left">
-								<i class="bi-folder-plus" id="toolbar_new_group" func="new-group"></i>
-								<i class="bi-plus-square-fill" id="toolbar_new_sprite" func="new"></i>
-								<i class="bi-arrow-left" id="toolbar_back" func="back"></i>
-							</div>
-							<div id="toolbar_right">
 								<i class="bi-type" func="rename"></i>
 								<i class="bi-back" func="duplicate"></i>
 								<i class="bi-trash" func="delete"></i>
+							</div>
+							<div id="toolbar_right">
 								<i class="bi-eraser-fill" id="sprite_erase" func="sprite-erase"></i>
 								<i class="bi-brush-fill sprite_picker picker" id="sprite_paint" func="sprite-paint"></i>
 								<i class="bi-paint-bucket sprite_picker picker" id="sprite_fill" func="sprite-fill"></i>
 							</div>
 						</div>
-						<div id="sprite_list_toolbar_rename">
+						<div id="sprite_editor_toolbar_rename">
 							<input type="text" id="texture_rename" placeholder="Rename" />
 						</div>
-						<div id="sprite_list_toolbar_delete">
+						<div id="sprite_editor_toolbar_delete">
 							<input type="button" id="sprite_delete_y" value="Confirm" />
 							<input type="button" id="sprite_delete_n" value="Cancel"  />
 						</div>
-						<div id="sprite_list_toolbar_new_group">
+						<div id="sprite_editor_toolbar_new_group">
 							<input type="button" id="sprite_new_group_8" value="8 x 8 Sprites" />
 							<input type="button" id="sprite_new_group_16" value="16 x 16 Sprites"  />
 						</div>

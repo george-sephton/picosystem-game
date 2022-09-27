@@ -1685,6 +1685,6 @@ function enable_controls() {
 	if( selected_texture.texture != false )
 		$( "#container #toolbar #map_paint_preview" ).css( "display", "block" );
 
-	if( selected_texture.texture == false )
+	if( ( selected_texture.texture == false ) && ( selected_map != false ) )
 		$( "#container #toolbar #map_settings" ).css( "display", "flex" );
 }

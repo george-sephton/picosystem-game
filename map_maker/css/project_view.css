@@ -54,6 +54,27 @@
 #container #content #project_view #map_list_container #map_list_heading {
 	font-size: 22px;
 }
+#container #content #project_view #map_list_container #map_list_toolbar {
+	width: 100%;
+	background:#fff;
+	box-sizing: border-box;
+	padding: 0;
+	height: 35px;
+
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: flex-start;
+}
+#container #content #project_view #map_list_container #map_list_toolbar i {
+	color: #333;
+	font-size: 28px;
+	margin: 0 8px 0 0;
+}
+#container #content #project_view #map_list_container #map_list_toolbar i:hover {
+	color: #8bb1c7;
+	cursor: pointer;
+}
 #container #content #project_view #map_list_container #map_list {
 }
 #container #content #project_view #map_list_container #map_list .sortable li  {
@@ -86,6 +107,27 @@
 }
 #container #content #project_view #sprite_list_container #sprite_list_heading {
 	font-size: 22px;
+}
+#container #content #project_view #sprite_list_container #sprite_list_toolbar {
+	width: 100%;
+	background:#fff;
+	box-sizing: border-box;
+	padding: 0;
+	height: 35px;
+
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: flex-start;
+}
+#container #content #project_view #sprite_list_container #sprite_list_toolbar i {
+	color: #333;
+	font-size: 28px;
+	margin: 0 8px 0 0;
+}
+#container #content #project_view #sprite_list_container #sprite_list_toolbar i:hover {
+	color: #8bb1c7;
+	cursor: pointer;
 }
 #container #content #project_view #sprite_list_container #sprite_list {
 	box-sizing: border-box;
@@ -139,7 +181,7 @@
 	background: #fff;
 	cursor: pointer;
 }
-#container #content #project_view #sprite_editor_container #sprite_list_toolbar {
+#container #content #project_view #sprite_editor_container #sprite_editor_toolbar {
 	width: 100%;
 	background:#fff;
 	box-sizing: border-box;
@@ -151,7 +193,7 @@
 	justify-content: space-between;
 	align-items: center;
 }
-#container #content #project_view #sprite_editor_container #sprite_list_toolbar_rename {
+#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename {
 	width: 100%;
 	background:#fff;
 	box-sizing: border-box;
@@ -159,14 +201,14 @@
 	height: 60px;
 	display: none;
 }
-#container #content #project_view #sprite_editor_container #sprite_list_toolbar_rename input {
+#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename input {
 	width: 100%;
 	font-size: 20px;
 	border: 0px;
 	background: #FFF;
 	border-radius: 10px;
 }
-#container #content #project_view #sprite_editor_container #sprite_list_toolbar_delete {
+#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_delete {
 	width: 100%;
 	background:#fff;
 	box-sizing: border-box;
@@ -177,7 +219,7 @@
 	align-items: center;
 	gap: 8px;
 }
-#container #content #project_view #sprite_editor_container #sprite_list_toolbar_delete input {
+#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_delete input {
 	padding: 8px;
 	border: 1px solid #666;
 	color: #fff;
@@ -185,12 +227,12 @@
 	border-radius: 10px;
 	font-size: 14px;
 }
-#container #content #project_view #sprite_editor_container #sprite_list_toolbar_delete input:hover {
+#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_delete input:hover {
 	background: #8bb1c7;
 	color: #333;
 	cursor: pointer;
 }
-#container #content #project_view #sprite_editor_container #sprite_list_toolbar_new_group {
+#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_new_group {
 	width: 100%;
 	background:#fff;
 	box-sizing: border-box;
@@ -201,7 +243,7 @@
 	align-items: center;
 	gap: 8px;
 }
-#container #content #project_view #sprite_editor_container #sprite_list_toolbar_new_group input {
+#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_new_group input {
 	padding: 8px;
 	border: 1px solid #666;
 	color: #fff;
@@ -209,36 +251,31 @@
 	border-radius: 10px;
 	font-size: 14px;
 }
-#container #content #project_view #sprite_editor_container #sprite_list_toolbar_new_group input:hover {
+#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_new_group input:hover {
 	background: #8bb1c7;
 	color: #333;
 	cursor: pointer;
 }
-#container #content #project_view #sprite_editor_container #sprite_list_toolbar #toolbar_left {
+#container #content #project_view #sprite_editor_container #sprite_editor_toolbar #toolbar_left {
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-end;
 	align-items: center;
 }
-#container #content #project_view #sprite_editor_container #sprite_list_toolbar #toolbar_right {
+#container #content #project_view #sprite_editor_container #sprite_editor_toolbar #toolbar_right {
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-end;
 	align-items: center;
 }
-#container #content #project_view #sprite_editor_container #sprite_list_toolbar i {
+#container #content #project_view #sprite_editor_container #sprite_editor_toolbar i {
 	color: #333;
 	font-size: 28px;
-}
-#container #content #project_view #sprite_editor_container #sprite_list_toolbar i:hover {
-	color: #8bb1c7;
-	cursor: pointer;
-}
-#container #content #project_view #sprite_editor_container #sprite_list_toolbar #toolbar_left i {
 	margin: 0 8px 0 0;
 }
-#container #content #project_view #sprite_editor_container #sprite_list_toolbar #toolbar_right i {
-	margin: 0 0 0 8px;
+#container #content #project_view #sprite_editor_container #sprite_editor_toolbar i:hover {
+	color: #8bb1c7;
+	cursor: pointer;
 }
 #container #content #project_view #sprite_editor_container #sprite_editor_empty {
 	width: 100%;
