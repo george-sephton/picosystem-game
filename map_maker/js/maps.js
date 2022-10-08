@@ -1624,6 +1624,7 @@ function disable_controls( hide_name_input = true ) {
 
 	/* Disable all other controls */
 	$( "#toolbar #settings #controls i" ).addClass( "resize_disabled" );
+	$( "#container #content #project_view #map_list_container #map_list_toolbar i" ).addClass( "resize_disabled" );
 	$( "#project_view #map_list .sortable li" ).addClass( "resize_disabled" );
 
 	$( "#sidebar #texture_list_toolbar i:not( #colour_ind )" ).addClass( "resize_disabled" );
@@ -1668,6 +1669,7 @@ function enable_controls() {
 
 	/* Re-enable all other controls */
 	$( "#toolbar #settings #controls i" ).removeClass( "resize_disabled" );
+	$( "#container #content #project_view #map_list_container #map_list_toolbar i" ).removeClass( "resize_disabled" );
 	$( "#project_view #map_list .sortable li" ).removeClass( "resize_disabled" );
 	
 	$( "#sidebar #texture_list_toolbar i" ).removeClass( "resize_disabled" );

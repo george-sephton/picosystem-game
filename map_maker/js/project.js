@@ -29,6 +29,7 @@ function load_project_view() {
 
 	$( "#container #content #project_view #sprite_editor_container #sprite_editor" ).css( "display", "none" );
 	$( "#container #content #project_view #sprite_editor_container #sprite_editor_empty" ).css( "display", "flex" );
+
 	$( "#container #content #project_view #sprite_list_container #sprite_list_toolbar" ).css( "display", "flex" );
 	$( "#container #content #project_view #sprite_list_container #sprite_list_toolbar #toolbar_right" ).css( "display", "none" );
 	$( "#container #content #project_view #sprite_list_container #sprite_list_toolbar #toolbar_new_sprite" ).css( "display", "none" );
@@ -38,7 +39,10 @@ function load_project_view() {
 	$( "#container #content #project_view" ).css( "display", "flex" );
 	$( "#container #content #project_view #sprite_editor_container" ).css( "display", "flex" );
 	$( "#container #content #project_view #sprite_list_container" ).css( "display", "flex" );
+
 	$( "#container #content #project_view #map_list_container" ).css( "display", "flex" );
+	$( "#container #content #project_view #map_list_container #map_list_toolbar" ).css( "display", "flex" );
+	$( "#container #content #project_view #map_list_container #map_list_new_map_name" ).css( "display", "none" );
 
 	$( "#container #content #map_editor_container" ).css( "display", "none" );
 	$( "#container #content #map_editor_container #map_editor" ).css( "display", "none" );
@@ -153,7 +157,7 @@ function project_toolbar_event_listeners() {
 	clear_project_toolbar_event_listeners();
 
 	/* Project toolbar event listener */
-	$( "#container #toolbar #settings #controls i" ).on( "click", function() {
+	$( "#container #toolbar #settings #controls i, #container #content #project_view #map_list_container #map_list_toolbar i" ).on( "click", function() {
 
 		/* Check if functions are disabled */
 		if( controls_disabled == false ) {
@@ -169,12 +173,15 @@ function project_toolbar_event_listeners() {
 					/* Disable controls - don't hide the name input */
 					disable_controls( false );
 
-					$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "placeholder", "Enter new map name" );
-					$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "disabled", false );
-					$( "#container #toolbar #settings #name_input_container #name_input" ).focus();
+					$( "#container #content #project_view #map_list_container #map_list_toolbar" ).css( "display", "none" );
+					$( "#container #content #project_view #map_list_container #map_list_new_map_name" ).css( "display", "flex" );
+
+					$( "#container #content #project_view #map_list_container #map_list_new_map_name #new_map_name" ).val( "" );
+					$( "#container #content #project_view #map_list_container #map_list_new_map_name #new_map_name" ).attr( "placeholder", "Enter new map name" );
+					$( "#container #content #project_view #map_list_container #map_list_new_map_name #new_map_name" ).focus();
 
 					/* Add event listeners */
-					$( "#container #toolbar #settings #name_input_container #name_input" ).on( "keyup blur", function( e ) {
+					$( "#container #content #project_view #map_list_container #map_list_new_map_name #new_map_name" ).on( "keyup blur", function( e ) {
 
 						/* Save the change */
 						if( e.key == "Enter" ) {
@@ -232,13 +239,19 @@ function project_toolbar_event_listeners() {
 								/* Open the map editor view */
 								selected_map = project.maps.find( obj => obj.id == new_map.id );
 								load_map_editing_view();
+							} else {
+
+								/* Put things back the way they were */
+								$( "#container #content #project_view #map_list_container #map_list_toolbar" ).css( "display", "flex" );
+								$( "#container #content #project_view #map_list_container #map_list_new_map_name" ).css( "display", "none" );
+								$( "#container #content #project_view #map_list_container #map_list_new_map_name #new_map_name" ).val( "" );
 							}
 
 							/* Re-enable controls */
 							enable_controls();
 
 							/* Remove event listeners */
-							$( "#container #toolbar #settings #name_input_container #name_input" ).unbind( "keyup blur" );
+							$( "#container #content #project_view #map_list_container #map_list_new_map_name #new_map_name" ).unbind( "keyup blur" );
 						}
 
 						/* Discard change */
@@ -248,12 +261,12 @@ function project_toolbar_event_listeners() {
 							enable_controls();
 
 							/* Remove event listeners */
-							$( "#container #toolbar #settings #name_input_container #name_input" ).unbind( "keyup blur" );
+							$( "#container #content #project_view #map_list_container #map_list_new_map_name #new_map_name" ).unbind( "keyup blur" );
 							
 							/* Put things back the way they were */
-							$( "#container #toolbar #settings #name_input_container #name_input" ).val( "" );
-							$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "placeholder", decodeURI( project.name ) );
-							$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "disabled", "disabled" );
+							$( "#container #content #project_view #map_list_container #map_list_toolbar" ).css( "display", "flex" );
+							$( "#container #content #project_view #map_list_container #map_list_new_map_name" ).css( "display", "none" );
+							$( "#container #content #project_view #map_list_container #map_list_new_map_name #new_map_name" ).val( "" );
 						}
 					} );
 					break;
@@ -266,6 +279,7 @@ function project_toolbar_event_listeners() {
 					disable_controls( false );
 
 					$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "placeholder", decodeURI( project.name ) );
+					$( "#container #toolbar #settings #name_input_container #name_input" ).val( decodeURI( project.name ) );
 					$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "disabled", false );
 					$( "#container #toolbar #settings #name_input_container #name_input" ).focus();
 
@@ -780,7 +794,7 @@ function sprite_toolbar_event_listeners() {
 								/* Show the rename input and focus */
 								$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name" ).css( "display", "flex" );
 								$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name #texture_group_name" ).focus();
-						$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name #texture_group_name" ).attr( "placeholder", "New group name" );
+								$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name #texture_group_name" ).attr( "placeholder", "New group name" );
 							}
 						} );
 
@@ -794,6 +808,9 @@ function sprite_toolbar_event_listeners() {
 						if(( selected_sprite.sprite != false ) || ( func == "new" ) ) $( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename #texture_rename" ).attr( "placeholder", "New sprite name" );
 						else $( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename #texture_rename" ).attr( "placeholder", "New group name" );
 					}
+							
+					/* Unbind exisiting event listeners */
+					$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename #texture_rename, #container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name #texture_group_name" ).unbind( "keyup blur" );
 					
 					/* Add event listners to either save or discard change */
 					$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename #texture_rename, #container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name #texture_group_name" ).on( "keyup blur", function( e ) {
@@ -900,9 +917,6 @@ function sprite_toolbar_event_listeners() {
 							/* Exit new sprite creation */
 							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename" ).css( "display", "none" );
 							$( "#container #content #project_view #sprite_list_container #sprite_list_toolbar" ).css( "display", "flex" );
-							
-							/* Unbind event listeners */
-							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename #texture_rename, #container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name #texture_group_name" ).unbind( "keyup blur" );
 
 							/* Reload sprite list */
 							load_sprite_list();
@@ -917,9 +931,6 @@ function sprite_toolbar_event_listeners() {
 							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename" ).css( "display", "none" );
 							$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name" ).css( "display", "none" );
 							$( "#container #content #project_view #sprite_list_container #sprite_list_toolbar" ).css( "display", "flex" );
-							
-							/* Unbind event listeners */
-							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename #texture_rename, #container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name #texture_group_name" ).unbind( "keyup blur" );
 
 							/* Enable controls */
 							enable_controls();

@@ -75,6 +75,21 @@
 	color: #8bb1c7;
 	cursor: pointer;
 }
+#container #content #project_view #map_list_container #map_list_new_map_name {
+	width: 100%;
+	background:#fff;
+	box-sizing: border-box;
+	padding: 10px;
+	height: 60px;
+	display: none;
+}
+#container #content #project_view #map_list_container #map_list_new_map_name input {
+	width: 100%;
+	font-size: 20px;
+	border: 0px;
+	background: #FFF;
+	border-radius: 10px;
+}
 #container #content #project_view #map_list_container #map_list {
 	padding: 10px;
 	background: #fff;
