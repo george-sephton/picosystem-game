@@ -188,64 +188,81 @@ function project_toolbar_event_listeners() {
 
 							var map_name_value = sanitise_input( $( this ).val() );
 
-							if( map_name_value != "" ) {
-
-								/* Duplicate current map */
-								new_map = new Object();
+							if( map_name_value.match( /^\d/ ) ) {
 								
-								/* Set the new name */
-								new_map.name = map_name_value;
-
-								/* Give it a blank canvas */
-								var blank_tile = new Object();
-								blank_tile.can_walk = [true, true, true, true];
-								blank_tile.texture_gid = undefined;
-								blank_tile.texture_id = undefined;
-								blank_tile.texture_reverse_x = false;
-								blank_tile.texture_reverse_y = false;
-								blank_tile.exit_tile = false;
-								blank_tile.exit_map_id = false;
-								blank_tile.interact_en = false;
-								blank_tile.interact_id = false;
-								blank_tile.npc_en = false;
-								blank_tile.npc_id = false;
-								blank_tile.top_layer = false;
-								blank_tile.exit_map_dir = [0, 0];
-								blank_tile.exit_map_pos = [0, 0];
-
-								new_map.width = 8;
-								new_map.height = 8;
-								new_map.can_run = false;
-								new_map.bg_texture = new Object();
-								new_map.bg_texture.gid = undefined;
-								new_map.bg_texture.id = undefined;
-								new_map.data = Array.from( { length: new_map.height }, () => Array.from( { length: new_map.width }, () => Object.assign( {}, blank_tile ) ) );
-
-								/* Get new ID value */
-								sort_maps_by_id();
-								new_map.id = ( project.maps.length != 0 ) ? ( project.maps[project.maps.length - 1].id + 1 ) : 0;
-
-								/* Get new order value */
-								sort_maps_by_order();
-								new_map.order = ( project.maps.length != 0 ) ? ( project.maps[project.maps.length - 1].order + 1 ) : 0;
-								/* Note we sort by order 2nd so the array goes back to the correct order */
-
-								/* Add the duplicated map to the array */
-								project.maps.push( new_map );
-
-								/* Close the project view */
-								close_project_view();
-
-								/* Open the map editor view */
-								selected_map = project.maps.find( obj => obj.id == new_map.id );
-								load_map_editing_view();
+								alert( "Map name cannot start with a number" );
 							} else {
 
-								/* Put things back the way they were */
-								$( "#container #content #project_view #map_list_container #map_list_toolbar" ).css( "display", "flex" );
-								$( "#container #content #project_view #map_list_container #map_list_new_map_name" ).css( "display", "none" );
-								$( "#container #content #project_view #map_list_container #map_list_new_map_name #new_map_name" ).val( "" );
+								/* Check if name already exists */
+								var check_name = map_name_value.toLowerCase().replace( / /g, "_" );
+								var check_array = project.maps.map( function( val ) {
+									return val.name.toLowerCase().replace( / /g, "_" );;
+								} );
+
+								if( check_array.indexOf( check_name ) !== -1 ) {
+
+									alert( "Map name already exits" );
+								} else {
+
+									if( map_name_value != "" ) {
+
+										/* Duplicate current map */
+										new_map = new Object();
+										
+										/* Set the new name */
+										new_map.name = map_name_value;
+
+										/* Give it a blank canvas */
+										var blank_tile = new Object();
+										blank_tile.can_walk = [true, true, true, true];
+										blank_tile.texture_gid = undefined;
+										blank_tile.texture_id = undefined;
+										blank_tile.texture_reverse_x = false;
+										blank_tile.texture_reverse_y = false;
+										blank_tile.exit_tile = false;
+										blank_tile.exit_map_id = false;
+										blank_tile.interact_en = false;
+										blank_tile.interact_id = false;
+										blank_tile.npc_en = false;
+										blank_tile.npc_id = false;
+										blank_tile.top_layer = false;
+										blank_tile.exit_map_dir = [0, 0];
+										blank_tile.exit_map_pos = [0, 0];
+
+										new_map.width = 8;
+										new_map.height = 8;
+										new_map.can_run = false;
+										new_map.bg_texture = new Object();
+										new_map.bg_texture.gid = undefined;
+										new_map.bg_texture.id = undefined;
+										new_map.data = Array.from( { length: new_map.height }, () => Array.from( { length: new_map.width }, () => Object.assign( {}, blank_tile ) ) );
+
+										/* Get new ID value */
+										sort_maps_by_id();
+										new_map.id = ( project.maps.length != 0 ) ? ( project.maps[project.maps.length - 1].id + 1 ) : 0;
+
+										/* Get new order value */
+										sort_maps_by_order();
+										new_map.order = ( project.maps.length != 0 ) ? ( project.maps[project.maps.length - 1].order + 1 ) : 0;
+										/* Note we sort by order 2nd so the array goes back to the correct order */
+
+										/* Add the duplicated map to the array */
+										project.maps.push( new_map );
+
+										/* Close the project view */
+										close_project_view();
+
+										/* Open the map editor view */
+										selected_map = project.maps.find( obj => obj.id == new_map.id );
+										load_map_editing_view();
+									}
+								}
 							}
+
+							/* Put things back the way they were */
+							$( "#container #content #project_view #map_list_container #map_list_toolbar" ).css( "display", "flex" );
+							$( "#container #content #project_view #map_list_container #map_list_new_map_name" ).css( "display", "none" );
+							$( "#container #content #project_view #map_list_container #map_list_new_map_name #new_map_name" ).val( "" );
 
 							/* Re-enable controls */
 							enable_controls();
@@ -290,9 +307,16 @@ function project_toolbar_event_listeners() {
 						if( e.key == "Enter" ) {
 
 							var project_name_value = sanitise_input( $( this ).val() );
+
+							if( project_name_value.match( /^\d/ ) ) {
+								
+								alert( "Project name cannot start with a number" );
+							} else {
 							
-							if( project_name_value != "" ) {
-								project.name = project_name_value;
+								if( project_name_value != "" ) {
+									
+									project.name = project_name_value;
+								}
 							}
 
 							/* Re-enable controls */
@@ -821,95 +845,113 @@ function sprite_toolbar_event_listeners() {
 							/* Get entered name */
 							var new_name = sanitise_input( $( this ).val() );
 
-							if( ( new_name != "" ) && ( new_name != undefined ) ) {
+							if( new_name.match( /^\d/ ) ) {
+								
+								alert( "Sprite name cannot start with a number" );
+							} else {
 
-								if( ( func == "new" ) || ( func == "new-group" ) || ( func == "duplicate" ) ) {
+								/* Check if name already exists */
+								var check_name = new_name.toLowerCase().replace( / /g, "_" );
+								var check_array = project.sprites.map( function( val ) {
+									return val.name.toLowerCase().replace( / /g, "_" );;
+								} );
+
+								if( ( ( check_array.indexOf( check_name ) !== -1 ) && ( func != "rename" ) ) || ( ( check_array.indexOf( check_name ) !== -1 ) && ( func == "rename" ) && ( check_name != selected_sprite.group.name.toLowerCase().replace( / /g, "_" ) ) ) ) {
 									
-									if(( selected_sprite.group == false ) || ( ( selected_sprite.sprite == false ) && ( func == "duplicate" ) ) ) {
-										
-										/* We are creating a new group or duplicating an exisiting group */
-										var new_group = new Object();
-										new_group.name = new_name;
+									alert( "Sprite name already exits" );
+								} else {
 
-										/* Get new ID value */
-										sort_sprite_groups_by_gid();
-										new_group.gid = ( project.sprites.length != 0 ) ? ( project.sprites[project.sprites.length - 1].gid + 1 ) : 0;
+									if( ( new_name != "" ) && ( new_name != undefined ) ) {
 
-										/* Get new order value */
-										sort_sprite_groups_by_gorder();
-										new_group.gorder = ( project.sprites.length != 0 ) ? ( project.sprites[project.sprites.length - 1].gorder + 1 ) : 0;
-										/* Note we sort by order 2nd so the array goes back to the correct order */
-
-										if( ( selected_sprite.sprite == false ) && ( func == "duplicate" ) ) {
+										if( ( func == "new" ) || ( func == "new-group" ) || ( func == "duplicate" ) ) {
 											
-											/* Duplicate existing textures into our new group */
-											new_group.sprites = new Array();
-											$.extend( true, new_group.sprites, selected_sprite.group.sprites ); /* Clone array */
+											if(( selected_sprite.group == false ) || ( ( selected_sprite.sprite == false ) && ( func == "duplicate" ) ) ) {
+												
+												/* We are creating a new group or duplicating an exisiting group */
+												var new_group = new Object();
+												new_group.name = new_name;
 
-											/* Add size */
-											new_group.size = selected_sprite.group.size;
-										} else {
+												/* Get new ID value */
+												sort_sprite_groups_by_gid();
+												new_group.gid = ( project.sprites.length != 0 ) ? ( project.sprites[project.sprites.length - 1].gid + 1 ) : 0;
 
-											/* Create a blank texture to initialise the group */
-											var new_sprite = new Object();
-											new_sprite.name = new_name;
-											new_sprite.id = 0;
-											new_sprite.order = 0;
-											new_sprite.data = Array.from( { length: new_group_size }, () => Array.from( { length: new_group_size }, () => "" ) );
+												/* Get new order value */
+												sort_sprite_groups_by_gorder();
+												new_group.gorder = ( project.sprites.length != 0 ) ? ( project.sprites[project.sprites.length - 1].gorder + 1 ) : 0;
+												/* Note we sort by order 2nd so the array goes back to the correct order */
 
-											/* Add size */
-											new_group.size = new_group_size;
+												if( ( selected_sprite.sprite == false ) && ( func == "duplicate" ) ) {
+													
+													/* Duplicate existing textures into our new group */
+													new_group.sprites = new Array();
+													$.extend( true, new_group.sprites, selected_sprite.group.sprites ); /* Clone array */
 
-											/* Add the blank texture to the array */
-											new_group.sprites = new Array();
-											new_group.sprites.push( new_sprite );
+													/* Add size */
+													new_group.size = selected_sprite.group.size;
+												} else {
+
+													/* Create a blank texture to initialise the group */
+													var new_sprite = new Object();
+													new_sprite.name = new_name;
+													new_sprite.id = 0;
+													new_sprite.order = 0;
+													new_sprite.data = Array.from( { length: new_group_size }, () => Array.from( { length: new_group_size }, () => "" ) );
+
+													/* Add size */
+													new_group.size = new_group_size;
+
+													/* Add the blank texture to the array */
+													new_group.sprites = new Array();
+													new_group.sprites.push( new_sprite );
+												}
+
+												/* Add the new texture into the local array*/
+												project.sprites.push( new_group );
+
+												/* Let's also update the selected group to be our new one */
+												selected_sprite.group = new_group;
+
+											} else {
+
+												/* We are creating or duplicating a texture */
+												var new_sprite = new Object();
+												new_sprite.name = new_name;
+
+												/* Get new ID value */
+												sort_sprites_by_id( selected_sprite.group.gid );
+												new_sprite.id = selected_sprite.group.sprites[selected_sprite.group.sprites.length - 1].id + 1;
+
+												/* Get new order value */
+												sort_sprites_by_order( selected_sprite.group.gid );
+												new_sprite.order = selected_sprite.group.sprites[selected_sprite.group.sprites.length - 1].order + 1;
+												/* Note we sort by order 2nd so the array goes back to the correct order */
+
+												if( func == "duplicate" ) {
+													/* Copy selected texture */
+													new_sprite.data = new Array();
+													$.extend( true, new_sprite.data, selected_sprite.sprite.data ); /* Clone array */
+												} else {
+													/* Create a blank canvas */
+													new_sprite.data = Array.from( { length: selected_sprite.group.size }, () => Array.from( { length: selected_sprite.group.size }, () => "" ) );
+												}
+
+												/* Add the new texture into the local array*/
+												selected_sprite.group.sprites.push( new_sprite );
+
+												/* Select newly created texture */
+												selected_sprite.sprite = new_sprite;
+											}
 										}
 
-										/* Add the new texture into the local array*/
-										project.sprites.push( new_group );
-
-										/* Let's also update the selected group to be our new one */
-										selected_sprite.group = new_group;
-
-									} else {
-
-										/* We are creating or duplicating a texture */
-										var new_sprite = new Object();
-										new_sprite.name = new_name;
-
-										/* Get new ID value */
-										sort_sprites_by_id( selected_sprite.group.gid );
-										new_sprite.id = selected_sprite.group.sprites[selected_sprite.group.sprites.length - 1].id + 1;
-
-										/* Get new order value */
-										sort_sprites_by_order( selected_sprite.group.gid );
-										new_sprite.order = selected_sprite.group.sprites[selected_sprite.group.sprites.length - 1].order + 1;
-										/* Note we sort by order 2nd so the array goes back to the correct order */
-
-										if( func == "duplicate" ) {
-											/* Copy selected texture */
-											new_sprite.data = new Array();
-											$.extend( true, new_sprite.data, selected_sprite.sprite.data ); /* Clone array */
-										} else {
-											/* Create a blank canvas */
-											new_sprite.data = Array.from( { length: selected_sprite.group.size }, () => Array.from( { length: selected_sprite.group.size }, () => "" ) );
+										if( func == "rename" ) {
+											if( selected_sprite.sprite == false ) {
+												/* Rename current group in local array */
+												selected_sprite.group.name = new_name;
+											} else {
+												/* Rename current texture in local array */
+												selected_sprite.sprite.name = new_name;								
+											}
 										}
-
-										/* Add the new texture into the local array*/
-										selected_sprite.group.sprites.push( new_sprite );
-
-										/* Select newly created texture */
-										selected_sprite.sprite = new_sprite;
-									}
-								}
-
-								if( func == "rename" ) {
-									if( selected_sprite.sprite == false ) {
-										/* Rename current group in local array */
-										selected_sprite.group.name = new_name;
-									} else {
-										/* Rename current texture in local array */
-										selected_sprite.sprite.name = new_name;								
 									}
 								}
 							}
