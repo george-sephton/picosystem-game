@@ -294,9 +294,12 @@
 	font-size: 28px;
 	margin: 0 8px 0 0;
 }
-#container #content #project_view #sprite_editor_container #sprite_editor_toolbar i:hover {
+#container #content #project_view #sprite_editor_container #sprite_editor_toolbar i:hover:not( #colour_ind ) {
 	color: #8bb1c7;
 	cursor: pointer;
+}
+#container #content #project_view #sprite_editor_container #sprite_editor_toolbar #colour_ind {
+	display: none;
 }
 #container #content #project_view #sprite_editor_container #sprite_editor_empty {
 	width: 100%;

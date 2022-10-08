@@ -1647,7 +1647,7 @@ function disable_controls( hide_name_input = true ) {
 	} else {
 
 		/* We're drawing, just grey out the icons */
-		$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar i" ).addClass( "resize_disabled" );
+		$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar i:not( #colour_ind )" ).addClass( "resize_disabled" );
 	}
 
 	/* Textures: Hide delete confirmation prompt and show the toolbar */

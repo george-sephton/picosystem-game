@@ -1257,6 +1257,11 @@ function load_sprite_editor_colour_pickers() {
 				/* We're painting the texture  */
 				drawing_functions = 3;
 
+				/* Show colour indicator briefly */
+				$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar #toolbar_right #colour_ind" ).css( "display", "block" );
+				$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar #toolbar_right #colour_ind" ).css( "color", "#"+hex );
+				$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar #toolbar_right #colour_ind" ).fadeOut( 750 );
+
 				/* Reset toolbar for a clean start */
 				map_editor_toolbar_reset();
 				
@@ -1272,21 +1277,38 @@ function load_sprite_editor_colour_pickers() {
 				$( "#sprite_editor table tr td:not( .oob )" ).addClass( "map_editor_table_cell_draw" );
 
 				/* Add event listeners to the cells of the texture editor */
-				$( "#sprite_editor table tr td:not( .oob )" ).on( "mouseup", function() {
+				$( "#sprite_editor table tr td:not( .oob )" ).on( "mouseup", function( e ) {
 
-					/* Set the pixel in the editor */
-					$( this ).css( "background", "#" + hex );
-					$( this ).removeClass( "trans_background" );
+					if( e.which == 3) {
 
-					/* Get the row and column */
-					var sprite_row = $( this ).parent().attr( "row_id" );
-					var sprite_col = $( this ).attr( "col_id" );
+						/* Right click, let's switch colours */
+						var cell_colour = selected_sprite.sprite.data[ $( this ).attr( "col_id" ) ][ $( this ).parent().attr( "row_id" ) ];
 
-					/* Set the colour in the local array */
-					selected_sprite.sprite.data[ sprite_col ][ sprite_row ] = hex;
+						if( ( cell_colour != "" ) && ( cell_colour != undefined ) ) {
 
-					/* Reset the selected picker */
-					selected_picker = false;
+							hex = cell_colour;
+
+							/* Show colour indicator briefly */
+							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar #toolbar_right #colour_ind" ).css( "display", "block" );
+							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar #toolbar_right #colour_ind" ).css( "color", "#"+hex );
+							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar #toolbar_right #colour_ind" ).fadeOut( 750 );
+						}
+					} else {
+
+						/* Set the pixel in the editor */
+						$( this ).css( "background", "#" + hex );
+						$( this ).removeClass( "trans_background" );
+
+						/* Get the row and column */
+						var sprite_row = $( this ).parent().attr( "row_id" );
+						var sprite_col = $( this ).attr( "col_id" );
+
+						/* Set the colour in the local array */
+						selected_sprite.sprite.data[ sprite_col ][ sprite_row ] = hex;
+
+						/* Reset the selected picker */
+						selected_picker = false;
+					}
 				} );
 
 				/* Add event listener to paint icon to stop the painting */
@@ -1310,7 +1332,9 @@ function load_sprite_editor_colour_pickers() {
 					drawing_functions = 4;
 				} );
 
-				
+				/* Remove default context menu when drawing */
+				$( "#sprite_editor table tr td:not( .oob )" ).on( "contextmenu" , function( e ) { return false; } );
+
 			} else {
 
 				/* We've selected a pixel colour, update the cell background */

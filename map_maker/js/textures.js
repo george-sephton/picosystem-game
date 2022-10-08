@@ -284,12 +284,17 @@ function load_texture_editor_colour_pickers() {
 					if( e.which == 3) {
 
 						/* Right click, let's switch colours */
-						hex = selected_texture.texture.data[ $( this ).attr( "col_id" ) ][ $( this ).parent().attr( "row_id" ) ];
+						var cell_colour = selected_texture.texture.data[ $( this ).attr( "col_id" ) ][ $( this ).parent().attr( "row_id" ) ];
 
-						/* Show colour indicator briefly */
-						$( "#container #sidebar #texture_list_toolbar #colour_ind" ).css( "display", "block" );
-						$( "#container #sidebar #texture_list_toolbar #colour_ind" ).css( "color", "#"+hex );
-						$( "#container #sidebar #texture_list_toolbar #colour_ind" ).fadeOut( 750 );
+						if( ( cell_colour != "" ) && ( cell_colour != undefined ) ) {
+							
+							hex = cell_colour;
+
+							/* Show colour indicator briefly */
+							$( "#container #sidebar #texture_list_toolbar #colour_ind" ).css( "display", "block" );
+							$( "#container #sidebar #texture_list_toolbar #colour_ind" ).css( "color", "#"+hex );
+							$( "#container #sidebar #texture_list_toolbar #colour_ind" ).fadeOut( 750 );
+						}
 					} else {
 
 						/* Carry on as normal and update the cell background */
