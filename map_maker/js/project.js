@@ -594,10 +594,14 @@ function load_sprite_editor() {
 	
 	/* Hide delete and new group confirmation prompt and show the toolbar */
 	$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_delete" ).css( "display", "none" );
-	$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_new_group" ).css( "display", "none" );
-	$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar" ).css( "display", "flex" );
+	$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group" ).css( "display", "none" );
+	$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name" ).css( "display", "none" );
+	
+	if( selected_sprite.group == false ) {
+		$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar" ).css( "display", "none" );
+	}
 
-	if ( selected_sprite.sprite != false ) {
+	if( selected_sprite.sprite != false ) {
 
 		/* Show fill and paint texture icons */
 		$( "#sprite_fill" ).css( "display", "block" );
@@ -663,11 +667,10 @@ function sprite_toolbar_event_listeners() {
 	$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar i:not( .sprite_picker ), #container #content #project_view #sprite_list_container #sprite_list_toolbar i" ).click(function() {
 		
 		var func = $( this ).attr( "func" );
-		console.log( func );
 		var new_group_size = false;
 
 		/* Ignore clicks if controls are disabled, unless deselecting the eraser tool */
-		if( ( ( controls_disabled == false ) && ( drawing_functions == false ) ) || ( ( drawing_functions = 2 ) && ( func == "sprite-erase" ) ) ) {
+		if( ( ( controls_disabled == false ) && ( drawing_functions == false ) ) || ( ( drawing_functions == 2 ) && ( func == "sprite-erase" ) ) ) {
 
 			switch( func ) {
 				case "back": /* Return to list of sprite groups */
@@ -678,16 +681,17 @@ function sprite_toolbar_event_listeners() {
 					/* Reload sprite list */
 					load_sprite_list();
 					break;
-				case "new": /* Create a new sprite */
 				case "new-group": /* Create a new sprite group */
+					$( "#container #content #project_view #sprite_list_container #sprite_list_toolbar" ).css( "display", "none" );
+				case "new": /* Create a new sprite */
 				case "rename": /* Rename selected sprite */
 				case "duplicate": /* Duplicated selected sprite */
 
+					/* Disable controls - don't hide the name input */
+					disable_controls( false );
+
 					/* Clear the name input */
 					$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename #texture_rename" ).val( "" );
-					
-					/* Hide the toolbar */
-					$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar" ).css( "display", "none" );
 					
 					/* Set the placeholder if we're renaming the selected sprite */
 					if( func == "rename" ) {
@@ -706,40 +710,62 @@ function sprite_toolbar_event_listeners() {
 					} else if( func == "new-group" ) {
 
 						/* Creating a new group, first prompt if it's an 8x8 or 16x16 sprite */
-						$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_new_group" ).css( "display", "flex" );
+						$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group" ).css( "display", "flex" );
 
 						/* Add event listners for escape key to discard change */
 						$( document ).on( "keyup", function( e ) {
 							
 							if( e.key == "Escape" ) {
 								/* Exit new group confirmation */
-								$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar" ).css( "display", "flex" );
-								$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_new_group" ).css( "display", "none" );
+								$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group" ).css( "display", "none" );
+								$( "#container #content #project_view #sprite_list_container #sprite_list_toolbar" ).css( "display", "flex" );
 								
 								/* Unbind event listeners */
 								$( document ).unbind( "keyup" );
-								$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_new_group input[type=button]" ).unbind( "click" );
+								$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group input[type=button]" ).unbind( "click" );
+
+								/* Enable controls */
+								enable_controls();
 							}
 						});
 
 						/* Add event listeners for buttons */
-						$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_new_group input[type=button]" ).click( function() {
+						$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group input[type=button]" ).click( function() {
 
-							if( $( this ).attr( "id" ) == "sprite_new_group_8" )
-								new_group_size = 8;
-							else 
-								new_group_size = 16;
+							if( $( this ).attr( "id" ) == "sprite_new_group_cancel" ) {
+								
+								/* Cancel making the new sprite */
+								$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group" ).css( "display", "none" );
+								$( "#container #content #project_view #sprite_list_container #sprite_list_toolbar" ).css( "display", "flex" );
 
-							/* Exit delete texture confirmation */
-							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_new_group" ).css( "display", "none" );
-							
-							/* Unbind event listeners */
-							$( document ).unbind( "keyup" );
-							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_new_group input[type=button]" ).unbind( "click" );
+								/* Reload sprite list */
+								load_sprite_list();
 
-							/* Show the rename input and focus */
-							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename" ).css( "display", "flex" );
-							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename #texture_rename" ).focus();
+								/* Enable controls */
+								enable_controls();
+								
+								/* Unbind event listeners */
+								$( document ).unbind( "keyup" );
+								$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group input[type=button]" ).unbind( "click" );
+
+							} else {
+								
+								if( $( this ).attr( "id" ) == "sprite_new_group_8" )
+									new_group_size = 8;
+								else 
+									new_group_size = 16;
+
+								/* Exit delete texture confirmation */
+								$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group" ).css( "display", "none" );
+								
+								/* Unbind event listeners */
+								$( document ).unbind( "keyup" );
+								$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group input[type=button]" ).unbind( "click" );
+
+								/* Show the rename input and focus */
+								$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name" ).css( "display", "flex" );
+								$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name" ).focus();
+							}
 						} );
 
 					} else {
@@ -853,7 +879,6 @@ function sprite_toolbar_event_listeners() {
 							}
 							
 							/* Exit new sprite creation */
-							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar" ).css( "display", "flex" );
 							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename" ).css( "display", "none" );
 							
 							/* Unbind event listeners */
@@ -861,23 +886,30 @@ function sprite_toolbar_event_listeners() {
 
 							/* Reload sprite list */
 							load_sprite_list();
+
+							/* Enable controls */
+							enable_controls();
 						}
 
 						/* Discard change */
 						if( ( e.key == "Escape" ) || ( e.type == "blur" ) ) {
 							/* Exit new sprite creation */
-							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar" ).css( "display", "flex" );
 							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename" ).css( "display", "none" );
 							
 							/* Unbind event listeners */
 							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename #texture_rename" ).unbind( "keyup blur" );
+
+							/* Enable controls */
+							enable_controls();
 						}
 					});
 					break;
 				case "delete": /* Delete the selected sprite */
 
+					/* Disable controls - don't hide the name input */
+					disable_controls( false );
+
 					/* Show the confirmation prompt */
-					$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar" ).css( "display", "none" );
 					$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_delete" ).css( "display", "flex" );
 
 					/* Add event listners for escape key to discard change */
@@ -885,8 +917,10 @@ function sprite_toolbar_event_listeners() {
 						
 						if( e.key == "Escape" ) {
 							/* Exit delete sprite confirmation */
-							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar" ).css( "display", "flex" );
 							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_delete" ).css( "display", "none" );
+							
+							/* Enable controls */
+							enable_controls();
 							
 							/* Unbind event listeners */
 							$( document ).unbind( "keyup" );
@@ -897,7 +931,6 @@ function sprite_toolbar_event_listeners() {
 					/* Add event listeners for buttons */
 					$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_delete #sprite_delete_y" ).click( function() {
 
-						console.log( selected_sprite.sprite );
 						if( selected_sprite.sprite == false ) {
 
 							/* Delete selected sprite group from local array */
@@ -954,8 +987,10 @@ function sprite_toolbar_event_listeners() {
 						}
 
 						/* Exit delete sprite confirmation */
-						$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar" ).css( "display", "flex" );
 						$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_delete" ).css( "display", "none" );
+
+						/* Enable controls */
+						enable_controls();
 						
 						/* Unbind event listeners */
 						$( document ).unbind( "keyup" );
@@ -968,8 +1003,10 @@ function sprite_toolbar_event_listeners() {
 					$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_delete #sprite_delete_n" ).click( function() {
 
 						/* Exit delete sprite confirmation */
-						$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar" ).css( "display", "flex" );
 						$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_delete" ).css( "display", "none" );
+
+						/* Enable controls */
+						enable_controls();
 						
 						/* Unbind event listeners */
 						$( document ).unbind( "keyup" );
@@ -978,7 +1015,7 @@ function sprite_toolbar_event_listeners() {
 					break;
 				case "sprite-erase":
 					
-					if( drawing_functions != 2) {
+					if( drawing_functions != 2 ) {
 
 						/* Switch to sprite erasing */
 						drawing_functions = 2;
@@ -1166,8 +1203,15 @@ function load_sprite_editor_colour_pickers() {
 				}
 
 				/* Set the colour picker to show the currently selected colour, ignore if it's the fill icon */
-				if( ( $( this ).attr( "id" ) != "sprite_fill" ) && ( $( this ).attr( "id" ) != "sprite_paint" ) )
+				if( ( $( this ).attr( "id" ) != "sprite_fill" ) && ( $( this ).attr( "id" ) != "sprite_paint" ) ) {
+
+					if( selected_sprite.sprite.data == undefined ) {
+						/* We had an error */
+						alert( "Error: Colour Picker not initialised correctly.\n\nPlease reload the Map Maker to fix, remember to save your work first!" );
+					}
+
 					$( this ).colpickSetColor( selected_sprite.sprite.data[ $( this ).attr( "col_id" ) ][ $( this ).parent().attr( "row_id" ) ], true );
+				}
 			} else {
 				return false;
 			}

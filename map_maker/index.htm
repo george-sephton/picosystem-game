@@ -6,8 +6,8 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto" />
-		<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+		<link rel="stylesheet" href="css/ext/Roboto.css" />
+		<link rel="stylesheet" href="css/ext/jquery-ui.css" />
 		<link rel="stylesheet" href="js/colpick/colpick.css" type="text/css"/>
 
 		<link rel="stylesheet" href="images/bootstrap-icons/bootstrap-icons.css">
@@ -17,8 +17,8 @@
 		<link rel="stylesheet" type="text/css" href="css/map_maker.css" />
 		<link rel="icon" type="image/x-icon" href="images/favicon.ico" />
 
-		<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.js"></script>
-		<script type="text/javascript" src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+		<script type="text/javascript" src="js/ext/jquery-3.6.0.js"></script>
+		<script type="text/javascript" src="js/ext/jquery-ui.js"></script>
 		<script type="text/javascript" src="js/colpick/colpick.js"></script>
 
 		<script type="text/javascript" src="js/data.js"></script>
@@ -199,6 +199,14 @@
 							<i class="bi-plus-square-fill" id="toolbar_new_sprite" func="new"></i>
 							<i class="bi-arrow-left" id="toolbar_back" func="back"></i>
 						</div>
+						<div id="sprite_editor_toolbar_new_group">
+							<input type="button" id="sprite_new_group_8" value="8 x 8 Sprites" />
+							<input type="button" id="sprite_new_group_16" value="16 x 16 Sprites" />
+							<input type="button" id="sprite_new_group_cancel" value="Cancel" />
+						</div>
+						<div id="sprite_editor_toolbar_new_group_name">
+							<input type="text" id="texture_group_name" placeholder="New group name" />
+						</div>
 						<div id="sprite_list">
 							<ul class="sortable">
 							</ul>
@@ -228,10 +236,6 @@
 						<div id="sprite_editor_toolbar_delete">
 							<input type="button" id="sprite_delete_y" value="Confirm" />
 							<input type="button" id="sprite_delete_n" value="Cancel"  />
-						</div>
-						<div id="sprite_editor_toolbar_new_group">
-							<input type="button" id="sprite_new_group_8" value="8 x 8 Sprites" />
-							<input type="button" id="sprite_new_group_16" value="16 x 16 Sprites"  />
 						</div>
 					</div>
 				</div>

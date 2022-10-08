@@ -14,6 +14,7 @@ function load_texture_list() {
 	/* Clear fill and paint texture icons */
 	$( "#texture_fill" ).css( "display", "none" );
 	$( "#texture_paint" ).css( "display", "none" );
+	$( "#texture_erase" ).css( "display", "none" );
 	
 	/* Check if we are showing groups or textures */
 	if( selected_texture.group == false ) {
@@ -230,8 +231,15 @@ function load_texture_editor_colour_pickers() {
 			}
 
 			/* Set the colour picker to show the currently selected colour, ignore if it's the fill icon */
-			if( ( $( this ).attr( "id" ) != "texture_fill" ) && ( $( this ).attr( "id" ) != "texture_paint" ) )
+			if( ( $( this ).attr( "id" ) != "texture_fill" ) && ( $( this ).attr( "id" ) != "texture_paint" ) ) {
+				
+				if( selected_texture.texture.data == undefined ) {
+					/* We had an error */
+					alert( "Error: Colour Picker not initialised correctly.\n\nPlease reload the Map Maker to fix, remember to save your work first!" );
+				}
+				
 				$( this ).colpickSetColor( selected_texture.texture.data[ $( this ).attr( "col_id" ) ][ $( this ).parent().attr( "row_id" ) ], true );
+			}
 		},
 		onSubmit: function( hsb, hex, rgb, e ) {
 
@@ -405,6 +413,7 @@ function load_texture_editor() {
 		/* Show fill and paint texture icons */
 		$( "#texture_fill" ).css( "display", "block" );
 		$( "#texture_paint" ).css( "display", "block" );
+		$( "#texture_erase" ).css( "display", "block" );
 
 		/* Show the editor */
 		$( "#texture_editor" ).css( "display", "flex" );

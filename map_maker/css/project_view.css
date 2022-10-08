@@ -48,23 +48,23 @@
 	display: none;
 	flex-direction: column;
 	gap: 10px;
-	padding: 10px;
-	background:#fff;
 }
 #container #content #project_view #map_list_container #map_list_heading {
 	font-size: 22px;
+	padding: 10px;
+	background: #fff;
 }
 #container #content #project_view #map_list_container #map_list_toolbar {
 	width: 100%;
-	background:#fff;
+	padding: 10px;
+	height: 60px;
+	background: #fff;
 	box-sizing: border-box;
-	padding: 0;
-	height: 35px;
 
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-start;
-	align-items: flex-start;
+	align-items: center;
 }
 #container #content #project_view #map_list_container #map_list_toolbar i {
 	color: #333;
@@ -76,6 +76,9 @@
 	cursor: pointer;
 }
 #container #content #project_view #map_list_container #map_list {
+	padding: 10px;
+	background: #fff;
+	flex-grow: 1;
 }
 #container #content #project_view #map_list_container #map_list .sortable li  {
 	background: #fff;
@@ -102,23 +105,23 @@
 	display: none;
 	flex-direction: column;
 	gap: 10px;
-	padding: 10px;
-	background: #fff;
 }
 #container #content #project_view #sprite_list_container #sprite_list_heading {
 	font-size: 22px;
+	padding: 10px;
+	background: #fff;
 }
 #container #content #project_view #sprite_list_container #sprite_list_toolbar {
 	width: 100%;
-	background:#fff;
+	padding: 10px;
+	background: #fff;
 	box-sizing: border-box;
-	padding: 0;
-	height: 35px;
+	height: 60px;
 
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-start;
-	align-items: flex-start;
+	align-items: center;
 }
 #container #content #project_view #sprite_list_container #sprite_list_toolbar i {
 	color: #333;
@@ -129,8 +132,50 @@
 	color: #8bb1c7;
 	cursor: pointer;
 }
+#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 10px;
+	height: 60px;
+	background: #fff;
+	display: none;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+}
+#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group input {
+	padding: 8px;
+	border: 1px solid #666;
+	color: #fff;
+	background: #333;
+	border-radius: 10px;
+	font-size: 14px;
+}
+#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group input:hover {
+	background: #8bb1c7;
+	color: #333;
+	cursor: pointer;
+}
+#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name {
+	width: 100%;
+	background:#fff;
+	box-sizing: border-box;
+	padding: 10px;
+	height: 60px;
+	display: flex;
+}
+#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name input {
+	width: 100%;
+	font-size: 20px;
+	border: 0px;
+	background: #FFF;
+	border-radius: 10px;
+}
 #container #content #project_view #sprite_list_container #sprite_list {
 	box-sizing: border-box;
+	background: #fff;
+	padding: 10px;
+	flex-grow: 1;
 }
 #container #content #project_view #sprite_list_container #sprite_list .sortable .ui-group  {
 	background: #ccc;
@@ -228,30 +273,6 @@
 	font-size: 14px;
 }
 #container #content #project_view #sprite_editor_container #sprite_editor_toolbar_delete input:hover {
-	background: #8bb1c7;
-	color: #333;
-	cursor: pointer;
-}
-#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_new_group {
-	width: 100%;
-	background:#fff;
-	box-sizing: border-box;
-	padding: 10px;
-	height: 60px;
-	display: none;
-	justify-content: center;
-	align-items: center;
-	gap: 8px;
-}
-#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_new_group input {
-	padding: 8px;
-	border: 1px solid #666;
-	color: #fff;
-	background: #333;
-	border-radius: 10px;
-	font-size: 14px;
-}
-#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_new_group input:hover {
 	background: #8bb1c7;
 	color: #333;
 	cursor: pointer;

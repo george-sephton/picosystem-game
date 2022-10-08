@@ -1642,6 +1642,14 @@ function disable_controls( hide_name_input = true ) {
 	$( "#container #content #project_view #sprite_editor_container #sprite_list_toolbar_new_group" ).css( "display", "none" );
 	$( "#container #content #project_view #sprite_editor_container #sprite_list_toolbar" ).css( "display", "flex" );
 
+	if( ( selected_sprite.group != false ) && ( drawing_functions == false ) ) {
+		$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar" ).css( "display", "none" );
+	} else {
+
+		/* We're drawing, just grey out the icons */
+		$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar i" ).addClass( "resize_disabled" );
+	}
+
 	/* Textures: Hide delete confirmation prompt and show the toolbar */
 	$( "#container #sidebar #texture_list_toolbar_delete" ).css( "display", "none" );
 	$( "#container #sidebar #texture_list_toolbar" ).css( "display", "flex" );
@@ -1685,6 +1693,19 @@ function enable_controls() {
 	if( selected_texture.texture != false )
 		$( "#container #toolbar #map_paint_preview" ).css( "display", "block" );
 
-	if( ( selected_texture.texture == false ) && ( selected_map != false ) )
+	if( ( selected_texture.texture == false ) && ( selected_map != false ) ) {
 		$( "#container #toolbar #map_settings" ).css( "display", "flex" );
+	}
+
+	if( selected_map == false ) {
+		
+		if( selected_sprite.group != false ) {
+			$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar" ).css( "display", "flex" );
+
+			$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar i" ).removeClass( "resize_disabled" );
+		}
+
+		/* Show sprite list in case it's hidden */
+		$( "#container #content #project_view #sprite_list_container #sprite_list" ).css( "display", "flex" );
+	}
 }
