@@ -1675,6 +1675,7 @@ function enable_controls() {
 
 	$( "#project_view #sprite_list_toolbar i" ).removeClass( "resize_disabled" );
 	$( "#project_view #sprite_list .sortable li" ).removeClass( "resize_disabled" );
+	$( "#project_view #sprite_editor_toolbar i" ).removeClass( "resize_disabled" );
 
 	$( ".sprite_picker" ).removeClass( "auto_cursor" );
 	$( ".texture_picker" ).removeClass( "auto_cursor" );

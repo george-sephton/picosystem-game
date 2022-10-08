@@ -29,11 +29,11 @@ function load_project_view() {
 
 	$( "#container #content #project_view #sprite_editor_container #sprite_editor" ).css( "display", "none" );
 	$( "#container #content #project_view #sprite_editor_container #sprite_editor_empty" ).css( "display", "flex" );
-	$( "#container #content #project_view #sprite_editor_container #sprite_list_toolbar" ).css( "display", "flex" );
-	$( "#container #content #project_view #sprite_editor_container #sprite_list_toolbar #toolbar_right" ).css( "display", "none" );
-	$( "#container #content #project_view #sprite_editor_container #sprite_list_toolbar #toolbar_new_sprite" ).css( "display", "none" );
-	$( "#container #content #project_view #sprite_editor_container #sprite_list_toolbar #toolbar_back" ).css( "display", "none" );
-	$( "#container #content #project_view #sprite_editor_container #sprite_list_toolbar_new_group" ).css( "display", "none" );
+	$( "#container #content #project_view #sprite_list_container #sprite_list_toolbar" ).css( "display", "flex" );
+	$( "#container #content #project_view #sprite_list_container #sprite_list_toolbar #toolbar_right" ).css( "display", "none" );
+	$( "#container #content #project_view #sprite_list_container #sprite_list_toolbar #toolbar_new_sprite" ).css( "display", "none" );
+	$( "#container #content #project_view #sprite_list_container #sprite_list_toolbar #toolbar_back" ).css( "display", "none" );
+	$( "#container #content #project_view #sprite_list_container #sprite_list_toolbar #sprite_list_toolbar_new_group" ).css( "display", "none" );
 
 	$( "#container #content #project_view" ).css( "display", "flex" );
 	$( "#container #content #project_view #sprite_editor_container" ).css( "display", "flex" );
@@ -686,17 +686,18 @@ function sprite_toolbar_event_listeners() {
 					/* Reload sprite list */
 					load_sprite_list();
 					break;
+				case "new": /* Create a new sprite */
 				case "new-group": /* Create a new sprite group */
 					$( "#container #content #project_view #sprite_list_container #sprite_list_toolbar" ).css( "display", "none" );
-				case "new": /* Create a new sprite */
 				case "rename": /* Rename selected sprite */
 				case "duplicate": /* Duplicated selected sprite */
 
 					/* Disable controls - don't hide the name input */
 					disable_controls( false );
 
-					/* Clear the name input */
+					/* Clear the name inputs */
 					$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename #texture_rename" ).val( "" );
+					$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name #texture_group_name" ).val( "" );
 					
 					/* Set the placeholder if we're renaming the selected sprite */
 					if( func == "rename" ) {
@@ -708,10 +709,19 @@ function sprite_toolbar_event_listeners() {
 						if( selected_sprite.sprite == false ) {
 							/* We're renaming the group name */
 							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename #texture_rename" ).attr( "placeholder", selected_sprite.group.name );
+							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename #texture_rename" ).val( selected_sprite.group.name );
 						} else {
 							/* We're renaming the texture name */
 							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename #texture_rename" ).attr( "placeholder", selected_sprite.sprite.name );
+							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename #texture_rename" ).val( selected_sprite.sprite.name );
 						}
+					} else if( func == "new" ) {
+
+						/* Creating a new sprite */
+						$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name" ).css( "display", "flex" );
+						$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name #texture_group_name" ).focus();
+
+						$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name #texture_group_name" ).attr( "placeholder", "New sprite name" );
 					} else if( func == "new-group" ) {
 
 						/* Creating a new group, first prompt if it's an 8x8 or 16x16 sprite */
@@ -769,7 +779,8 @@ function sprite_toolbar_event_listeners() {
 
 								/* Show the rename input and focus */
 								$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name" ).css( "display", "flex" );
-								$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name" ).focus();
+								$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name #texture_group_name" ).focus();
+						$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name #texture_group_name" ).attr( "placeholder", "New group name" );
 							}
 						} );
 
@@ -785,109 +796,113 @@ function sprite_toolbar_event_listeners() {
 					}
 					
 					/* Add event listners to either save or discard change */
-					$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename #texture_rename" ).on( "keyup blur", function( e ) {
+					$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename #texture_rename, #container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name #texture_group_name" ).on( "keyup blur", function( e ) {
 						
 						/* Save the change */
 						if( e.key == "Enter" ) {
 
 							/* Get entered name */
-							var new_name = sanitise_input( $( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename #texture_rename" ).val() );
+							var new_name = sanitise_input( $( this ).val() );
 
-							if( ( func == "new" ) || ( func == "new-group" ) || ( func == "duplicate" ) ) {
-								
-								if(( selected_sprite.group == false ) || ( ( selected_sprite.sprite == false ) && ( func == "duplicate" ) ) ) {
+							if( ( new_name != "" ) && ( new_name != undefined ) ) {
+
+								if( ( func == "new" ) || ( func == "new-group" ) || ( func == "duplicate" ) ) {
 									
-									/* We are creating a new group or duplicating an exisiting group */
-									var new_group = new Object();
-									new_group.name = new_name;
-
-									/* Get new ID value */
-									sort_sprite_groups_by_gid();
-									new_group.gid = ( project.sprites.length != 0 ) ? ( project.sprites[project.sprites.length - 1].gid + 1 ) : 0;
-
-									/* Get new order value */
-									sort_sprite_groups_by_gorder();
-									new_group.gorder = ( project.sprites.length != 0 ) ? ( project.sprites[project.sprites.length - 1].gorder + 1 ) : 0;
-									/* Note we sort by order 2nd so the array goes back to the correct order */
-
-									if( ( selected_sprite.sprite == false ) && ( func == "duplicate" ) ) {
+									if(( selected_sprite.group == false ) || ( ( selected_sprite.sprite == false ) && ( func == "duplicate" ) ) ) {
 										
-										/* Duplicate existing textures into our new group */
-										new_group.sprites = new Array();
-										$.extend( true, new_group.sprites, selected_sprite.group.sprites ); /* Clone array */
+										/* We are creating a new group or duplicating an exisiting group */
+										var new_group = new Object();
+										new_group.name = new_name;
 
-										/* Add size */
-										new_group.size = selected_sprite.group.size;
+										/* Get new ID value */
+										sort_sprite_groups_by_gid();
+										new_group.gid = ( project.sprites.length != 0 ) ? ( project.sprites[project.sprites.length - 1].gid + 1 ) : 0;
+
+										/* Get new order value */
+										sort_sprite_groups_by_gorder();
+										new_group.gorder = ( project.sprites.length != 0 ) ? ( project.sprites[project.sprites.length - 1].gorder + 1 ) : 0;
+										/* Note we sort by order 2nd so the array goes back to the correct order */
+
+										if( ( selected_sprite.sprite == false ) && ( func == "duplicate" ) ) {
+											
+											/* Duplicate existing textures into our new group */
+											new_group.sprites = new Array();
+											$.extend( true, new_group.sprites, selected_sprite.group.sprites ); /* Clone array */
+
+											/* Add size */
+											new_group.size = selected_sprite.group.size;
+										} else {
+
+											/* Create a blank texture to initialise the group */
+											var new_sprite = new Object();
+											new_sprite.name = new_name;
+											new_sprite.id = 0;
+											new_sprite.order = 0;
+											new_sprite.data = Array.from( { length: new_group_size }, () => Array.from( { length: new_group_size }, () => "" ) );
+
+											/* Add size */
+											new_group.size = new_group_size;
+
+											/* Add the blank texture to the array */
+											new_group.sprites = new Array();
+											new_group.sprites.push( new_sprite );
+										}
+
+										/* Add the new texture into the local array*/
+										project.sprites.push( new_group );
+
+										/* Let's also update the selected group to be our new one */
+										selected_sprite.group = new_group;
+
 									} else {
 
-										/* Create a blank texture to initialise the group */
+										/* We are creating or duplicating a texture */
 										var new_sprite = new Object();
 										new_sprite.name = new_name;
-										new_sprite.id = 0;
-										new_sprite.order = 0;
-										new_sprite.data = Array.from( { length: new_group_size }, () => Array.from( { length: new_group_size }, () => "" ) );
 
-										/* Add size */
-										new_group.size = new_group_size;
+										/* Get new ID value */
+										sort_sprites_by_id( selected_sprite.group.gid );
+										new_sprite.id = selected_sprite.group.sprites[selected_sprite.group.sprites.length - 1].id + 1;
 
-										/* Add the blank texture to the array */
-										new_group.sprites = new Array();
-										new_group.sprites.push( new_sprite );
+										/* Get new order value */
+										sort_sprites_by_order( selected_sprite.group.gid );
+										new_sprite.order = selected_sprite.group.sprites[selected_sprite.group.sprites.length - 1].order + 1;
+										/* Note we sort by order 2nd so the array goes back to the correct order */
+
+										if( func == "duplicate" ) {
+											/* Copy selected texture */
+											new_sprite.data = new Array();
+											$.extend( true, new_sprite.data, selected_sprite.sprite.data ); /* Clone array */
+										} else {
+											/* Create a blank canvas */
+											new_sprite.data = Array.from( { length: selected_sprite.group.size }, () => Array.from( { length: selected_sprite.group.size }, () => "" ) );
+										}
+
+										/* Add the new texture into the local array*/
+										selected_sprite.group.sprites.push( new_sprite );
+
+										/* Select newly created texture */
+										selected_sprite.sprite = new_sprite;
 									}
-
-									/* Add the new texture into the local array*/
-									project.sprites.push( new_group );
-
-									/* Let's also update the selected group to be our new one */
-									selected_sprite.group = new_group;
-
-								} else {
-
-									/* We are creating or duplicating a texture */
-									var new_sprite = new Object();
-									new_sprite.name = new_name;
-
-									/* Get new ID value */
-									sort_sprites_by_id( selected_sprite.group.gid );
-									new_sprite.id = selected_sprite.group.sprites[selected_sprite.group.sprites.length - 1].id + 1;
-
-									/* Get new order value */
-									sort_sprites_by_order( selected_sprite.group.gid );
-									new_sprite.order = selected_sprite.group.sprites[selected_sprite.group.sprites.length - 1].order + 1;
-									/* Note we sort by order 2nd so the array goes back to the correct order */
-
-									if( func == "duplicate" ) {
-										/* Copy selected texture */
-										new_sprite.data = new Array();
-										$.extend( true, new_sprite.data, selected_sprite.sprite.data ); /* Clone array */
-									} else {
-										/* Create a blank canvas */
-										new_sprite.data = Array.from( { length: selected_sprite.group.size }, () => Array.from( { length: selected_sprite.group.size }, () => "" ) );
-									}
-
-									/* Add the new texture into the local array*/
-									selected_sprite.group.sprites.push( new_sprite );
-
-									/* Select newly created texture */
-									selected_sprite.sprite = new_sprite;
 								}
-							}
 
-							if( func == "rename" ) {
-								if( selected_sprite.sprite == false ) {
-									/* Rename current group in local array */
-									selected_sprite.group.name = new_name;
-								} else {
-									/* Rename current texture in local array */
-									selected_sprite.sprite.name = new_name;								
+								if( func == "rename" ) {
+									if( selected_sprite.sprite == false ) {
+										/* Rename current group in local array */
+										selected_sprite.group.name = new_name;
+									} else {
+										/* Rename current texture in local array */
+										selected_sprite.sprite.name = new_name;								
+									}
 								}
 							}
 							
 							/* Exit new sprite creation */
 							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename" ).css( "display", "none" );
+							$( "#container #content #project_view #sprite_list_container #sprite_list_toolbar" ).css( "display", "flex" );
 							
 							/* Unbind event listeners */
-							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename #texture_rename" ).unbind( "keyup blur" );
+							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename #texture_rename, #container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name #texture_group_name" ).unbind( "keyup blur" );
 
 							/* Reload sprite list */
 							load_sprite_list();
@@ -900,12 +915,15 @@ function sprite_toolbar_event_listeners() {
 						if( ( e.key == "Escape" ) || ( e.type == "blur" ) ) {
 							/* Exit new sprite creation */
 							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename" ).css( "display", "none" );
+							$( "#container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name" ).css( "display", "none" );
+							$( "#container #content #project_view #sprite_list_container #sprite_list_toolbar" ).css( "display", "flex" );
 							
 							/* Unbind event listeners */
-							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename #texture_rename" ).unbind( "keyup blur" );
+							$( "#container #content #project_view #sprite_editor_container #sprite_editor_toolbar_rename #texture_rename, #container #content #project_view #sprite_list_container #sprite_editor_toolbar_new_group_name #texture_group_name" ).unbind( "keyup blur" );
 
 							/* Enable controls */
 							enable_controls();
+
 						}
 					});
 					break;
