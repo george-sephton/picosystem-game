@@ -1,3 +1,8 @@
+/* Removed from <head>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+Causes issues with sortable lists if including a local version for some reason.
+*/
+
 function load_project_view() {
 
 	/* Show project view elements */
