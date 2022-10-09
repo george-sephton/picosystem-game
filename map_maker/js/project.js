@@ -352,8 +352,6 @@ function project_toolbar_event_listeners() {
 					$( "#container #sidebar #texture_list_toolbar_rename" ).css( "display", "none" );
 					$( "#container #sidebar #texture_list_toolbar_delete" ).css( "display", "none" );
 
-					console.log( project );
-
 					var blob = new Blob( [ JSON.stringify( project ) ], { type: "text/json" } );
 					var file = document.createElement( "a" );
 					file.download = project.name.toLowerCase().replace( / /g, "_" ) + ".json";
@@ -362,80 +360,102 @@ function project_toolbar_event_listeners() {
 					break;
 				case "open":
 					/* Disable controls */
-						disable_controls();
+					disable_controls();
 
-						/* Show the confirmation prompt */
-						$( "#container #toolbar #settings #map_confirm #map_confirm_prompt" ).html( "Would you like to close this project and open a new one?" );
+					/* Show the confirmation prompt */
+					$( "#container #toolbar #settings #map_confirm #map_confirm_prompt" ).html( "Would you like to close this project and open a new one?" );
 
-						$( "#container #toolbar #settings #map_confirm input[type=button]" ).css( "display", "block" );
-						$( "#container #toolbar #settings #map_confirm #map_done" ).css( "display", "none" );
+					$( "#container #toolbar #settings #map_confirm input[type=button]" ).css( "display", "block" );
+					$( "#container #toolbar #settings #map_confirm #map_done" ).css( "display", "none" );
 
-						$( "#container #toolbar #settings #map_confirm" ).css( "display", "flex" );
+					$( "#container #toolbar #settings #map_confirm" ).css( "display", "flex" );
 
-						/* Add event listeners */
-						$( "#container #toolbar #settings #map_confirm input[type=button]" ).on( "click" , function( e ) {
+					/* Add event listeners */
+					$( "#container #toolbar #settings #map_confirm input[type=button]" ).on( "click" , function( e ) {
+						
+						if( $( this ).attr( "id" ) == "map_confirm_y" ) {
+
+							$( "#container #content #toolbar #settings" ).css( "display", "none" );
+							$( "#container #content #toolbar #upload_settings" ).css( "display", "flex" );
+							$( "#container #content #project_upload" ).css( "display", "flex" );
+
+							$( "#container #content #project_view" ).css( "display", "none" );
+
+							/* Upload toolbar event listener */
+							$( "#container #toolbar #upload_settings #upload_confirm #map_done" ).on( "click", function() {
+
+								if( $( "#container #project_upload #upload_input" ).val() != "" ) {
+
+									/* Convert JSON to object and set as the active project */
+									try {
+										var uploaded_project = JSON.parse( $( "#container #project_upload #upload_input" ).val() );
+										project = uploaded_project;
+
+										/* Clear the input */
+										$( "#container #project_upload #upload_input" ).val( "" )
+
+										/* Remove event listener */
+										$( "#container #toolbar #upload_settings #upload_confirm #map_done" ).unbind( "click" );
+
+										/* Re-enable controls */
+										enable_controls();
+
+										/* Load project view */
+										load_project_view();
+									} 
+									catch( exc ) {
+										/* Clear the input */
+										$( "#container #project_upload #upload_input" ).val( "" )
+									}									
+								}
+
+							} );
+
+						} else if( $( this ).attr( "id" ) == "map_confirm_n" ) {
 							
-							if( $( this ).attr( "id" ) == "map_confirm_y" ) {
+							/* Re-enable controls */
+							enable_controls();
+						}
 
-								$( "#container #content #toolbar #settings" ).css( "display", "none" );
-								$( "#container #content #toolbar #upload_settings" ).css( "display", "flex" );
-								$( "#container #content #project_upload" ).css( "display", "flex" );
+						/* Remove event listeners */
+						$( "#container #toolbar #settings #map_confirm input[type=button]" ).unbind( "click" );
 
-								$( "#container #content #project_view" ).css( "display", "none" );
-
-								/* Upload toolbar event listener */
-								$( "#container #toolbar #upload_settings #upload_confirm #map_done" ).on( "click", function() {
-
-									if( $( "#container #project_upload #upload_input" ).val() != "" ) {
-
-										/* Convert JSON to object and set as the active project */
-										try {
-											var uploaded_project = JSON.parse( $( "#container #project_upload #upload_input" ).val() );
-											project = uploaded_project;
-
-											/* Clear the input */
-											$( "#container #project_upload #upload_input" ).val( "" )
-
-											/* Remove event listener */
-											$( "#container #toolbar #upload_settings #upload_confirm #map_done" ).unbind( "click" );
-
-											/* Re-enable controls */
-											enable_controls();
-
-											/* Load project view */
-											load_project_view();
-										} 
-										catch( exc ) {
-											/* Clear the input */
-											$( "#container #project_upload #upload_input" ).val( "" )
-										}									
-									}
-
-								} );
-
-							} else if( $( this ).attr( "id" ) == "map_confirm_n" ) {
-								
-								/* Re-enable controls */
-								enable_controls();
-							}
-
-							/* Remove event listeners */
-							$( "#container #toolbar #settings #map_confirm input[type=button]" ).unbind( "click" );
-
-							/* Hide the confirmation prompt */
-							$( "#container #toolbar #settings #map_confirm #map_confirm_prompt" ).html( "" );
-
-							$( "#container #toolbar #settings #map_confirm" ).css( "display", "none" );
-						});
+						/* Hide the confirmation prompt */
+						$( "#container #toolbar #settings #map_confirm #map_confirm_prompt" ).html( "" );
+						$( "#container #toolbar #settings #map_confirm" ).css( "display", "none" );
+					});
 					break;
 				case "export":
 					
-					/* Hide any confirmation prompts */
-					$( "#container #sidebar #texture_list_toolbar_rename" ).css( "display", "none" );
-					$( "#container #sidebar #texture_list_toolbar_delete" ).css( "display", "none" );
+					/* Disable controls */
+					disable_controls();
 
-					//export_data();
-					export_data_gba();
+					/* Show the confirmation prompt */
+					$( "#container #toolbar #settings #map_export #map_export_prompt" ).html( "What format would you like to export?" );
+					$( "#container #toolbar #settings #map_export #map_done" ).css( "display", "none" );
+
+					$( "#container #toolbar #settings #map_export" ).css( "display", "flex" );
+
+					/* Add event listeners */
+					$( "#container #toolbar #settings #map_export input[type=button]" ).on( "click" , function( e ) {
+						
+						/* Which format are we exporting */
+						if( $( this ).attr( "id" ) == "map_export_gba" ) {
+							export_data_gba();
+						} else if( $( this ).attr( "id" ) == "map_export_ps" ) {
+							export_data_ps();
+						}
+
+						/* Re-enable controls */
+						enable_controls();
+
+						/* Remove event listeners */
+						$( "#container #toolbar #settings #map_export input[type=button]" ).unbind( "click" );
+
+						/* Hide the confirmation prompt */
+						$( "#container #toolbar #settings #map_export #map_export_prompt" ).html( "" );
+						$( "#container #toolbar #settings #map_export" ).css( "display", "none" );
+					} );
 					break;
 			}
 		}

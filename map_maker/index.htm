@@ -6,7 +6,7 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-		<!--<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto" />-->
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto" />
 		<link rel="stylesheet" href="js/colpick/colpick.css" type="text/css"/>
 
 		<link rel="stylesheet" href="images/bootstrap-icons/bootstrap-icons.css">
@@ -20,8 +20,9 @@
 		<script type="text/javascript" src="js/ext/jquery-ui.js"></script>
 		<script type="text/javascript" src="js/colpick/colpick.js"></script>
 
-		<script type="text/javascript" src="js/data.js"></script>
+		<script type="text/javascript" src="js/demo_data.js"></script>
 		<script type="text/javascript" src="js/data_gba.js"></script>
+		<script type="text/javascript" src="js/data_ps.js"></script>
 		<script type="text/javascript" src="js/project.js"></script>
 		<script type="text/javascript" src="js/textures.js"></script>
 		<script type="text/javascript" src="js/maps.js"></script>
@@ -99,6 +100,12 @@
 							<input type="button" id="map_confirm_y" value="Confirm" />
 							<input type="button" id="map_confirm_n" value="Cancel"  />
 							<input type="button" id="map_done" value="Done"  />
+						</div>
+						<div id="map_export">
+							<label id="map_export_prompt"></label>
+							<input type="button" id="map_export_gba" value="GBA" />
+							<input type="button" id="map_export_ps" value="PicoSystem"  />
+							<input type="button" id="map_export_cancel" value="Cancel"  />
 						</div>
 					</div>
 					<div id="map_settings">

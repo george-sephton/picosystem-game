@@ -243,6 +243,27 @@
 	color: #333;
 	cursor: pointer;
 }
+#container #toolbar #settings #map_export {
+	display: none;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 8px;
+	margin: 6px 0 0 0;
+}
+#container #toolbar #settings #map_export input {
+	padding: 8px;
+	border: 1px solid #666;
+	color: #fff;
+	background: #333;
+	border-radius: 10px;
+	font-size: 14px;
+	width: 105px;
+}
+#container #toolbar #settings #map_export input:hover {
+	background: #8bb1c7;
+	color: #333;
+	cursor: pointer;
+}
 #container #toolbar #map_settings {
 	display: none;
 	flex-direction: column;

@@ -45,6 +45,17 @@ function sanitise_input( input_text ) {
 	return input_text.replace(/[^a-zA-Z0-9\ _]/g, '_');
 }
 
+/* Create empty project */
+var empty_project = new Object();
+empty_project.name = "New Project";
+empty_project.textures = new Array();
+empty_project.sprites = new Array();
+empty_project.maps = new Array();
+//var project = empty_project;
+
+/* Load demo project */
+var project = demo_project;
+
 /* Document load */
 $( function() {
 
@@ -52,13 +63,13 @@ $( function() {
 	load_texture_editor_colour_pickers();
 	load_sprite_editor_colour_pickers();
 
-	//load_project_view();
+	load_project_view();
 
 	/* Debug */
-	selected_map = project.maps.find( obj => obj.id == 0 );
+	/*selected_map = project.maps.find( obj => obj.id == 0 );
 	load_map_editing_view();
 
 	selected_texture.group = project.textures.find( obj => obj.gid == 2 );
 	selected_texture.texture = selected_texture.group.textures.find( obj => obj.id == 0 );
-	load_texture_list();
+	load_texture_list();*/
 } );

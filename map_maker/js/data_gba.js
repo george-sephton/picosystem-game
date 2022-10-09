@@ -447,6 +447,13 @@ function export_data_gba() {
 	output += "};\n\n";
 	output += "#endif";
 
-	console.log( output );
-	
+	//console.log( output );
+
+	var blob = new Blob( [output], { type: "text/plain" } );
+	var file = document.createElement( "a" );
+	file.download = project.name.toLowerCase().replace( / /g, "_" ) + ".h";
+	file.href = window.URL.createObjectURL( blob );
+	file.click(); 
+
+	console.log( project );
 }
