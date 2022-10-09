@@ -575,9 +575,11 @@ function texture_toolbar_event_listeners() {
 						if( selected_texture.texture == false ) {
 							/* We're renaming the group name */
 							$( "#container #sidebar #texture_list_toolbar_rename #texture_rename" ).attr( "placeholder", selected_texture.group.name );
+							$( "#container #sidebar #texture_list_toolbar_rename #texture_rename" ).val( selected_texture.group.name );
 						} else {
 							/* We're renaming the texture name */
 							$( "#container #sidebar #texture_list_toolbar_rename #texture_rename" ).attr( "placeholder", selected_texture.texture.name );
+							$( "#container #sidebar #texture_list_toolbar_rename #texture_rename" ).val( selected_texture.texture.name );
 						}
 					} else {
 						/* Set the placeholder if we're creating/duplicating a new texture or group */
@@ -594,89 +596,107 @@ function texture_toolbar_event_listeners() {
 							/* Get entered name */
 							var new_name = sanitise_input( $( "#container #sidebar #texture_list_toolbar_rename #texture_rename" ).val() );
 
-							if( ( func == "new" ) || ( func == "new-group" ) || ( func == "duplicate" ) ) {
+							if( new_name.match( /^\d/ ) ) {
 								
-								if(( selected_texture.group == false ) || ( ( selected_texture.texture == false ) && ( func == "duplicate" ) ) ) {
+								alert( "Texture name cannot start with a number" );
+							} else {
+
+								/* Check if name already exists */
+								var check_name = new_name.toLowerCase().replace( / /g, "_" );
+								var check_array = project.textures.map( function( val ) {
+									return val.name.toLowerCase().replace( / /g, "_" );;
+								} );
+
+								if( ( ( ( check_array.indexOf( check_name ) !== -1 ) && ( func != "rename" ) ) || ( ( check_array.indexOf( check_name ) !== -1 ) && ( func == "rename" ) && ( check_name != selected_texture.group.name.toLowerCase().replace( / /g, "_" ) ) ) ) && ( selected_texture.texture == false ) ) {
 									
-									/* We are creating a new group or duplicating an exisiting group */
-									var new_group = new Object();
-									new_group.name = new_name;
-
-									/* Get new ID value */
-									sort_texture_groups_by_gid();
-									new_group.gid = ( project.textures.length != 0 ) ? ( project.textures[project.textures.length - 1].gid + 1 ) : 0;
-
-									/* Get new order value */
-									sort_texture_groups_by_gorder();
-									new_group.gorder = ( project.textures.length != 0 ) ? ( project.textures[project.textures.length - 1].gorder + 1 ) : 0;
-									/* Note we sort by order 2nd so the array goes back to the correct order */
-
-									if( ( selected_texture.texture == false ) && ( func == "duplicate" ) ) {
-										
-										/* Duplicate existing textures into our new group */
-										new_group.textures = new Array();
-										$.extend( true, new_group.textures, selected_texture.group.textures ); /* Clone array */
-									} else {
-										
-										/* Create a blank texture to initialise the group */
-										var new_texture = new Object();
-										new_texture.name = new_name;
-										new_texture.id = 0;
-										new_texture.order = 0;
-										new_texture.data = Array.from( { length: 8 }, () => Array.from( { length: 8 }, () => "ffffff" ) );
-
-										/* Add the blank texture to the array */
-										new_group.textures = new Array();
-										new_group.textures.push( new_texture );
-									}
-
-									/* Add the new texture into the local array*/
-									project.textures.push( new_group );
-
-									/* Let's also update the selected group to be our new one */
-									selected_texture.group = new_group;
-
+									alert( "Texture name already exits" );
 								} else {
 
-									/* We are creating or duplicating a texture */
-									var new_texture = new Object();
-									new_texture.name = new_name;
-
-									/* Get new ID value */
-									sort_textures_by_id( selected_texture.group.gid );
-									new_texture.id = selected_texture.group.textures[selected_texture.group.textures.length - 1].id + 1;
-
-									/* Get new order value */
-									sort_textures_by_order( selected_texture.group.gid );
-									new_texture.order = selected_texture.group.textures[selected_texture.group.textures.length - 1].order + 1;
-									/* Note we sort by order 2nd so the array goes back to the correct order */
-
-									if( func == "duplicate" ) {
+									if( ( func == "new" ) || ( func == "new-group" ) || ( func == "duplicate" ) ) {
 										
-										/* Copy selected texture */
-										new_texture.data = new Array();
-										$.extend( true, new_texture.data, selected_texture.texture.data ); /* Clone array */
-									} else {
-										
-										/* Create a blank canvas */
-										new_texture.data = Array.from( { length: 8 }, () => Array.from( { length: 8 }, () => "ffffff" ) );
+										if(( selected_texture.group == false ) || ( ( selected_texture.texture == false ) && ( func == "duplicate" ) ) ) {
+											
+											/* We are creating a new group or duplicating an exisiting group */
+											var new_group = new Object();
+											new_group.name = new_name;
+
+											/* Get new ID value */
+											sort_texture_groups_by_gid();
+											new_group.gid = ( project.textures.length != 0 ) ? ( project.textures[project.textures.length - 1].gid + 1 ) : 0;
+
+											/* Get new order value */
+											sort_texture_groups_by_gorder();
+											new_group.gorder = ( project.textures.length != 0 ) ? ( project.textures[project.textures.length - 1].gorder + 1 ) : 0;
+											/* Note we sort by order 2nd so the array goes back to the correct order */
+
+											if( ( selected_texture.texture == false ) && ( func == "duplicate" ) ) {
+												
+												/* Duplicate existing textures into our new group */
+												new_group.textures = new Array();
+												$.extend( true, new_group.textures, selected_texture.group.textures ); /* Clone array */
+											} else {
+												
+												/* Create a blank texture to initialise the group */
+												var new_texture = new Object();
+												new_texture.name = new_name;
+												new_texture.id = 0;
+												new_texture.order = 0;
+												new_texture.data = Array.from( { length: 8 }, () => Array.from( { length: 8 }, () => "ffffff" ) );
+
+												/* Add the blank texture to the array */
+												new_group.textures = new Array();
+												new_group.textures.push( new_texture );
+											}
+
+											/* Add the new texture into the local array*/
+											project.textures.push( new_group );
+
+											/* Let's also update the selected group to be our new one */
+											selected_texture.group = new_group;
+
+										} else {
+
+											/* We are creating or duplicating a texture */
+											var new_texture = new Object();
+											new_texture.name = new_name;
+
+											/* Get new ID value */
+											sort_textures_by_id( selected_texture.group.gid );
+											new_texture.id = selected_texture.group.textures[selected_texture.group.textures.length - 1].id + 1;
+
+											/* Get new order value */
+											sort_textures_by_order( selected_texture.group.gid );
+											new_texture.order = selected_texture.group.textures[selected_texture.group.textures.length - 1].order + 1;
+											/* Note we sort by order 2nd so the array goes back to the correct order */
+
+											if( func == "duplicate" ) {
+												
+												/* Copy selected texture */
+												new_texture.data = new Array();
+												$.extend( true, new_texture.data, selected_texture.texture.data ); /* Clone array */
+											} else {
+												
+												/* Create a blank canvas */
+												new_texture.data = Array.from( { length: 8 }, () => Array.from( { length: 8 }, () => "ffffff" ) );
+											}
+
+											/* Add the new texture into the local array*/
+											selected_texture.group.textures.push( new_texture );
+
+											/* Select newly created texture */
+											selected_texture.texture = new_texture;
+										}
 									}
 
-									/* Add the new texture into the local array*/
-									selected_texture.group.textures.push( new_texture );
-
-									/* Select newly created texture */
-									selected_texture.texture = new_texture;
-								}
-							}
-
-							if( func == "rename" ) {
-								if( selected_texture.texture == false ) {
-									/* Rename current group in local array */
-									selected_texture.group.name = new_name;
-								} else {
-									/* Rename current texture in local array */
-									selected_texture.texture.name = new_name;								
+									if( func == "rename" ) {
+										if( selected_texture.texture == false ) {
+											/* Rename current group in local array */
+											selected_texture.group.name = new_name;
+										} else {
+											/* Rename current texture in local array */
+											selected_texture.texture.name = new_name;								
+										}
+									}
 								}
 							}
 							

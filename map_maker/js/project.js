@@ -856,7 +856,7 @@ function sprite_toolbar_event_listeners() {
 									return val.name.toLowerCase().replace( / /g, "_" );;
 								} );
 
-								if( ( ( check_array.indexOf( check_name ) !== -1 ) && ( func != "rename" ) ) || ( ( check_array.indexOf( check_name ) !== -1 ) && ( func == "rename" ) && ( check_name != selected_sprite.group.name.toLowerCase().replace( / /g, "_" ) ) ) ) {
+								if( ( ( ( check_array.indexOf( check_name ) !== -1 ) && ( func != "rename" ) ) || ( ( check_array.indexOf( check_name ) !== -1 ) && ( func == "rename" ) && ( check_name != selected_sprite.group.name.toLowerCase().replace( / /g, "_" ) ) ) ) && ( selected_sprite.sprite == false ) ) {
 									
 									alert( "Sprite name already exits" );
 								} else {

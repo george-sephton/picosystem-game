@@ -400,6 +400,7 @@ function map_toolbar_event_listeners() {
 					/* Focus on name input */
 					if( func == "rename-map" ) {
 						$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "placeholder", selected_map.name );
+						$( "#container #toolbar #settings #name_input_container #name_input" ).val( selected_map.name );
 					} else {
 						$( "#container #toolbar #settings #name_input_container #name_input" ).attr( "placeholder", "Enter new map name" );
 					}
@@ -414,38 +415,56 @@ function map_toolbar_event_listeners() {
 
 							var map_name_value = sanitise_input( $( this ).val() );
 
-							if( func == "rename-map" ) {
-								if( ( map_name_value != "" ) && (map_name_value != selected_map.name ) ) {
-									
-									/* Change the map name */
-									selected_map.name = map_name_value;
-								}
+							if( map_name_value.match( /^\d/ ) ) {
+								
+								alert( "Map name cannot start with a number" );
 							} else {
-								if( map_name_value != "" ) {
 
-									/* Duplicate current map */
-									new_map = new Object();
-									$.extend( true, new_map, selected_map ); /* Clone array */
+								/* Check if name already exists */
+								var check_name = map_name_value.toLowerCase().replace( / /g, "_" );
+								var check_array = project.maps.map( function( val ) {
+									return val.name.toLowerCase().replace( / /g, "_" );;
+								} );
 
-									/* Set the new name */
-									new_map.name = map_name_value;
+								if( ( ( check_array.indexOf( check_name ) !== -1 ) && ( func != "rename-map" ) ) || ( ( check_array.indexOf( check_name ) !== -1 ) && ( func == "rename-map" ) && ( check_name != selected_map.name.toLowerCase().replace( / /g, "_" ) ) ) ) {
 
-									/* Get new ID value */
-									sort_maps_by_id();
-									new_map.id = project.maps[project.maps.length - 1].id + 1;
+									alert( "Map name already exits" );
+								} else {
 
-									/* Get new order value */
-									sort_maps_by_order();
-									new_map.order = project.maps[project.maps.length - 1].order + 1;
-									/* Note we sort by order 2nd so the array goes back to the correct order */
+									if( func == "rename-map" ) {
+										if( ( map_name_value != "" ) && (map_name_value != selected_map.name ) ) {
+											
+											/* Change the map name */
+											selected_map.name = map_name_value;
+										}
+									} else {
+										if( map_name_value != "" ) {
 
-									/* Add the duplicated map to the array */
-									project.maps.push( new_map );
+											/* Duplicate current map */
+											new_map = new Object();
+											$.extend( true, new_map, selected_map ); /* Clone array */
 
-									/* Reload map editor */
-									close_map_editing_view();
-									selected_map = project.maps.find( obj => obj.id == new_map.id );
-									load_map_editing_view();
+											/* Set the new name */
+											new_map.name = map_name_value;
+
+											/* Get new ID value */
+											sort_maps_by_id();
+											new_map.id = project.maps[project.maps.length - 1].id + 1;
+
+											/* Get new order value */
+											sort_maps_by_order();
+											new_map.order = project.maps[project.maps.length - 1].order + 1;
+											/* Note we sort by order 2nd so the array goes back to the correct order */
+
+											/* Add the duplicated map to the array */
+											project.maps.push( new_map );
+
+											/* Reload map editor */
+											close_map_editing_view();
+											selected_map = project.maps.find( obj => obj.id == new_map.id );
+											load_map_editing_view();
+										}
+									}
 								}
 							}
 
