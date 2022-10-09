@@ -138,23 +138,25 @@ function load_map_editor() {
 		}
 
 		/* If we are looking for a newly added row, outside of the exisiting map bounds, return an empty tile */
-		if( ( tile_info.col >= selected_map.width ) || ( tile_info.row >= selected_map.height ) ) tile_info.texture_gid = undefined;
+		if( ( tile_info.col >= selected_map.width ) || ( tile_info.row >= selected_map.height ) ) tile_info.texture_gid = -1;
 		else tile_info.texture_gid = selected_map.data[tile_info.row][tile_info.col].texture_gid;
 		/* If we are looking for a newly added column, outside of the exisiting map bounds, return an empty tile */
-		if( ( tile_info.col >= selected_map.width ) || ( tile_info.row >= selected_map.height ) ) tile_info.texture_gid = undefined;
+		if( ( tile_info.col >= selected_map.width ) || ( tile_info.row >= selected_map.height ) ) tile_info.texture_gid = -1;
 		else tile_info.texture_id = selected_map.data[tile_info.row][tile_info.col].texture_id;
 		
 		var texture_obj = undefined;
 		var bg_texture = false;
 
 		/* Get the texture */
-		if( ( tile_info.texture_gid != undefined ) && ( tile_info.texture_id != undefined ) ) {
+		if( ( tile_info.texture_gid != -1 ) && ( tile_info.texture_id != -1 ) ) {
 			var group_obj = project.textures.find( obj => obj.gid == tile_info.texture_gid );
 			if( group_obj != undefined ) {
 				texture_obj = group_obj.textures.find( obj => obj.id == tile_info.texture_id );
 			} else {
 				texture_obj = undefined;
 			}
+		} else {
+			texture_obj = -1;
 		}
 		
 		if( texture_obj == undefined ) {
@@ -175,10 +177,13 @@ function load_map_editor() {
 			}
 		}
 		
-		if( texture_obj != undefined ) {
+		if( texture_obj != -1 ) {
 
 			/* Whilst resizing, don't render the texture */
-			if(controls_disabled == true) {	
+			if( controls_disabled == true ) {
+
+				//map_resizing.new_width = selected_map.width;
+				//map_resizing.new_height = selected_map.height;
 
 				/* Show blue instead */
 				$( this ).css( "background", "#327da8" );
@@ -279,6 +284,10 @@ function load_map_editor() {
 					}
 				}
 			}
+		} else {
+
+			$( this ).css( "background", "#ccc" );
+			$( this ).removeClass( "trans_background" );
 		}
 		
 	} );
@@ -300,6 +309,7 @@ function map_editor_toolbar_reset() {
 	/* Deselect the paint/erase tool */
 	$( "#map_toolbar_paint" ).removeClass( "selected_tool" );
 	$( "#map_toolbar_erase" ).removeClass( "selected_tool" );
+	$( "#map_toolbar_eyedropper" ).removeClass( "selected_tool" );
 
 	/* Remove restrictions on texture panel */
 	$( "#container #sidebar #texture_list_toolbar i" ).removeClass( "resize_disabled" );
@@ -360,23 +370,15 @@ function map_toolbar_event_listeners() {
 	/* Map toolbar event listeners */
 	$( "#container #toolbar #settings #controls i" ).click(function() {
 		
+		var func = $( this ).attr( "func" );
+		
 		/* Check if functions are disabled */
-		if( controls_disabled == false ) {
-
-			var func = $( this ).attr( "func" );
-			
-			/* Hide delete confirmation prompt and show the toolbar */
-			$( "#container #sidebar #texture_list_toolbar_delete" ).css( "display", "none" );
-			$( "#container #sidebar #texture_list_toolbar" ).css( "display", "flex" );
-
-			if( ( func != "paint") && ( func != "erase" ) && ( func != "zoom-in" ) && ( func != "zoom-out" ) && ( func != "flip-v" ) && ( func != "flip-h" ) && ( drawing_functions != false ) ) {
-								
-				/* We are moving to another function whilst painting/erasing, reset everything */
-				map_editor_toolbar_reset();
-
-				/* Disable drawing functions */
-				drawing_functions = false;
-			}
+		if	(     ( controls_disabled == false ) || 
+			  ( ( ( func == "zoom-in" ) || ( func == "zoom-out" ) ) && ( drawing_functions != false ) ) || 
+			    ( ( func == "eyedropper" ) && ( drawing_functions == 6 ) ) || 
+			    ( ( func == "erase" ) && ( drawing_functions == 2 ) ) || 
+			  ( ( ( func == "paint" ) || ( func == "flip-v" ) || ( func == "flip-h" ) ) && ( drawing_functions == 1 ) )
+			) {
 
 			switch( func ) {
 				case "close-map":
@@ -564,18 +566,46 @@ function map_toolbar_event_listeners() {
 					break;
 				case "paint":
 				case "erase":
+				case "eyedropper":
 
 					/* Reset toolbar for a clean start */
 					map_editor_toolbar_reset();
+
+					/* Disable controls */
+					disable_controls( false );
+
+					/* Re-enable zoom controls */
+					$( "#map_toolbar_zoom_in" ).removeClass( "resize_disabled" );
+					$( "#map_toolbar_zoom_out" ).removeClass( "resize_disabled" );
 					
 					/* Tool selection behaviour */
-					if( ( func == "paint" ) && (drawing_functions != 1) ) {
+					if( ( func == "eyedropper" ) && ( drawing_functions != 6 ) ) {
+
+						/* Switch to eyedropper */
+						drawing_functions = 6;
+						map_editor_start_drawing();
+
+						/* Highlight the eyedropper icon */
+						$( "#map_toolbar_eyedropper" ).addClass( "selected_tool" );
+						$( "#map_toolbar_eyedropper" ).removeClass( "resize_disabled" );
+
+						/* Disable everything in texture list */
+						$( "#container #sidebar #texture_list .sortable li" ).addClass( "resize_disabled" );
+
+					} else if( ( func == "paint" ) && ( drawing_functions != 1 ) ) {
+						
 						/* Switch to map painting */
 						drawing_functions = 1;
 						map_editor_start_drawing();
 
 						/* Highlight the paintbrush icon */
 						$( "#map_toolbar_paint" ).addClass( "selected_tool" );
+						$( "#map_toolbar_paint" ).removeClass( "resize_disabled" );
+
+						/* Enable the flip icons and preview */
+						$( "#map_toolbar_flip_h" ).removeClass( "resize_disabled" );
+						$( "#map_toolbar_flip_v" ).removeClass( "resize_disabled" );
+						$( "#map_paint_preview" ).removeClass( "resize_disabled" );
 
 						/* Update preview and tile settings panel */
 						selected_texture.can_walk = [true, true, true, true];
@@ -594,22 +624,23 @@ function map_toolbar_event_listeners() {
 
 						/* Disable groups in texture list */
 						$( "#container #sidebar #texture_list .sortable .ui-group" ).addClass( "resize_disabled" );
-					} else if( ( func == "erase" ) && (drawing_functions != 2) ) {
+					} else if( ( func == "erase" ) && ( drawing_functions != 2 ) ) {
+						
 						/* Switch to map erasing */
 						drawing_functions = 2;
 						map_editor_start_drawing();
 
 						/* Highlight the eraser icon */
 						$( "#map_toolbar_erase" ).addClass( "selected_tool" );
-
-						/* Hide the flip icons and preview since we aren't painting these */
-						$( "#map_toolbar_flip_h" ).css( "display", "none" );
-						$( "#map_toolbar_flip_v" ).css( "display", "none" );
-						$( "#map_paint_preview" ).css( "display", "none" );
+						$( "#map_toolbar_erase" ).removeClass( "resize_disabled" );
 
 						/* Disable everything in texture list */
 						$( "#container #sidebar #texture_list .sortable li" ).addClass( "resize_disabled" );
 					} else {
+						
+						/* Re-enable controls */
+						enable_controls();
+
 						/* Disable all drawing functions */				
 						drawing_functions = false;
 					}

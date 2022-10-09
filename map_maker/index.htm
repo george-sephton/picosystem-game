@@ -6,7 +6,7 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto" />
+		<!--<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto" />-->
 		<link rel="stylesheet" href="js/colpick/colpick.css" type="text/css"/>
 
 		<link rel="stylesheet" href="images/bootstrap-icons/bootstrap-icons.css">
@@ -80,10 +80,11 @@
 							<i class="bi-x-square map_editing_functions" func="clear"></i>
 							<i class="bi-aspect-ratio-fill map_editing_functions" func="resize-canvas"></i>
 							<div class="toolbar_separator map_editing_functions"></div>
-							<i class="bi-zoom-in map_editing_functions" func="zoom-in"></i>
-							<i class="bi-zoom-out map_editing_functions" func="zoom-out"></i>
+							<i class="bi-zoom-in map_editing_functions" id="map_toolbar_zoom_in" func="zoom-in"></i>
+							<i class="bi-zoom-out map_editing_functions" id="map_toolbar_zoom_out" func="zoom-out"></i>
 							<div class="toolbar_separator map_editing_functions"></div>
 							<i class="bi-image-fill map_editing_functions" id="map_toolbar_bg_image" func="set-bg-texture"></i>
+							<i class="bi-eyedropper map_editing_functions" id="map_toolbar_eyedropper" func="eyedropper"></i>
 							<i class="bi-brush-fill map_editing_functions" id="map_toolbar_paint" func="paint"></i>
 							<i class="bi-eraser-fill map_editing_functions" id="map_toolbar_erase" func="erase"></i>
 							<i class="bi-paint-bucket map_editing_functions" id="map_toolbar_fill" func="fill"></i>
