@@ -858,7 +858,7 @@ function map_toolbar_event_listeners() {
 	$( "#container #toolbar #map_paint_settings" ).on( "keyup change", function( e ) {
 		
 		/* Functions disabled whilst map is being re-sized */
-		if( controls_disabled == false ) {
+		if( ( controls_disabled == false ) || ( drawing_functions != false ) ) {
 			
 			var element = $( e.target );
 
@@ -1341,6 +1341,47 @@ function map_editor_event_listeners() {
 			$.extend( true, selected_map.data[tile_info.row][tile_info.col].exit_map_dir, selected_texture.exit_map_dir ); /* Clone array */
 			selected_map.data[tile_info.row][tile_info.col].exit_map_pos = new Array();
 			$.extend( true, selected_map.data[tile_info.row][tile_info.col].exit_map_pos, selected_texture.exit_map_pos ); /* Clone array */
+
+		} else if( drawing_functions == 6 ) { /* Eyedropper */
+
+			/* Get current tile information and switch to paint tool */
+			var tile_info = new Object();
+			tile_info.row = $( this ).parent().attr( "row_id" );
+			tile_info.col = $( this ).attr( "col_id" );
+
+			/* Get texture info */
+			var cell_texture_gid = selected_map.data[tile_info.row][tile_info.col].texture_gid;
+			var cell_texture_id = selected_map.data[tile_info.row][tile_info.col].texture_id;
+
+			if( cell_texture_gid != undefined ) {
+
+				/* Switch to map painting */
+				drawing_functions = 1;
+				map_editor_start_drawing();
+
+				/* Disable the eyedropper icon */
+				$( "#map_toolbar_eyedropper" ).removeClass( "selected_tool" );
+				$( "#map_toolbar_eyedropper" ).addClass( "resize_disabled" );
+
+				/* Highlight the paintbrush icon */
+				$( "#map_toolbar_paint" ).addClass( "selected_tool" );
+				$( "#map_toolbar_paint" ).removeClass( "resize_disabled" );
+
+				/* Enable the flip icons and preview */
+				$( "#map_toolbar_flip_h" ).removeClass( "resize_disabled" );
+				$( "#map_toolbar_flip_v" ).removeClass( "resize_disabled" );
+				$( "#map_paint_preview" ).removeClass( "resize_disabled" );
+
+				/* Update preview and tile settings panel */
+				display_tile_info( tile_info.row, tile_info.col );
+
+				$( "#container #toolbar #map_paint_settings" ).css( "display", "flex" );
+				load_texture_preview();
+
+				/* Disable groups in texture list */
+				$( "#container #sidebar #texture_list .sortable .ui-group" ).addClass( "resize_disabled" );
+			}
+
 
 		} else {
 			/* Get texture info */
