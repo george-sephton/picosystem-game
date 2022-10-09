@@ -574,6 +574,9 @@ function map_toolbar_event_listeners() {
 					/* Disable controls */
 					disable_controls( false );
 
+					/* Re-enable texture list */
+					$( "#sidebar #texture_list .sortable li" ).removeClass( "resize_disabled" );
+
 					/* Re-enable zoom controls */
 					$( "#map_toolbar_zoom_in" ).removeClass( "resize_disabled" );
 					$( "#map_toolbar_zoom_out" ).removeClass( "resize_disabled" );
@@ -1381,7 +1384,6 @@ function map_editor_event_listeners() {
 				/* Disable groups in texture list */
 				$( "#container #sidebar #texture_list .sortable .ui-group" ).addClass( "resize_disabled" );
 			}
-
 
 		} else {
 			/* Get texture info */

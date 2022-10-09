@@ -118,7 +118,7 @@ function texture_list_event_listeners() {
 	$( "#texture_list .sortable li" ).on( "click" , function( e ) {
 
 		/* Ignore clicks on the items in the texture list when controls are disabled */
-		if( ( controls_disabled == false ) && ( drawing_functions != 2 ) ) {
+		if( ( ( controls_disabled == false ) && ( drawing_functions != 2 ) ) || ( ( controls_disabled == true ) && ( drawing_functions == 1 ) ) ){
 
 			if( selected_texture.group == false ) {
 
